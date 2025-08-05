@@ -20,8 +20,9 @@ import type {
   DatabaseChordVoicing,
 } from '../src/modules/chord-data/types/database.js';
 import type { NoteName, TriadQuality } from '../src/modules/music-theory/types/music.js';
+import { VALID_NOTE_NAMES } from '../src/shared/constants/music';
 
-const ALL_NOTES: NoteName[] = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+const ALL_NOTES: NoteName[] = [...VALID_NOTE_NAMES];
 
 function convertToDatabase<T extends { name: NoteName; octave?: number; frequency?: number }>(note: T) {
   return {

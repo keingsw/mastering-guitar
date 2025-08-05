@@ -1,4 +1,5 @@
 import type { NoteName } from "../types/music";
+import { MUSIC_CONSTANTS, VALID_NOTE_NAMES } from "@shared/constants/music";
 
 /**
  * Note class representing a musical note with methods for interval calculations
@@ -19,11 +20,11 @@ export class Note {
     B: 11,
   };
 
-  private static readonly NOTE_NAMES: NoteName[] = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+  private static readonly NOTE_NAMES: NoteName[] = [...VALID_NOTE_NAMES];
 
   // Standard tuning frequencies (A4 = 440Hz reference)
-  private static readonly A4_FREQUENCY = 440;
-  private static readonly A4_SEMITONE_VALUE = 9 + 4 * 12; // A in 4th octave
+  private static readonly A4_FREQUENCY = MUSIC_CONSTANTS.A4_FREQUENCY;
+  private static readonly A4_SEMITONE_VALUE = 9 + 4 * MUSIC_CONSTANTS.SEMITONES_IN_OCTAVE; // A in 4th octave
 
   public readonly name: NoteName;
   public readonly octave?: number;
@@ -46,13 +47,13 @@ export class Note {
 
   public addSemitones(semitones: number): Note {
     const currentSemitone = this.semitoneValue();
-    const newSemitone = (((currentSemitone + semitones) % 12) + 12) % 12;
+    const newSemitone = (((currentSemitone + semitones) % MUSIC_CONSTANTS.SEMITONES_IN_OCTAVE) + MUSIC_CONSTANTS.SEMITONES_IN_OCTAVE) % MUSIC_CONSTANTS.SEMITONES_IN_OCTAVE;
     const newNoteName = Note.NOTE_NAMES[newSemitone];
 
     // Calculate new octave if this note has an octave
     let newOctave: number | undefined;
     if (this.octave !== undefined) {
-      const octaveChange = Math.floor((currentSemitone + semitones) / 12);
+      const octaveChange = Math.floor((currentSemitone + semitones) / MUSIC_CONSTANTS.SEMITONES_IN_OCTAVE);
       newOctave = this.octave + octaveChange;
     }
 
@@ -66,7 +67,7 @@ export class Note {
     if (otherSemitone >= thisSemitone) {
       return otherSemitone - thisSemitone;
     }
-    return 12 + otherSemitone - thisSemitone;
+    return MUSIC_CONSTANTS.SEMITONES_IN_OCTAVE + otherSemitone - thisSemitone;
   }
 
   public equals(other: Note): boolean {
@@ -92,9 +93,9 @@ export class Note {
 
   private calculateFrequency(name: NoteName, octave: number): number {
     const noteSemitone = Note.SEMITONE_MAP[name];
-    const totalSemitones = noteSemitone + octave * 12;
+    const totalSemitones = noteSemitone + octave * MUSIC_CONSTANTS.SEMITONES_IN_OCTAVE;
     const semitoneDifference = totalSemitones - Note.A4_SEMITONE_VALUE;
 
-    return Note.A4_FREQUENCY * 2 ** (semitoneDifference / 12);
+    return Note.A4_FREQUENCY * 2 ** (semitoneDifference / MUSIC_CONSTANTS.SEMITONES_IN_OCTAVE);
   }
 }

@@ -4,7 +4,7 @@
 
 export type NoteName = "C" | "C#" | "D" | "D#" | "E" | "F" | "F#" | "G" | "G#" | "A" | "A#" | "B";
 
-export interface Note {
+export interface INote {
   name: NoteName;
   octave?: number;
   frequency?: number;
@@ -21,9 +21,9 @@ export interface Interval {
 export type TriadQuality = "major" | "minor" | "diminished" | "augmented";
 
 export interface Triad {
-  root: Note;
-  third: Note;
-  fifth: Note;
+  root: INote;
+  third: INote;
+  fifth: INote;
   quality: TriadQuality;
   symbol: string;
 }
@@ -31,7 +31,7 @@ export interface Triad {
 export interface FretboardPosition {
   string: number; // 1-6 (high E to low E)
   fret: number; // 0-24
-  note: Note;
+  note: INote;
   isRoot?: boolean;
   isThird?: boolean;
   isFifth?: boolean;

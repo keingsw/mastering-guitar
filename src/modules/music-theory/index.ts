@@ -6,23 +6,39 @@
  */
 
 // Entities
+export { Note } from "./entities/Note";
+export {
+  findNoteOnFretboard,
+  generateChordVoicings,
+  getStandardTuning,
+  mapTriadToFretboard,
+} from "./services/fretboard-mapping";
+
+// Services
+export {
+  calculateInterval,
+  getAllIntervals,
+  getIntervalName,
+  invertInterval,
+  isConsonant,
+} from "./services/intervals";
+
+export {
+  generateTriad,
+  getAllTriadQualities,
+  getAllTriads,
+  getChordTones,
+  getTriadPattern,
+  identifyTriad,
+} from "./services/triads";
+// Types
 export type {
   ChordVoicing,
   FretboardPosition,
+  INote,
   Interval,
   IntervalQuality,
-  Note,
   NoteName,
   Triad,
   TriadQuality,
 } from "./types/music";
-
-// Services (will be implemented)
-// export { ChordCalculator } from './services/ChordCalculator';
-// export { FretboardMapper } from './services/FretboardMapper';
-// export { IntervalCalculator } from './services/IntervalCalculator';
-
-// Entities (will be implemented)
-// export { Note } from './entities/Note';
-// export { Interval } from './entities/Interval';
-// export { Triad } from './entities/Triad';

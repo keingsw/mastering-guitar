@@ -1,18 +1,31 @@
 /**
  * Chord Data Module
  *
- * Static chord databases and fretboard position data.
- * Provides structured access to triad data and instrument configurations.
+ * Pre-computed triad database with fretboard positions and voicings.
+ * Optimized for fast lookup and guitar-specific chord information.
  */
 
-// Data exports (will be implemented)
-// export { majorTriads } from './triads/major.json';
-// export { minorTriads } from './triads/minor.json';
-// export { diminishedTriads } from './triads/diminished.json';
-// export { augmentedTriads } from './triads/augmented.json';
+// Database types
+export type {
+  TriadDatabase,
+  TriadDatabaseEntry,
+  DatabaseTriad,
+  DatabaseFretboardPosition,
+  DatabaseChordVoicing,
+  DatabaseLookupOptions,
+} from './types/database';
 
-// Fretboard data (will be implemented)
-// export { fretboardPositions } from './fretboard/positions.json';
-
-// Instrument configurations (will be implemented)
-// export { guitarStandardTuning } from './instruments/guitar-standard.json';
+// Database lookup services
+export {
+  getTriad,
+  getTriadsByRoot,
+  getTriadsByQuality,
+  getVoicingsByDifficulty,
+  getVoicingsByNeckPosition,
+  findTriads,
+  findVoicings,
+  getRandomTriad,
+  getCommonVoicings,
+  getDatabaseStats,
+  getAllTriadSymbols,
+} from './services/database-lookup';

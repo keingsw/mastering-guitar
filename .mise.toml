@@ -1,0 +1,10 @@
+[tools]
+node = "22"
+pnpm = "latest"
+
+[tasks]
+# Convenient shortcuts
+dev = "pnpm run dev"
+build = "pnpm run build"
+lint = "pnpm run lint"
+test = "pnpm run test"

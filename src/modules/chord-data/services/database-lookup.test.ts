@@ -3,6 +3,8 @@ import {
   getTriad,
   getTriadsByRoot,
   getTriadsByQuality,
+  getVoicingsByDifficulty,
+  getVoicingsByNeckPosition,
   findTriads,
   findVoicings,
   getRandomTriad,
@@ -113,13 +115,13 @@ describe('Database lookup', () => {
       
       expect(random1).toBeDefined();
       expect(random2).toBeDefined();
-      expect(random1.triad).toBeDefined();
-      expect(random2.triad).toBeDefined();
+      expect(random1?.triad).toBeDefined();
+      expect(random2?.triad).toBeDefined();
     });
 
     test('returns random triad of specific quality', () => {
       const randomMinor = getRandomTriad({ quality: 'minor' });
-      expect(randomMinor.triad.quality).toBe('minor');
+      expect(randomMinor?.triad.quality).toBe('minor');
     });
   });
 
@@ -158,6 +160,52 @@ describe('Database lookup', () => {
       expect(symbols).toContain('C+');
       
       expect(symbols.every(s => typeof s === 'string')).toBe(true);
+    });
+  });
+
+  describe('Input Validation', () => {
+    test('getTriad validates note names and qualities', () => {
+      expect(getTriad('InvalidNote' as any, 'major')).toBeNull();
+      expect(getTriad('C', 'invalidQuality' as any)).toBeNull();
+      expect(getTriad(null as any, 'major')).toBeNull();
+      expect(getTriad('C', null as any)).toBeNull();
+    });
+
+    test('getTriadsByRoot validates note names', () => {
+      expect(getTriadsByRoot('InvalidNote' as any)).toEqual([]);
+      expect(getTriadsByRoot(null as any)).toEqual([]);
+      expect(getTriadsByRoot(undefined as any)).toEqual([]);
+    });
+
+    test('getTriadsByQuality validates quality types', () => {
+      expect(getTriadsByQuality('invalidQuality' as any)).toEqual([]);
+      expect(getTriadsByQuality(null as any)).toEqual([]);
+      expect(getTriadsByQuality(undefined as any)).toEqual([]);
+    });
+
+    test('getVoicingsByDifficulty validates difficulty levels', () => {
+      expect(getVoicingsByDifficulty('expert' as any)).toEqual([]);
+      expect(getVoicingsByDifficulty(null as any)).toEqual([]);
+      expect(getVoicingsByDifficulty(undefined as any)).toEqual([]);
+    });
+
+    test('getVoicingsByNeckPosition validates position numbers', () => {
+      expect(getVoicingsByNeckPosition(-1)).toEqual([]);
+      expect(getVoicingsByNeckPosition(25)).toEqual([]);
+      expect(getVoicingsByNeckPosition(null as any)).toEqual([]);
+      expect(getVoicingsByNeckPosition('invalid' as any)).toEqual([]);
+    });
+
+    test('getRandomTriad validates quality option', () => {
+      expect(getRandomTriad({ quality: 'invalidQuality' as any })).toBeNull();
+      // null quality should work (returns any triad)
+      expect(getRandomTriad({ quality: null as any })).toBeDefined();
+    });
+
+    test('getCommonVoicings validates both parameters', () => {
+      expect(getCommonVoicings('InvalidNote' as any, 'major')).toEqual([]);
+      expect(getCommonVoicings('C', 'invalidQuality' as any)).toEqual([]);
+      expect(getCommonVoicings(null as any, null as any)).toEqual([]);
     });
   });
 });

@@ -1,0 +1,179 @@
+import { Meta } from '@storybook/blocks';
+import { Button } from './components/Button/Button';
+import { ChordDisplay } from './components/ChordDisplay/ChordDisplay';
+import { FretPosition } from './components/FretPosition/FretPosition';
+
+<Meta title="Design System/Overview" />
+
+# Guitar Mastery Design System
+
+A comprehensive design system built specifically for music education applications, with a focus on guitar learning and chord mastery.
+
+## 🎯 Design Philosophy
+
+Our design system is built with these core principles:
+
+- **Music-First**: Every component is designed with music education in mind
+- **Accessibility**: WCAG 2.1 AA compliant with comprehensive keyboard and screen reader support
+- **Color & Shape**: Dual encoding using both color and shape for colorblind accessibility
+- **Touch-Friendly**: All interactive elements meet 44px minimum touch targets
+- **Consistency**: Unified visual language across all components
+
+## 🎨 Visual Identity
+
+### Color Palette
+
+Our warm, musical color palette is inspired by natural wood tones and traditional guitar aesthetics:
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '16px', margin: '20px 0' }}>
+  <div style={{ textAlign: 'center' }}>
+    <div style={{ width: '100px', height: '60px', backgroundColor: '#ed7027', borderRadius: '8px', margin: '0 auto 8px' }}></div>
+    <div style={{ fontSize: '12px', fontWeight: '600' }}>Primary</div>
+    <div style={{ fontSize: '11px', color: '#666' }}>#ed7027</div>
+  </div>
+  <div style={{ textAlign: 'center' }}>
+    <div style={{ width: '100px', height: '60px', backgroundColor: '#ef4444', borderRadius: '8px', margin: '0 auto 8px' }}></div>
+    <div style={{ fontSize: '12px', fontWeight: '600' }}>Root</div>
+    <div style={{ fontSize: '11px', color: '#666' }}>#ef4444</div>
+  </div>
+  <div style={{ textAlign: 'center' }}>
+    <div style={{ width: '100px', height: '60px', backgroundColor: '#f59e0b', borderRadius: '8px', margin: '0 auto 8px' }}></div>
+    <div style={{ fontSize: '12px', fontWeight: '600' }}>Third</div>
+    <div style={{ fontSize: '11px', color: '#666' }}>#f59e0b</div>
+  </div>
+  <div style={{ textAlign: 'center' }}>
+    <div style={{ width: '100px', height: '60px', backgroundColor: '#3b82f6', borderRadius: '8px', margin: '0 auto 8px' }}></div>
+    <div style={{ fontSize: '12px', fontWeight: '600' }}>Fifth</div>
+    <div style={{ fontSize: '11px', color: '#666' }}>#3b82f6</div>
+  </div>
+</div>
+
+### Typography
+
+- **Primary Font**: Inter - Clean, modern sans-serif optimized for UI
+- **Monospace Font**: JetBrains Mono - For chord symbols and note names
+- **Scale**: Modular scale from 12px to 48px with consistent line heights
+
+### Spacing
+
+Musical interfaces require precise spacing for finger positioning and visual clarity. Our spacing system uses:
+
+- **Base Unit**: 8px
+- **Note Spacing**: 88px (optimal for finger positioning)
+- **Chord Spacing**: 120px minimum width for chord displays
+
+## 🧩 Components
+
+### Button
+
+Versatile buttons with three variants, three sizes, and comprehensive accessibility support.
+
+<div style={{ display: 'flex', gap: '16px', margin: '20px 0' }}>
+  <Button variant="primary">Primary</Button>
+  <Button variant="secondary">Secondary</Button>
+  <Button variant="ghost">Ghost</Button>
+</div>
+
+### ChordDisplay
+
+Clean chord symbol display with optional notes and intervals for music theory education.
+
+<div style={{ display: 'flex', gap: '16px', margin: '20px 0' }}>
+  <ChordDisplay chord="Cmaj7" notes={['C', 'E', 'G', 'B']} showNotes />
+  <ChordDisplay chord="Am7" notes={['A', 'C', 'E', 'G']} showNotes variant="highlighted" />
+  <ChordDisplay chord="F#dim" notes={['F#', 'A', 'C']} showNotes variant="muted" />
+</div>
+
+### FretPosition
+
+Interactive fret positions with harmonic function color coding and accessibility features.
+
+<div style={{ display: 'flex', gap: '16px', margin: '20px 0' }}>
+  <div style={{ textAlign: 'center' }}>
+    <FretPosition note="C" function="root" showFunction isHighlighted />
+    <div style={{ fontSize: '12px', marginTop: '4px', color: '#666' }}>Root</div>
+  </div>
+  <div style={{ textAlign: 'center' }}>
+    <FretPosition note="E" function="third" showFunction isHighlighted />
+    <div style={{ fontSize: '12px', marginTop: '4px', color: '#666' }}>Third</div>
+  </div>
+  <div style={{ textAlign: 'center' }}>
+    <FretPosition note="G" function="fifth" showFunction isHighlighted />
+    <div style={{ fontSize: '12px', marginTop: '4px', color: '#666' }}>Fifth</div>
+  </div>
+</div>
+
+## ♿ Accessibility Features
+
+Our design system is built with accessibility as a first-class citizen:
+
+### WCAG 2.1 AA Compliance
+- **Color Contrast**: All text meets 4.5:1 minimum ratio
+- **Touch Targets**: 44px minimum for interactive elements
+- **Focus Management**: Clear focus indicators for keyboard navigation
+- **Screen Readers**: Comprehensive ARIA labels and semantic markup
+
+### Keyboard Navigation
+- Tab navigation through all interactive elements
+- Enter and Space activation for buttons and interactive components
+- Escape key support where applicable
+
+### Colorblind Support
+- Dual encoding using color and shape symbols
+- High contrast alternatives for all color-coded elements
+- Function symbols: ● (root), ◆ (third), ▲ (fifth)
+
+### Motion & Animation
+- Subtle, purposeful animations that don't cause distraction
+- Respects `prefers-reduced-motion` user preference
+- Short duration transitions (150ms) with smooth easing
+
+## 🧪 Testing
+
+Every component includes comprehensive test coverage:
+
+- **Unit Tests**: 145+ tests covering all component functionality
+- **Accessibility Tests**: WCAG compliance validation
+- **Visual Regression**: Storybook visual testing
+- **Interaction Tests**: User event simulation
+
+## 🚀 Usage
+
+Import components from the design system package:
+
+```tsx
+import { Button, ChordDisplay, FretPosition } from '@/design-system';
+
+function MyComponent() {
+  return (
+    <div>
+      <ChordDisplay chord="C" notes={['C', 'E', 'G']} showNotes />
+      <FretPosition note="C" function="root" isHighlighted />
+      <Button onClick={() => console.log('Chord played!')}>
+        Play Chord
+      </Button>
+    </div>
+  );
+}
+```
+
+## 📖 Documentation
+
+- **Component Stories**: Interactive examples for each component
+- **API Documentation**: Generated from TypeScript interfaces
+- **Accessibility Guide**: Comprehensive accessibility documentation
+- **Design Tokens**: Exportable tokens for consistent theming
+
+## 🔄 Contributing
+
+When adding new components:
+
+1. **Test-Driven Development**: Write tests first
+2. **Accessibility First**: Include ARIA labels and keyboard support
+3. **Consistent API**: Follow established patterns for props and events
+4. **Documentation**: Include Storybook stories and MDX documentation
+5. **Design Tokens**: Use existing tokens or propose new ones
+
+---
+
+*Built with love for music education and accessibility* 🎸

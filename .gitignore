@@ -108,3 +108,5 @@ vite.config.d.ts
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+*storybook.log
+storybook-static

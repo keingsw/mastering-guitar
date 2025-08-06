@@ -1,12 +1,19 @@
 import React from 'react';
 import { colors, componentTokens, musicalSpacing } from '../../tokens';
+import { 
+  NoteName, 
+  HarmonicFunction, 
+  ComponentSize, 
+  isValidNoteName, 
+  MusicValidationErrors 
+} from '../../types/music';
 
 export interface FretPositionProps {
-  note: string;
-  function?: 'root' | 'third' | 'fifth';
+  note: NoteName;
+  function?: HarmonicFunction;
   isHighlighted?: boolean;
   isDisabled?: boolean;
-  size?: 'sm' | 'md' | 'lg';
+  size?: ComponentSize;
   showNote?: boolean;
   showFunction?: boolean;
   onClick?: () => void;
@@ -28,6 +35,26 @@ export const FretPosition: React.FC<FretPositionProps> = ({
   className,
   style,
 }) => {
+  // Runtime validation for development safety
+  if (process.env.NODE_ENV === 'development') {
+    if (!isValidNoteName(note)) {
+      console.warn(MusicValidationErrors.INVALID_NOTE(note));
+      return (
+        <div 
+          style={{ 
+            padding: '8px', 
+            backgroundColor: '#fecaca', 
+            border: '1px solid #dc2626', 
+            borderRadius: '4px',
+            color: '#991b1b',
+            fontSize: '12px'
+          }}
+        >
+          Invalid note: {note}
+        </div>
+      );
+    }
+  }
   const sizeStyles = {
     sm: {
       width: '32px',

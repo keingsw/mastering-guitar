@@ -19,13 +19,18 @@ Each ADR follows this structure:
 
 | ADR | Title | Status | Date |
 |-----|-------|--------|------|
-| [001](./001-single-repo-modular-architecture.md) | Single Repository with Modular Architecture | Accepted | 2024-08-04 |
+| [0001](./0001-single-repo-modular-architecture.md) | Single Repository with Modular Architecture | Accepted | 2024-08-04 |
+| [0002](./0002-audio-playback-strategy.md) | Audio Playback Strategy | Accepted | 2025-08-06 |
+| [0003](./0003-theory-first-learning-approach.md) | Theory-First Learning Approach | Accepted | 2025-08-06 |
+| [0004](./0004-progressive-difficulty-system.md) | Progressive Difficulty System | Accepted | 2025-08-06 |
+| [0005](./0005-mobile-responsive-design-strategy.md) | Mobile-Responsive Design Strategy | Accepted | 2025-08-06 |
+| [0006](./0006-color-coding-system-for-music-theory.md) | Color Coding System for Music Theory | Accepted | 2025-08-06 |
 
 ## Creating New ADRs
 
 When making significant architectural decisions:
 
-1. Create a new ADR file: `XXX-brief-title.md`
+1. Create a new ADR file: `XXXX-brief-title.md` (4-digit numbering)
 2. Use the next sequential number
 3. Follow the established format
 4. Update this README with the new entry

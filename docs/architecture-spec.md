@@ -1,5 +1,7 @@
 # Guitar Triads Mastery App - Architecture Specification
 
+> **Note**: This document provides comprehensive technical architecture details. For architectural decisions and their rationale, see the [Architecture Decision Records (ADRs)](adr/) which contain the decision context and alternatives considered.
+
 ## Overview
 
 A React + Vite application for mastering guitar triads through interactive visualization, practice modes, and progress tracking. Built with TypeScript for type safety and scalable architecture.

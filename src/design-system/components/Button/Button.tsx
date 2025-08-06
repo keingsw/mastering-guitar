@@ -1,9 +1,10 @@
 import React, { forwardRef } from 'react';
 import { colors, textStyles, componentSpacing, componentTokens } from '../../tokens';
+import { ComponentSize } from '../../types/music';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'musical';
-  size?: 'sm' | 'md' | 'lg';
+  size?: ComponentSize;
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;

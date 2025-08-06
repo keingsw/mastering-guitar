@@ -1,11 +1,21 @@
 import React from 'react';
 import { colors, chordTypography, spacing, componentTokens } from '../../tokens';
+import { 
+  ChordSymbol, 
+  NoteName, 
+  Interval,
+  ComponentSize, 
+  isValidChordSymbol, 
+  isValidNoteName,
+  isValidInterval,
+  MusicValidationErrors 
+} from '../../types/music';
 
 export interface ChordDisplayProps {
-  chord: string;
-  notes?: string[];
-  intervals?: string[];
-  size?: 'sm' | 'md' | 'lg';
+  chord: ChordSymbol | string; // Allow string for flexibility but prefer ChordSymbol
+  notes?: NoteName[];
+  intervals?: Interval[];
+  size?: ComponentSize;
   showNotes?: boolean;
   showIntervals?: boolean;
   variant?: 'default' | 'highlighted' | 'muted';
@@ -26,6 +36,24 @@ export const ChordDisplay: React.FC<ChordDisplayProps> = ({
   style,
   onClick,
 }) => {
+  // Runtime validation for development safety
+  if (process.env.NODE_ENV === 'development') {
+    if (!isValidChordSymbol(chord)) {
+      console.warn(MusicValidationErrors.INVALID_CHORD(chord));
+    }
+    
+    notes.forEach((note) => {
+      if (!isValidNoteName(note)) {
+        console.warn(MusicValidationErrors.INVALID_NOTE(note));
+      }
+    });
+    
+    intervals.forEach((interval) => {
+      if (!isValidInterval(interval)) {
+        console.warn(MusicValidationErrors.INVALID_INTERVAL(interval));
+      }
+    });
+  }
   const sizeStyles = {
     sm: {
       chord: {

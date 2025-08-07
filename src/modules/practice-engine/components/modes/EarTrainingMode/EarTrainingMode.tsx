@@ -25,6 +25,7 @@ export interface EarTrainingModeProps {
 class AudioSynthesizer {
   private audioContext: AudioContext | null = null;
   private gainNode: GainNode | null = null;
+  private cleanupTimer?: NodeJS.Timeout;
 
   constructor() {
     // Initialize on user interaction to avoid browser restrictions
@@ -49,11 +50,16 @@ class AudioSynthesizer {
 
     const noteFrequencies: Record<string, number> = {
       'C': 261.63,
+      'C#': 277.18,
       'D': 293.66,
+      'D#': 311.13,
       'E': 329.63,
       'F': 349.23,
+      'F#': 369.99,
       'G': 392.00,
+      'G#': 415.30,
       'A': 440.00,
+      'A#': 466.16,
       'B': 493.88,
     };
 
@@ -114,8 +120,20 @@ class AudioSynthesizer {
   }
 
   cleanup(): void {
-    if (this.audioContext) {
-      this.audioContext.close();
+    if (this.cleanupTimer) {
+      clearTimeout(this.cleanupTimer);
+      this.cleanupTimer = undefined;
+    }
+    
+    if (this.audioContext && this.audioContext.state !== 'closed') {
+      this.audioContext.close().catch(console.warn);
+      // Force cleanup after timeout to prevent memory leaks
+      this.cleanupTimer = setTimeout(() => {
+        this.audioContext = null;
+        this.gainNode = null;
+        this.cleanupTimer = undefined;
+      }, 1000);
+    } else {
       this.audioContext = null;
       this.gainNode = null;
     }

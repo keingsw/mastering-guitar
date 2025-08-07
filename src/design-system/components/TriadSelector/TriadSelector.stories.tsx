@@ -3,7 +3,6 @@ import { action } from '@storybook/addon-actions';
 import { TriadSelector } from './TriadSelector';
 import type { TriadSelection } from './TriadSelector';
 import type { FretPosition } from '../Fretboard/Fretboard';
-import type { NoteName } from '../../types/music';
 
 const meta: Meta<typeof TriadSelector> = {
   title: 'Design System/TriadSelector',

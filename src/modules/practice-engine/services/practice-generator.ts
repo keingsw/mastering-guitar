@@ -10,9 +10,8 @@ import type {
   QuestionGeneratorOptions, 
   DifficultyLevel,
   PracticeMode,
-  QuestionType
+  QuestionResult
 } from '../types/practice';
-import { COMMON_PROGRESSIONS } from '../types/practice';
 
 // Available note names for random generation
 const ALL_NOTES: NoteName[] = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
@@ -355,11 +354,41 @@ function removeDuplicateQuestions(questions: PracticeQuestion[]): PracticeQuesti
 
 /**
  * Identify weak areas from previous results
+ * Analyzes question results to find triad qualities with lower accuracy rates
  */
-function identifyWeakQualities(results: any[]): TriadQuality[] {
-  // This would analyze results and return qualities with lower accuracy
-  // For now, return empty array (use all qualities)
-  return [];
+function identifyWeakQualities(results: QuestionResult[]): TriadQuality[] {
+  if (results.length === 0) {
+    return [];
+  }
+
+  // Track accuracy for each quality
+  const qualityStats = new Map<TriadQuality, { correct: number; total: number }>();
+
+  results.forEach(result => {
+    const quality = result.question.target.quality;
+    const stats = qualityStats.get(quality) || { correct: 0, total: 0 };
+    
+    stats.total += 1;
+    if (result.isCorrect) {
+      stats.correct += 1;
+    }
+    
+    qualityStats.set(quality, stats);
+  });
+
+  // Find qualities with accuracy below 70%
+  const weakQualities: TriadQuality[] = [];
+  const accuracyThreshold = 0.7;
+
+  for (const [quality, stats] of qualityStats.entries()) {
+    const accuracy = stats.correct / stats.total;
+    if (accuracy < accuracyThreshold) {
+      weakQualities.push(quality);
+    }
+  }
+
+  // If no weak areas found or too few results, return empty array (use all qualities)
+  return weakQualities.length > 0 && results.length >= 5 ? weakQualities : [];
 }
 
 /**

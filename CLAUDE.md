@@ -13,7 +13,7 @@ Comprehensive guitar education web application with integrated design system and
 - **Error Handling**: React Error Boundaries for production reliability
 
 ## Development Philosophy
-- **Test-Driven Development**: Write tests first, then implement
+- **TEST-FIRST MANDATORY**: Always write failing tests before any implementation code
 - **Accessibility First**: WCAG 2.1 AA compliance from the start
 - **Type Safety**: Strict TypeScript with music-specific validation
 - **Atomic Commits**: One logical change per commit with clear intentions
@@ -21,7 +21,7 @@ Comprehensive guitar education web application with integrated design system and
 - **Performance First**: Optimized rendering and memory management
 
 ## Code Quality Standards
-- **TDD Approach**: Tests written before implementation (345+ tests total)
+- **TDD ENFORCEMENT**: NO CODE WITHOUT TESTS FIRST - Tests written before implementation (345+ tests total)
 - **Coverage**: Comprehensive testing for all components and edge cases
 - **TypeScript**: Strict mode with --noEmit validation
 - **Code Style**: Biome for consistent formatting and linting
@@ -80,15 +80,19 @@ npm run build-storybook  # Build static Storybook
 npm run build:data       # Build triad database
 ```
 
-## TDD Workflow (Essential Pattern)
-1. **Red**: Write failing test that describes desired behavior
-2. **Green**: Write minimal code to make test pass
+## TDD Workflow (MANDATORY - NO EXCEPTIONS)
+**⚠️ CRITICAL: Never write implementation code without tests first ⚠️**
+
+1. **Red**: Write failing test that describes desired behavior FIRST
+2. **Green**: Write minimal code to make test pass (and ONLY to make test pass)
 3. **Refactor**: Improve code while keeping tests green
 4. **Document**: Add Storybook stories with accessibility notes
 5. **Commit**: Atomic commit with clear test-to-implementation story
 
+**ENFORCEMENT**: All PRs must show test commits before implementation commits
+
 ## Essential Patterns
-- **TDD cycle**: Always write tests before implementation
+- **TDD FIRST**: NEVER write implementation without failing tests first
 - **Use design tokens**: Never hardcode colors/spacing
 - **Validate music props**: Use strict TypeScript types
 - **Maintain accessibility**: Test with screen readers
@@ -99,6 +103,7 @@ npm run build:data       # Build triad database
 - **Audio resource management**: Always cleanup audio contexts and timers
 
 ## Quality Gates (Run Before Commit)
+**🚫 GATE 0: TESTS FIRST - Verify tests were written before implementation**
 1. `npm run test:coverage` - All tests pass (maintain TDD coverage)
 2. `npm run type-check` - No TypeScript errors  
 3. `npm run lint` - Code quality standards met
@@ -109,12 +114,14 @@ npm run build:data       # Build triad database
 
 ## Code Review Best Practices
 ### PR Structure (Atomic Commits)
+- **TDD VERIFICATION**: First commit must be failing tests, second commit implementation
 - **One concern per commit** - Each commit addresses a single issue or feature
 - **Clear commit messages** - Explain the "why" not just the "what"
 - **Logical progression** - Commits build from foundation to advanced features
 - **Reviewable scope** - Each commit can be reviewed and understood independently
 
 ### Implementation Standards
+- **TDD COMPLIANCE**: All features must have tests written first
 - **Audio synthesis**: Full chromatic support (all 12 notes)
 - **Error handling**: Graceful fallbacks with user-friendly messages
 - **Performance**: Stable dependency keys, proper cleanup, memory management
@@ -122,6 +129,7 @@ npm run build:data       # Build triad database
 - **Accessibility**: WCAG 2.1 AA compliance with keyboard navigation
 
 ### Review Priority Guidelines
-1. **High Priority**: Audio completeness, error handling, accessibility
-2. **Medium Priority**: Performance optimization, type safety
-3. **Low Priority**: Code organization, documentation improvements
+1. **CRITICAL PRIORITY**: TDD compliance - Tests written before implementation
+2. **High Priority**: Audio completeness, error handling, accessibility
+3. **Medium Priority**: Performance optimization, type safety
+4. **Low Priority**: Code organization, documentation improvements

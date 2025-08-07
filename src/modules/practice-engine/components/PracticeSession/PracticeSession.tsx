@@ -1,15 +1,14 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { RecognitionMode } from '../modes/RecognitionMode/RecognitionMode';
 import { ConstructionMode } from '../modes/ConstructionMode/ConstructionMode';
 import { ProgressionMode } from '../modes/ProgressionMode/ProgressionMode';
 import { EarTrainingMode } from '../modes/EarTrainingMode/EarTrainingMode';
+import { PracticeErrorBoundary } from '../PracticeErrorBoundary';
 import type { ComponentSize } from '../../../../design-system/types/music';
 import type { 
   PracticeSession as PracticeSessionType,
   PracticeSettings,
-  PracticeQuestion,
   QuestionResult,
-  SessionScore,
   ProgressIndicator
 } from '../../types/practice';
 import { PracticeQuestionGenerator } from '../../services/practice-generator';
@@ -53,7 +52,13 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
   // Generate session ID
   const sessionId = useMemo(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`, []);
   
-  // Generate questions for the session
+  // Create stable dependency key for question generation
+  const questionsKey = useMemo(() => 
+    `${settings.mode}-${settings.difficulty}-${settings.questionCount}-${settings.includeQualities.join(',')}-${settings.includePositions.join(',')}`, 
+    [settings.mode, settings.difficulty, settings.questionCount, settings.includeQualities, settings.includePositions]
+  );
+
+  // Generate questions for the session (only when key configuration changes)
   const questions = useMemo(() => {
     return PracticeQuestionGenerator.generateQuestions({
       difficulty: settings.difficulty,
@@ -62,7 +67,7 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
       includeQualities: settings.includeQualities,
       includePositions: settings.includePositions,
     });
-  }, [settings]);
+  }, [questionsKey, settings.difficulty, settings.mode, settings.questionCount, settings.includeQualities, settings.includePositions]);
 
   // Session state
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -229,43 +234,67 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
 
       {/* Practice mode component */}
       {currentQuestion && settings.mode === 'recognition' && (
-        <RecognitionMode
-          question={currentQuestion}
-          size={size}
-          timeLimit={settings.timeLimit}
-          onAnswer={handleAnswer}
-          className="practice-session__mode"
-        />
+        <PracticeErrorBoundary
+          onError={(error, errorInfo) => {
+            console.error('Recognition Mode error:', error, errorInfo);
+          }}
+        >
+          <RecognitionMode
+            question={currentQuestion}
+            size={size}
+            timeLimit={settings.timeLimit}
+            onAnswer={handleAnswer}
+            className="practice-session__mode"
+          />
+        </PracticeErrorBoundary>
       )}
 
       {currentQuestion && settings.mode === 'construction' && (
-        <ConstructionMode
-          question={currentQuestion}
-          size={size}
-          timeLimit={settings.timeLimit}
-          onAnswer={handleAnswer}
-          className="practice-session__mode"
-        />
+        <PracticeErrorBoundary
+          onError={(error, errorInfo) => {
+            console.error('Construction Mode error:', error, errorInfo);
+          }}
+        >
+          <ConstructionMode
+            question={currentQuestion}
+            size={size}
+            timeLimit={settings.timeLimit}
+            onAnswer={handleAnswer}
+            className="practice-session__mode"
+          />
+        </PracticeErrorBoundary>
       )}
 
       {currentQuestion && settings.mode === 'progression' && (
-        <ProgressionMode
-          question={currentQuestion}
-          size={size}
-          timeLimit={settings.timeLimit}
-          onAnswer={handleAnswer}
-          className="practice-session__mode"
-        />
+        <PracticeErrorBoundary
+          onError={(error, errorInfo) => {
+            console.error('Progression Mode error:', error, errorInfo);
+          }}
+        >
+          <ProgressionMode
+            question={currentQuestion}
+            size={size}
+            timeLimit={settings.timeLimit}
+            onAnswer={handleAnswer}
+            className="practice-session__mode"
+          />
+        </PracticeErrorBoundary>
       )}
 
       {currentQuestion && settings.mode === 'ear-training' && (
-        <EarTrainingMode
-          question={currentQuestion}
-          size={size}
-          timeLimit={settings.timeLimit}
-          onAnswer={handleAnswer}
-          className="practice-session__mode"
-        />
+        <PracticeErrorBoundary
+          onError={(error, errorInfo) => {
+            console.error('Ear Training Mode error:', error, errorInfo);
+          }}
+        >
+          <EarTrainingMode
+            question={currentQuestion}
+            size={size}
+            timeLimit={settings.timeLimit}
+            onAnswer={handleAnswer}
+            className="practice-session__mode"
+          />
+        </PracticeErrorBoundary>
       )}
 
       {/* Placeholder for future modes */}

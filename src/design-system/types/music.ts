@@ -25,6 +25,9 @@ export type ChordQuality =
   | '9' | 'maj9' | 'm9'   // Ninths
   | '11' | '13';          // Extensions
 
+// Simplified triad qualities for practice exercises
+export type TriadQuality = 'major' | 'minor' | 'diminished' | 'augmented';
+
 // Chord symbol patterns (note + quality)
 export type ChordSymbol = `${NoteName}${ChordQuality}`;
 

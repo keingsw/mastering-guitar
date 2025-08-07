@@ -1,0 +1,329 @@
+/* Practice Session Component Styles */
+
+.practice-session {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: var(--color-background-primary);
+  border: 2px solid var(--color-neutral-200);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Size variants */
+.practice-session--sm {
+  transform: scale(0.85);
+  transform-origin: center top;
+  max-width: 850px;
+}
+
+.practice-session--lg {
+  transform: scale(1.15);
+  transform-origin: center top;
+  max-width: 1150px;
+}
+
+.practice-session--completed {
+  max-width: 600px;
+  text-align: center;
+}
+
+/* Header */
+.practice-session__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--color-neutral-200);
+}
+
+.practice-session__info {
+  flex: 1;
+}
+
+.practice-session__title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 0.5rem 0;
+  text-transform: capitalize;
+}
+
+.practice-session__difficulty {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.practice-session__difficulty-value {
+  font-weight: 600;
+  color: var(--color-accent-600);
+  text-transform: capitalize;
+}
+
+.practice-session__controls {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.practice-session__pause-button {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: var(--color-neutral-100);
+  border: 2px solid var(--color-neutral-300);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.practice-session__pause-button:hover:not(:disabled) {
+  background: var(--color-neutral-200);
+  border-color: var(--color-neutral-400);
+}
+
+.practice-session__pause-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Progress indicator */
+.practice-session__progress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.practice-session__progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--color-neutral-200);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.practice-session__progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent-500), var(--color-accent-400));
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.practice-session__progress-text {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Current score */
+.practice-session__current-score {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1rem;
+  background: var(--color-neutral-50);
+  border-radius: 8px;
+  border: 1px solid var(--color-neutral-200);
+}
+
+.practice-session__score-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.practice-session__score-label {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.practice-session__score-value {
+  font-size: 1.25rem;
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+/* Practice mode container */
+.practice-session__mode {
+  /* Mode components handle their own styling */
+}
+
+/* Placeholder for unimplemented modes */
+.practice-session__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem;
+  background: var(--color-neutral-50);
+  border: 2px dashed var(--color-neutral-300);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.practice-session__placeholder h3 {
+  font-size: 1.5rem;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.practice-session__placeholder p {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.practice-session__skip-button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-background-primary);
+  background: var(--color-neutral-500);
+  border: 2px solid var(--color-neutral-500);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.practice-session__skip-button:hover {
+  background: var(--color-neutral-600);
+  border-color: var(--color-neutral-600);
+}
+
+/* Completion screen */
+.practice-session__completion {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.practice-session__completion-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.practice-session__completion-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.practice-session__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  background: var(--color-accent-50);
+  border: 2px solid var(--color-accent-200);
+  border-radius: 8px;
+}
+
+.practice-session__stat-label {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.practice-session__stat-value {
+  font-size: 2rem;
+  color: var(--color-accent-700);
+  font-weight: 700;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .practice-session {
+    padding: 1.5rem;
+    gap: 1.25rem;
+  }
+
+  .practice-session__header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .practice-session__title {
+    font-size: 1.5rem;
+  }
+
+  .practice-session__current-score {
+    gap: 1rem;
+  }
+
+  .practice-session__completion-title {
+    font-size: 1.75rem;
+  }
+
+  .practice-session__completion-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .practice-session__stat {
+    padding: 1rem;
+  }
+
+  .practice-session__stat-value {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .practice-session {
+    padding: 1rem;
+  }
+
+  .practice-session__completion-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .practice-session__current-score {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .practice-session__progress-bar {
+    border: 2px solid var(--color-text-primary);
+  }
+
+  .practice-session__stat {
+    border-width: 3px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .practice-session__progress-fill {
+    transition: none;
+  }
+
+  .practice-session__pause-button {
+    transition: none;
+  }
+
+  .practice-session__skip-button {
+    transition: none;
+  }
+}

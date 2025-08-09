@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
 import { FretPosition } from './FretPosition';
 
 const meta: Meta<typeof FretPosition> = {
@@ -47,8 +46,8 @@ const meta: Meta<typeof FretPosition> = {
     },
   },
   args: {
-    onClick: fn(),
-    onHover: fn(),
+    onClick: () => {},
+    onHover: () => {},
     note: 'C',
   },
 };
@@ -168,8 +167,8 @@ export const Interactive: Story = {
   args: {
     note: 'D',
     function: 'root',
-    onClick: fn(),
-    onHover: fn(),
+    onClick: () => {},
+    onHover: () => {},
   },
   parameters: {
     docs: {
@@ -185,7 +184,7 @@ export const Disabled: Story = {
     note: 'F',
     function: 'third',
     isDisabled: true,
-    onClick: fn(),
+    onClick: () => {},
   },
 };
 
@@ -279,15 +278,15 @@ export const CMajorTriad: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '12px', alignItems: 'center', padding: '20px', backgroundColor: '#fafafa', borderRadius: '8px' }}>
       <div style={{ textAlign: 'center' }}>
-        <FretPosition note="C" function="root" showFunction isHighlighted onClick={fn()} />
+        <FretPosition note="C" function="root" showFunction isHighlighted onClick={() => {}} />
         <div style={{ fontSize: '12px', marginTop: '4px', color: '#666' }}>C</div>
       </div>
       <div style={{ textAlign: 'center' }}>
-        <FretPosition note="E" function="third" showFunction isHighlighted onClick={fn()} />
+        <FretPosition note="E" function="third" showFunction isHighlighted onClick={() => {}} />
         <div style={{ fontSize: '12px', marginTop: '4px', color: '#666' }}>E</div>
       </div>
       <div style={{ textAlign: 'center' }}>
-        <FretPosition note="G" function="fifth" showFunction isHighlighted onClick={fn()} />
+        <FretPosition note="G" function="fifth" showFunction isHighlighted onClick={() => {}} />
         <div style={{ fontSize: '12px', marginTop: '4px', color: '#666' }}>G</div>
       </div>
       <div style={{ marginLeft: '16px', fontSize: '14px', color: '#333' }}>
@@ -310,9 +309,9 @@ export const AccessibilityDemo: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '400px' }}>
       <div style={{ display: 'flex', gap: '16px' }}>
-        <FretPosition note="C" function="root" showFunction isHighlighted onClick={fn()} />
-        <FretPosition note="E" function="third" showFunction isHighlighted onClick={fn()} />
-        <FretPosition note="G" function="fifth" showFunction isHighlighted onClick={fn()} />
+        <FretPosition note="C" function="root" showFunction isHighlighted onClick={() => {}} />
+        <FretPosition note="E" function="third" showFunction isHighlighted onClick={() => {}} />
+        <FretPosition note="G" function="fifth" showFunction isHighlighted onClick={() => {}} />
       </div>
       <div style={{ fontSize: '14px', color: '#666', lineHeight: '1.5' }}>
         <strong>Accessibility Features:</strong>

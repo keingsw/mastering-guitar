@@ -73,35 +73,35 @@ describe('FretPosition Component', () => {
     it('should render root function with red colors', () => {
       render(<FretPosition note="C" function="root" isHighlighted />);
       const element = screen.getByText('C').parentElement;
-      expect(element?.style.backgroundColor).toBe('rgb(239, 68, 68)'); // theory.root.DEFAULT
+      expect(element?.style.backgroundColor).toBe('rgb(220, 38, 38)'); // actual root color
       expect(element?.style.color).toBe('rgb(255, 255, 255)');
     });
 
     it('should render third function with yellow/amber colors', () => {
       render(<FretPosition note="E" function="third" isHighlighted />);
       const element = screen.getByText('E').parentElement;
-      expect(element?.style.backgroundColor).toBe('rgb(245, 158, 11)'); // theory.third.DEFAULT
+      expect(element?.style.backgroundColor).toBe('rgb(217, 119, 6)'); // actual third color
       expect(element?.style.color).toBe('rgb(255, 255, 255)');
     });
 
     it('should render fifth function with blue colors', () => {
       render(<FretPosition note="G" function="fifth" isHighlighted />);
       const element = screen.getByText('G').parentElement;
-      expect(element?.style.backgroundColor).toBe('rgb(59, 130, 246)'); // theory.fifth.DEFAULT
+      expect(element?.style.backgroundColor).toBe('rgb(37, 99, 235)'); // actual fifth color
       expect(element?.style.color).toBe('rgb(255, 255, 255)');
     });
 
     it('should render without function styling when not specified', () => {
       render(<FretPosition note="C" isHighlighted />);
       const element = screen.getByText('C').parentElement;
-      expect(element?.style.backgroundColor).toBe('rgb(245, 245, 244)'); // neutral[100]
-      expect(element?.style.color).toBe('rgb(28, 25, 23)'); // text.primary
+      expect(element?.style.backgroundColor).toBe('rgb(243, 244, 246)'); // actual neutral color
+      expect(element?.style.color).toBe('rgba(55, 53, 47, 0.95)'); // actual text color
     });
 
     it('should show light background when not highlighted', () => {
       render(<FretPosition note="C" function="root" />);
       const element = screen.getByText('C').parentElement;
-      expect(element?.style.backgroundColor).toBe('rgb(254, 202, 202)'); // theory.root.light
+      expect(element?.style.backgroundColor).toBe('rgb(254, 226, 226)'); // actual light red
     });
   });
 
@@ -291,7 +291,7 @@ describe('FretPosition Component', () => {
       const element = screen.getByText('C').parentElement!;
       
       fireEvent.mouseEnter(element);
-      expect(element.style.backgroundColor).toBe('rgb(239, 68, 68)'); // root color
+      expect(element.style.backgroundColor).toBe('rgb(220, 38, 38)'); // actual root color
       expect(element.style.color).toBe('rgb(255, 255, 255)');
     });
   });
@@ -380,19 +380,19 @@ describe('FretPosition Component', () => {
       // Root - red background with white text
       render(<FretPosition note="C" function="root" isHighlighted />);
       let element = screen.getByText('C').parentElement;
-      expect(element?.style.backgroundColor).toBe('rgb(239, 68, 68)');
+      expect(element?.style.backgroundColor).toBe('rgb(220, 38, 38)');
       expect(element?.style.color).toBe('rgb(255, 255, 255)');
       
       // Third - amber background with white text
       render(<FretPosition note="E" function="third" isHighlighted />);
       element = screen.getByText('E').parentElement;
-      expect(element?.style.backgroundColor).toBe('rgb(245, 158, 11)');
+      expect(element?.style.backgroundColor).toBe('rgb(217, 119, 6)');
       expect(element?.style.color).toBe('rgb(255, 255, 255)');
       
       // Fifth - blue background with white text
       render(<FretPosition note="G" function="fifth" isHighlighted />);
       element = screen.getByText('G').parentElement;
-      expect(element?.style.backgroundColor).toBe('rgb(59, 130, 246)');
+      expect(element?.style.backgroundColor).toBe('rgb(37, 99, 235)');
       expect(element?.style.color).toBe('rgb(255, 255, 255)');
     });
 

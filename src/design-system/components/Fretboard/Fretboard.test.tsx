@@ -118,6 +118,71 @@ describe('Fretboard Component', () => {
     });
   });
 
+  describe('Note Calculation (TDD)', () => {
+    it('calculates correct notes for open strings (standard tuning)', () => {
+      const onFretClick = vi.fn();
+      render(<Fretboard onFretClick={onFretClick} />);
+      
+      // Test open strings (fret 0)
+      // String 1 (high E) - fret 0 should be E
+      const string1Open = screen.getByTestId('fret-position-0-1').querySelector('circle[role="button"]');
+      fireEvent.click(string1Open!);
+      expect(onFretClick).toHaveBeenCalledWith(expect.objectContaining({
+        fret: 0,
+        string: 1,
+        note: 'E'
+      }));
+      
+      // String 6 (low E) - fret 0 should be E
+      const string6Open = screen.getByTestId('fret-position-0-6').querySelector('circle[role="button"]');
+      fireEvent.click(string6Open!);
+      expect(onFretClick).toHaveBeenCalledWith(expect.objectContaining({
+        fret: 0,
+        string: 6,
+        note: 'E'
+      }));
+    });
+
+    it('calculates correct notes for specific fret positions', () => {
+      const onFretClick = vi.fn();
+      render(<Fretboard onFretClick={onFretClick} />);
+      
+      // String 1 (high E), fret 3 should be G (E + 3 semitones = G)
+      const string1Fret3 = screen.getByTestId('fret-position-3-1').querySelector('circle[role="button"]');
+      fireEvent.click(string1Fret3!);
+      expect(onFretClick).toHaveBeenCalledWith(expect.objectContaining({
+        fret: 3,
+        string: 1,
+        note: 'G'
+      }));
+      
+      // String 2 (A), fret 3 should be C (A + 3 semitones = C)
+      const string2Fret3 = screen.getByTestId('fret-position-3-2').querySelector('circle[role="button"]');
+      fireEvent.click(string2Fret3!);
+      expect(onFretClick).toHaveBeenCalledWith(expect.objectContaining({
+        fret: 3,
+        string: 2,
+        note: 'C'
+      }));
+    });
+
+    it('calculates correct notes with neck position offset', () => {
+      const onFretClick = vi.fn();
+      render(<Fretboard neckPosition={3} onFretClick={onFretClick} />);
+      
+      // With neck position 3, fret 3 on string 1 should still be G
+      // because neckPosition affects display, not the actual fret calculation
+      // The fret positions passed to Fretboard already account for neck position
+      const string1Fret3 = screen.getByTestId('fret-position-3-1').querySelector('circle[role="button"]');
+      fireEvent.click(string1Fret3!);
+      expect(onFretClick).toHaveBeenCalledWith(expect.objectContaining({
+        fret: 3,
+        string: 1,
+        note: 'G' // E + 3 = G (neck position is handled by TriadSelector, not Fretboard)
+      }));
+    });
+  });
+
   describe('Interaction', () => {
     it('handles fret clicks with callback', () => {
       const onFretClick = vi.fn();
@@ -130,7 +195,7 @@ describe('Fretboard Component', () => {
       expect(onFretClick).toHaveBeenCalledWith({
         fret: 3,
         string: 1,
-        note: expect.any(String)
+        note: 'G'  // Now we test the actual expected note instead of expect.any(String)
       });
     });
 

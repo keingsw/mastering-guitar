@@ -183,7 +183,7 @@ export const ConstructionMode: React.FC<ConstructionModeProps> = ({
       <div className="construction-mode__selector">
         <TriadSelector
           initialSelection={selectedTriad}
-          onSelectionChange={handleTriadChange}
+          onChange={handleTriadChange}
           size={size}
           aria-label={`Build triad selector - Current: ${selectedTriad.rootNote} ${selectedTriad.quality} in ${selectedTriad.neckPosition}`}
           disabled={isSubmitted}

@@ -1,12 +1,37 @@
-import { render, screen, waitFor, within, act } from '@testing-library/react';
+import React from 'react';
+import { render, screen, waitFor, within, act, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { RecognitionMode } from './RecognitionMode';
 import type { PracticeQuestion } from '../../../types/practice';
 
+// Mock the scoring system
+vi.mock('../../../services/scoring-system', () => ({
+  validateAnswer: vi.fn((question, userAnswer) => {
+    // Check if the answer matches the target
+    const isCorrect = question.target.quality === userAnswer.answer;
+    return {
+      isCorrect,
+      points: isCorrect ? 10 : 0,
+      explanation: isCorrect 
+        ? `Correct! This is a ${question.target.quality} triad`
+        : `This is a ${question.target.quality} triad, not ${userAnswer.answer}`,
+      correctAnswer: question.target.quality,
+    };
+  }),
+  createQuestionResult: vi.fn((question, userAnswer, validation) => ({
+    question,
+    userAnswer,
+    correctAnswer: question.target,
+    isCorrect: validation.isCorrect,
+    feedback: validation.explanation,
+    points: validation.points,
+  })),
+}));
+
 // Mock TriadSelector component
 vi.mock('../../../../../design-system/components/TriadSelector/TriadSelector', () => ({
-  TriadSelector: ({ initialSelection, 'aria-label': ariaLabel }: any) => (
+  TriadSelector: ({ initialSelection, onChange, disabled, 'aria-label': ariaLabel }: any) => (
     <div data-testid="triad-selector" aria-label={ariaLabel}>
       Mock TriadSelector: {initialSelection.rootNote} {initialSelection.quality} in {initialSelection.neckPosition}
     </div>
@@ -96,7 +121,6 @@ describe('RecognitionMode Component', () => {
 
   describe('User Interactions', () => {
     it('enables submit button when option is selected', async () => {
-      const user = userEvent.setup();
       render(<RecognitionMode question={sampleQuestion} onAnswer={mockOnAnswer} />);
       
       const majorOption = screen.getByDisplayValue('major');
@@ -104,84 +128,88 @@ describe('RecognitionMode Component', () => {
       
       expect(submitButton).toBeDisabled();
       
-      await user.click(majorOption);
+      fireEvent.click(majorOption);
       
       expect(submitButton).toBeEnabled();
       expect(majorOption).toBeChecked();
     });
 
     it('calls onAnswer with correct result when answer is submitted', async () => {
-      const user = userEvent.setup();
       render(<RecognitionMode question={sampleQuestion} onAnswer={mockOnAnswer} />);
       
       const majorOption = screen.getByDisplayValue('major');
       const submitButton = screen.getByRole('button', { name: /submit answer/i });
       
-      await user.click(majorOption);
-      await user.click(submitButton);
+      fireEvent.click(majorOption);
+      fireEvent.click(submitButton);
       
-      await waitFor(() => {
-        expect(mockOnAnswer).toHaveBeenCalledWith(
-          expect.objectContaining({
-            question: sampleQuestion,
-            userAnswer: expect.objectContaining({
-              answer: 'major',
-              questionId: sampleQuestion.id,
-            }),
-            isCorrect: true,
-          })
-        );
+      // Advance timer for callback delay (3000ms from component)
+      act(() => {
+        vi.advanceTimersByTime(3100);
       });
+      
+      expect(mockOnAnswer).toHaveBeenCalledWith(
+        expect.objectContaining({
+          question: sampleQuestion,
+          userAnswer: expect.objectContaining({
+            answer: 'major',
+            questionId: sampleQuestion.id,
+          }),
+          isCorrect: true,
+        })
+      );
     });
 
     it('shows correct feedback for right answer', async () => {
-      const user = userEvent.setup();
       render(<RecognitionMode question={sampleQuestion} onAnswer={mockOnAnswer} />);
       
       const majorOption = screen.getByDisplayValue('major');
       const submitButton = screen.getByRole('button', { name: /submit answer/i });
       
-      await user.click(majorOption);
-      await user.click(submitButton);
+      fireEvent.click(majorOption);
+      fireEvent.click(submitButton);
       
-      await waitFor(() => {
-        expect(screen.getByRole('alert')).toBeInTheDocument();
-        expect(screen.getByText('✓ Correct!')).toBeInTheDocument();
-        expect(screen.getByText(/correct! this is a major triad/i)).toBeInTheDocument();
-      });
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+      expect(screen.getByText('✓ Correct!')).toBeInTheDocument();
+      expect(screen.getByText(/correct! this is a major triad/i)).toBeInTheDocument();
     });
 
     it('shows incorrect feedback for wrong answer', async () => {
-      const user = userEvent.setup();
       render(<RecognitionMode question={sampleQuestion} onAnswer={mockOnAnswer} />);
       
       const minorOption = screen.getByDisplayValue('minor');
       const submitButton = screen.getByRole('button', { name: /submit answer/i });
       
-      await user.click(minorOption);
-      await user.click(submitButton);
+      fireEvent.click(minorOption);
+      fireEvent.click(submitButton);
       
-      await waitFor(() => {
-        expect(screen.getByRole('alert')).toBeInTheDocument();
-        expect(screen.getByText('✗ Incorrect')).toBeInTheDocument();
-        expect(screen.getByText(/this is a major triad, not minor/i)).toBeInTheDocument();
-        expect(screen.getByText(/the correct answer is major/i)).toBeInTheDocument();
-      });
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+      expect(screen.getByText('✗ Incorrect')).toBeInTheDocument();
+      expect(screen.getByText(/this is a major triad, not minor/i)).toBeInTheDocument();
+      // Text is split across elements, check the feedback explanation
+      const explanation = screen.getByText(/the correct answer is/i);
+      expect(explanation).toBeInTheDocument();
+      // The strong element with "major" should be in the feedback section
+      expect(explanation.parentElement).toHaveTextContent(/the correct answer is major/i);
     });
 
     it('supports keyboard navigation with Enter key', async () => {
-      const user = userEvent.setup();
       render(<RecognitionMode question={sampleQuestion} onAnswer={mockOnAnswer} />);
       
       const majorOption = screen.getByDisplayValue('major');
-      await user.click(majorOption);
+      fireEvent.click(majorOption);
       
-      // Press Enter to submit
-      await user.keyboard('{Enter}');
+      // Focus the submit button and press Enter
+      const submitButton = screen.getByRole('button', { name: /submit answer/i });
+      submitButton.focus();
+      fireEvent.keyDown(submitButton, { key: 'Enter' });
       
-      await waitFor(() => {
-        expect(mockOnAnswer).toHaveBeenCalled();
+      // Advance timer for callback delay (3000ms from component)
+      act(() => {
+        vi.advanceTimersByTime(3100);
       });
+      
+      expect(mockOnAnswer).toHaveBeenCalled();
     });
   });
 
@@ -222,9 +250,7 @@ describe('RecognitionMode Component', () => {
         vi.advanceTimersByTime(2000);
       });
       
-      await waitFor(() => {
-        expect(mockOnTimeOut).toHaveBeenCalled();
-      });
+      expect(mockOnTimeOut).toHaveBeenCalled();
     });
 
     it('shows warning style when time is running low', async () => {
@@ -246,7 +272,6 @@ describe('RecognitionMode Component', () => {
     });
 
     it('stops timer when answer is submitted', async () => {
-      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
       render(
         <RecognitionMode 
           question={sampleQuestion} 
@@ -258,13 +283,11 @@ describe('RecognitionMode Component', () => {
       const majorOption = screen.getByDisplayValue('major');
       const submitButton = screen.getByRole('button', { name: /submit answer/i });
       
-      await user.click(majorOption);
-      await user.click(submitButton);
+      fireEvent.click(majorOption);
+      fireEvent.click(submitButton);
       
-      // Wait for submission to complete
-      await waitFor(() => {
-        expect(submitButton).toHaveTextContent('Submitted');
-      });
+      // Submission should be immediate
+      expect(submitButton).toHaveTextContent('Submitted');
       
       // Timer should not continue after submission
       act(() => {
@@ -273,7 +296,7 @@ describe('RecognitionMode Component', () => {
       
       // The component should still exist but timer should be stopped
       expect(screen.getByRole('main')).toBeInTheDocument();
-    }, 10000);
+    });
   });
 
   describe('Accessibility', () => {
@@ -296,19 +319,16 @@ describe('RecognitionMode Component', () => {
     });
 
     it('announces feedback with alert role', async () => {
-      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
       render(<RecognitionMode question={sampleQuestion} onAnswer={mockOnAnswer} />);
       
       const majorOption = screen.getByDisplayValue('major');
       const submitButton = screen.getByRole('button', { name: /submit answer/i });
       
-      await user.click(majorOption);
-      await user.click(submitButton);
+      fireEvent.click(majorOption);
+      fireEvent.click(submitButton);
       
-      await waitFor(() => {
-        const feedback = screen.getByRole('alert');
-        expect(feedback).toHaveAttribute('aria-live', 'assertive');
-      }, { timeout: 10000 });
+      const feedback = screen.getByRole('alert');
+      expect(feedback).toHaveAttribute('aria-live', 'assertive');
     });
 
     it('supports custom aria-label', () => {

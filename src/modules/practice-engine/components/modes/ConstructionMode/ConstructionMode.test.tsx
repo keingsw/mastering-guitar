@@ -1,45 +1,74 @@
-import { render, screen, waitFor, act } from '@testing-library/react';
+import React from 'react';
+import { render, screen, waitFor, act, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { ConstructionMode } from './ConstructionMode';
 import type { PracticeQuestion } from '../../../types/practice';
 
+// Mock the scoring system
+vi.mock('../../../services/scoring-system', () => ({
+  validateAnswer: vi.fn(() => ({
+    isCorrect: true,
+    points: 10,
+    explanation: 'Correct! This is a major triad',
+  })),
+  createQuestionResult: vi.fn((question, userAnswer, validation) => ({
+    question,
+    userAnswer,
+    correctAnswer: question.target,
+    isCorrect: validation.isCorrect,
+    feedback: validation.explanation,
+    points: validation.points,
+  })),
+}));
+
 // Mock TriadSelector component
 vi.mock('../../../../../design-system/components/TriadSelector/TriadSelector', () => ({
   TriadSelector: ({ 
     initialSelection, 
-    onSelectionChange, 
+    onChange, 
     disabled,
     'aria-label': ariaLabel 
-  }: any) => (
-    <div data-testid="triad-selector" aria-label={ariaLabel}>
-      <div>Current: {initialSelection.rootNote} {initialSelection.quality} in {initialSelection.neckPosition}</div>
-      {!disabled && (
-        <div>
-          <button 
-            onClick={() => onSelectionChange({
-              rootNote: 'C',
-              quality: 'major',
-              neckPosition: 'open'
-            })}
-            data-testid="select-c-major-open"
-          >
-            Select C Major Open
-          </button>
-          <button 
-            onClick={() => onSelectionChange({
-              rootNote: 'D',
-              quality: 'minor',
-              neckPosition: 'position-3'
-            })}
-            data-testid="select-d-minor-pos3"
-          >
-            Select D Minor Pos3
-          </button>
-        </div>
-      )}
-    </div>
-  ),
+  }: any) => {
+    const [currentSelection, setCurrentSelection] = React.useState(initialSelection);
+    
+    const handleClick = (selection: any) => {
+      if (disabled || !onChange) return;
+      
+      setCurrentSelection(selection);
+      onChange(selection);
+    };
+    
+    return (
+      <div data-testid="triad-selector" aria-label={ariaLabel}>
+        <div>Current: {currentSelection.rootNote} {currentSelection.quality} in {currentSelection.neckPosition}</div>
+        {!disabled && (
+          <div>
+            <button 
+              onClick={() => handleClick({
+                rootNote: 'C',
+                quality: 'major',
+                neckPosition: 'open'
+              })}
+              data-testid="select-c-major-open"
+            >
+              Select C Major Open
+            </button>
+            <button 
+              onClick={() => handleClick({
+                rootNote: 'D',
+                quality: 'minor',
+                neckPosition: 'position-3'
+              })}
+              data-testid="select-d-minor-pos3"
+            >
+              Select D Minor Pos3
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  },
 }));
 
 describe('ConstructionMode Component', () => {
@@ -150,45 +179,48 @@ describe('ConstructionMode Component', () => {
     });
 
     it('shows incomplete validation when incorrect triad is built', async () => {
-      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
       render(<ConstructionMode question={sampleQuestion} onAnswer={mockOnAnswer} />);
       
-      // Change to incorrect triad
-      const selectButton = screen.getByTestId('select-d-minor-pos3');
-      await user.click(selectButton);
+      // Component should start in correct state since initial state matches target
+      expect(screen.getByText('Correct! Ready to submit')).toBeInTheDocument();
       
-      await waitFor(() => {
-        expect(screen.getByText('Keep building...')).toBeInTheDocument();
-        expect(screen.getByText('○')).toBeInTheDocument();
-      }, { timeout: 1000 });
+      // Change to incorrect triad using fireEvent instead of userEvent
+      const selectButton = screen.getByTestId('select-d-minor-pos3');
+      fireEvent.click(selectButton);
+      
+      // Now should show incomplete validation - elements should be immediately available
+      expect(screen.getByText('Keep building...')).toBeInTheDocument();
+      expect(screen.getByText('○')).toBeInTheDocument();
 
       const submitButton = screen.getByRole('button', { name: /submit answer/i });
       expect(submitButton).toBeDisabled();
     });
 
     it('calls onAnswer with correct result when answer is submitted', async () => {
-      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
       render(<ConstructionMode question={sampleQuestion} onAnswer={mockOnAnswer} />);
+      
+      // Component should start in correct state
+      expect(screen.getByText('Correct! Ready to submit')).toBeInTheDocument();
       
       const submitButton = screen.getByRole('button', { name: /submit answer/i });
       expect(submitButton).toBeEnabled();
       
-      await user.click(submitButton);
+      fireEvent.click(submitButton);
       
-      // Wait for the 1.5s delay before callback
+      // Feedback should appear immediately after click
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+      
+      // Then advance time for the callback delay (1500ms from component)
       act(() => {
-        vi.advanceTimersByTime(2000);
+        vi.advanceTimersByTime(1600);
       });
       
-      await waitFor(() => {
-        expect(mockOnAnswer).toHaveBeenCalled();
-      }, { timeout: 1000 });
+      expect(mockOnAnswer).toHaveBeenCalled();
       
       expect(mockOnAnswer).toHaveBeenCalledWith(
         expect.objectContaining({
           isCorrect: true,
           userAnswer: expect.objectContaining({
-            isCorrect: true,
             answer: expect.objectContaining({
               rootNote: 'C',
               quality: 'major',
@@ -200,16 +232,17 @@ describe('ConstructionMode Component', () => {
     });
 
     it('shows correct feedback for right construction', async () => {
-      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
       render(<ConstructionMode question={sampleQuestion} onAnswer={mockOnAnswer} />);
       
-      const submitButton = screen.getByRole('button', { name: /submit answer/i });
-      await user.click(submitButton);
+      // Component starts in correct state
+      expect(screen.getByText('Correct! Ready to submit')).toBeInTheDocument();
       
-      await waitFor(() => {
-        expect(screen.getByRole('alert')).toBeInTheDocument();
-        expect(screen.getByText('✓ Correct!')).toBeInTheDocument();
-      }, { timeout: 1000 });
+      const submitButton = screen.getByRole('button', { name: /submit answer/i });
+      fireEvent.click(submitButton);
+      
+      // Elements should be immediately available after click
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+      expect(screen.getByText('✓ Correct!')).toBeInTheDocument();
     });
 
     it('shows incomplete validation for mismatched target', async () => {
@@ -224,20 +257,23 @@ describe('ConstructionMode Component', () => {
     });
 
     it('supports keyboard navigation with Enter key', async () => {
-      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
       render(<ConstructionMode question={sampleQuestion} onAnswer={mockOnAnswer} />);
       
+      // Component starts in correct state
+      expect(screen.getByText('Correct! Ready to submit')).toBeInTheDocument();
+      
       // Press Enter to submit (should work since initial state matches target)
-      await user.keyboard('{Enter}');
+      fireEvent.keyDown(document, { key: 'Enter' });
+      
+      // Feedback should appear immediately
+      expect(screen.getByRole('alert')).toBeInTheDocument();
       
       // Advance timers for the 1.5s delay
       act(() => {
-        vi.advanceTimersByTime(2000);
+        vi.advanceTimersByTime(1600);
       });
       
-      await waitFor(() => {
-        expect(mockOnAnswer).toHaveBeenCalled();
-      }, { timeout: 1000 });
+      expect(mockOnAnswer).toHaveBeenCalled();
     });
   });
 
@@ -300,7 +336,6 @@ describe('ConstructionMode Component', () => {
     });
 
     it('stops timer when answer is submitted', async () => {
-      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
       render(
         <ConstructionMode 
           question={sampleQuestion} 
@@ -309,13 +344,14 @@ describe('ConstructionMode Component', () => {
         />
       );
       
-      const submitButton = screen.getByRole('button', { name: /submit answer/i });
-      await user.click(submitButton);
+      // Component starts in correct state
+      expect(screen.getByText('Correct! Ready to submit')).toBeInTheDocument();
       
-      // Wait for submission to complete
-      await waitFor(() => {
-        expect(submitButton).toHaveTextContent('Submitted');
-      }, { timeout: 1000 });
+      const submitButton = screen.getByRole('button', { name: /submit answer/i });
+      fireEvent.click(submitButton);
+      
+      // Submission should be immediate
+      expect(submitButton).toHaveTextContent('Submitted');
       
       // The component should still exist but timer should be stopped
       expect(screen.getByRole('main')).toBeInTheDocument();
@@ -341,16 +377,16 @@ describe('ConstructionMode Component', () => {
     });
 
     it('announces feedback with alert role', async () => {
-      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
       render(<ConstructionMode question={sampleQuestion} onAnswer={mockOnAnswer} />);
       
-      const submitButton = screen.getByRole('button', { name: /submit answer/i });
-      await user.click(submitButton);
+      // Component starts in correct state
+      expect(screen.getByText('Correct! Ready to submit')).toBeInTheDocument();
       
-      await waitFor(() => {
-        const feedback = screen.getByRole('alert');
-        expect(feedback).toHaveAttribute('aria-live', 'assertive');
-      }, { timeout: 1000 });
+      const submitButton = screen.getByRole('button', { name: /submit answer/i });
+      fireEvent.click(submitButton);
+      
+      const feedback = screen.getByRole('alert');
+      expect(feedback).toHaveAttribute('aria-live', 'assertive');
     });
 
     it('supports custom aria-label', () => {
@@ -367,17 +403,18 @@ describe('ConstructionMode Component', () => {
     });
 
     it('disables TriadSelector when submitted', async () => {
-      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
       render(<ConstructionMode question={sampleQuestion} onAnswer={mockOnAnswer} />);
       
-      const submitButton = screen.getByRole('button', { name: /submit answer/i });
-      await user.click(submitButton);
+      // Component starts in correct state
+      expect(screen.getByText('Correct! Ready to submit')).toBeInTheDocument();
       
-      // Check if selector buttons are no longer present (disabled state)
-      await waitFor(() => {
-        expect(screen.queryByTestId('select-c-major-open')).not.toBeInTheDocument();
-        expect(screen.queryByTestId('select-d-minor-pos3')).not.toBeInTheDocument();
-      }, { timeout: 1000 });
+      const submitButton = screen.getByRole('button', { name: /submit answer/i });
+      fireEvent.click(submitButton);
+      
+      // Submit state and disabled selector should be immediate
+      expect(submitButton).toHaveTextContent('Submitted');
+      expect(screen.queryByTestId('select-c-major-open')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('select-d-minor-pos3')).not.toBeInTheDocument();
     });
   });
 

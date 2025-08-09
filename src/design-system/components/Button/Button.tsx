@@ -50,34 +50,34 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         backgroundColor: colors.theory.third.DEFAULT,
         color: colors.text.inverse,
         border: 'none',
-        boxShadow: componentTokens.shadows.note,
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
       },
     };
 
     const sizeStyles = {
       sm: {
-        fontSize: textStyles.buttonSmall.fontSize,
-        paddingLeft: componentSpacing.button.paddingX.sm,
-        paddingRight: componentSpacing.button.paddingX.sm,
-        paddingTop: componentSpacing.button.paddingY.sm,
-        paddingBottom: componentSpacing.button.paddingY.sm,
-        minHeight: '36px',
+        fontSize: '12px',
+        paddingLeft: '8px',
+        paddingRight: '8px',
+        paddingTop: '4px',
+        paddingBottom: '4px',
+        minHeight: '28px',
       },
       md: {
-        fontSize: textStyles.button.fontSize,
-        paddingLeft: componentSpacing.button.paddingX.md,
-        paddingRight: componentSpacing.button.paddingX.md,
-        paddingTop: componentSpacing.button.paddingY.md,
-        paddingBottom: componentSpacing.button.paddingY.md,
-        minHeight: '44px',
+        fontSize: '14px',
+        paddingLeft: '12px',
+        paddingRight: '12px',
+        paddingTop: '6px',
+        paddingBottom: '6px',
+        minHeight: '32px',
       },
       lg: {
-        fontSize: textStyles.buttonLarge.fontSize,
-        paddingLeft: componentSpacing.button.paddingX.lg,
-        paddingRight: componentSpacing.button.paddingX.lg,
-        paddingTop: componentSpacing.button.paddingY.lg,
-        paddingBottom: componentSpacing.button.paddingY.lg,
-        minHeight: '52px',
+        fontSize: '14px',
+        paddingLeft: '16px',
+        paddingRight: '16px',
+        paddingTop: '8px',
+        paddingBottom: '8px',
+        minHeight: '40px',
       },
     };
 
@@ -85,41 +85,49 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       display: 'inline-flex',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: componentSpacing.button.gap,
-      cursor: disabled || isLoading ? 'default' : 'pointer',
-      transition: `all ${componentTokens.animation.duration.fast} ${componentTokens.animation.easing.easeInOut}`,
+      gap: '6px',
+      cursor: disabled || isLoading ? 'not-allowed' : 'pointer',
+      transition: 'all 0.15s ease',
       textDecoration: 'none',
       position: 'relative',
       width: fullWidth ? '100%' : 'auto',
-      opacity: disabled ? componentTokens.opacity[50] : componentTokens.opacity[100],
+      opacity: disabled ? 0.6 : 1,
       outline: 'none',
-      fontFamily: textStyles.button.fontFamily,
-      fontWeight: textStyles.button.fontWeight,
-      borderRadius: componentTokens.borderRadius.lg,
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
+      fontWeight: 400,
+      borderRadius: '4px',
       ...sizeStyles[size],
       ...variantStyles[variant],
     };
 
     const handleFocus = (e: React.FocusEvent<HTMLButtonElement>) => {
-      e.currentTarget.style.boxShadow = `0 0 0 2px ${colors.interactive.focus}, 0 0 0 4px ${colors.primary[200]}`;
+      e.currentTarget.style.boxShadow = '0 0 0 2px rgba(35, 131, 226, 0.3)';
       props.onFocus?.(e);
     };
 
     const handleBlur = (e: React.FocusEvent<HTMLButtonElement>) => {
-      e.currentTarget.style.boxShadow = variantStyles[variant].boxShadow || '';
+      e.currentTarget.style.boxShadow = variantStyles[variant].boxShadow || 'none';
       props.onBlur?.(e);
     };
 
     const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (variant === 'musical' && !disabled && !isLoading) {
-        e.currentTarget.style.transform = 'translateY(-1px)';
+      if (!disabled && !isLoading) {
+        if (variant === 'primary') {
+          e.currentTarget.style.backgroundColor = colors.primary[600];
+        } else if (variant === 'secondary') {
+          e.currentTarget.style.backgroundColor = 'rgba(55, 53, 47, 0.06)';
+          e.currentTarget.style.borderColor = 'rgba(55, 53, 47, 0.24)';
+        } else if (variant === 'ghost') {
+          e.currentTarget.style.backgroundColor = 'rgba(55, 53, 47, 0.06)';
+        }
       }
       props.onMouseEnter?.(e);
     };
 
     const handleMouseLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (variant === 'musical') {
-        e.currentTarget.style.transform = '';
+      if (!disabled && !isLoading) {
+        // Reset to original variant styles
+        Object.assign(e.currentTarget.style, variantStyles[variant]);
       }
       props.onMouseLeave?.(e);
     };

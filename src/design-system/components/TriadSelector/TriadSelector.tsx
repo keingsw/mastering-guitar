@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Fretboard } from '../Fretboard/Fretboard';
 import type { FretPosition } from '../Fretboard/Fretboard';
 import type { NoteName, ComponentSize, ChordSymbol, HarmonicFunction } from '../../types/music';
@@ -33,6 +33,10 @@ export interface TriadSelectorProps {
   className?: string;
   /** ARIA label for accessibility */
   'aria-label'?: string;
+  /** Start with expanded note grid visible */
+  expandedView?: boolean;
+  /** Disable all interactions */
+  disabled?: boolean;
 }
 
 // Chromatic notes for the root note picker
@@ -41,21 +45,21 @@ const CHROMATIC_NOTES: NoteName[] = [
 ];
 
 // Triad qualities with their interval structures
-const TRIAD_QUALITIES: Array<{ value: TriadQuality; label: string; intervals: number[]; symbol: string }> = [
-  { value: 'major', label: 'Major', intervals: [0, 4, 7], symbol: '' },
-  { value: 'minor', label: 'Minor', intervals: [0, 3, 7], symbol: 'm' },
-  { value: 'diminished', label: 'Diminished', intervals: [0, 3, 6], symbol: 'dim' },
-  { value: 'augmented', label: 'Augmented', intervals: [0, 4, 8], symbol: 'aug' },
+const TRIAD_QUALITIES: Array<{ value: TriadQuality; label: string; intervals: number[]; symbol: string; shortLabel: string }> = [
+  { value: 'major', label: 'Major', intervals: [0, 4, 7], symbol: '', shortLabel: 'Maj' },
+  { value: 'minor', label: 'Minor', intervals: [0, 3, 7], symbol: 'm', shortLabel: 'Min' },
+  { value: 'diminished', label: 'Diminished', intervals: [0, 3, 6], symbol: 'dim', shortLabel: 'Dim' },
+  { value: 'augmented', label: 'Augmented', intervals: [0, 4, 8], symbol: 'aug', shortLabel: 'Aug' },
 ];
 
 // Neck position mappings
-const NECK_POSITIONS: Array<{ value: NeckPosition; label: string; fret: number }> = [
-  { value: 'open', label: 'Open Position', fret: 0 },
-  { value: 'position-3', label: '3rd Position', fret: 3 },
-  { value: 'position-5', label: '5th Position', fret: 5 },
-  { value: 'position-7', label: '7th Position', fret: 7 },
-  { value: 'position-9', label: '9th Position', fret: 9 },
-  { value: 'position-12', label: '12th Position', fret: 12 },
+const NECK_POSITIONS: Array<{ value: NeckPosition; label: string; fret: number; shortLabel: string }> = [
+  { value: 'open', label: 'Open Position', fret: 0, shortLabel: 'Open' },
+  { value: 'position-3', label: '3rd Position', fret: 3, shortLabel: '3rd' },
+  { value: 'position-5', label: '5th Position', fret: 5, shortLabel: '5th' },
+  { value: 'position-7', label: '7th Position', fret: 7, shortLabel: '7th' },
+  { value: 'position-9', label: '9th Position', fret: 9, shortLabel: '9th' },
+  { value: 'position-12', label: '12th Position', fret: 12, shortLabel: '12th' },
 ];
 
 // Standard guitar tuning for fret position calculations
@@ -63,12 +67,12 @@ const STANDARD_TUNING: NoteName[] = ['E', 'A', 'D', 'G', 'B', 'E'];
 
 /**
  * Interactive triad selection interface component for guitar chord education.
+ * Features a compact control bar with maximized fretboard visualization.
  * 
  * Features:
- * - Root note picker with all 12 chromatic notes
- * - Triad quality selector (major, minor, diminished, augmented)
- * - Position chooser for different neck positions
- * - Visual chord chart display using Fretboard component
+ * - Compact controls with dropdown and button groups
+ * - Large fretboard visualization (85% of component space)
+ * - Optional expandable note grid for detailed selection
  * - Full keyboard navigation support
  * - Screen reader accessibility with ARIA labels
  * - WCAG 2.1 AA compliant
@@ -81,6 +85,8 @@ export const TriadSelector: React.FC<TriadSelectorProps> = ({
   onFretClick,
   className = '',
   'aria-label': ariaLabel,
+  expandedView = false,
+  disabled = false,
 }) => {
   // Component state
   const [selection, setSelection] = useState<TriadSelection>({
@@ -89,10 +95,7 @@ export const TriadSelector: React.FC<TriadSelectorProps> = ({
     neckPosition: initialSelection.neckPosition || 'open',
   });
 
-  // Refs for keyboard navigation
-  const rootNoteRef = useRef<HTMLFieldSetElement>(null);
-  const qualityRef = useRef<HTMLFieldSetElement>(null);
-  const positionRef = useRef<HTMLFieldSetElement>(null);
+  const [isCompactMode, setIsCompactMode] = useState(!expandedView);
 
   // Calculate triad notes from root note and quality
   const calculateTriadNotes = useCallback((rootNote: NoteName, quality: TriadQuality): NoteName[] => {
@@ -113,7 +116,7 @@ export const TriadSelector: React.FC<TriadSelectorProps> = ({
     const positions: FretPosition[] = [];
     const neckFret = NECK_POSITIONS.find(pos => pos.value === selection.neckPosition)?.fret || 0;
     
-    // Search for triad notes within reasonable fret range (4 frets around position)
+    // Search for triad notes within reasonable fret range
     const searchRange = { min: Math.max(0, neckFret - 2), max: neckFret + 5 };
     
     for (let stringIndex = 0; stringIndex < 6; stringIndex++) {
@@ -159,178 +162,129 @@ export const TriadSelector: React.FC<TriadSelectorProps> = ({
     onChange?.(newSelection);
   }, [selection, onChange]);
 
-  // Keyboard navigation handlers
-  const handleKeyDown = useCallback((event: React.KeyboardEvent, field: keyof TriadSelection) => {
-    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-      event.preventDefault();
-      
-      let currentIndex: number;
-      let options: readonly any[];
-      
-      switch (field) {
-        case 'rootNote':
-          options = CHROMATIC_NOTES;
-          currentIndex = CHROMATIC_NOTES.indexOf(selection.rootNote);
-          break;
-        case 'quality':
-          options = TRIAD_QUALITIES;
-          currentIndex = TRIAD_QUALITIES.findIndex(q => q.value === selection.quality);
-          break;
-        case 'neckPosition':
-          options = showAdvancedPositions ? NECK_POSITIONS : NECK_POSITIONS.slice(0, 3);
-          currentIndex = options.findIndex((pos: any) => pos.value === selection.neckPosition);
-          break;
-        default:
-          return;
-      }
-      
-      const direction = event.key === 'ArrowUp' ? -1 : 1;
-      const newIndex = (currentIndex + direction + options.length) % options.length;
-      
-      if (field === 'rootNote') {
-        handleSelectionChange('rootNote', options[newIndex] as NoteName);
-      } else if (field === 'quality') {
-        handleSelectionChange('quality', (options[newIndex] as any).value);
-      } else if (field === 'neckPosition') {
-        handleSelectionChange('neckPosition', (options[newIndex] as any).value);
-      }
-    }
-  }, [selection, handleSelectionChange, showAdvancedPositions]);
-
-  // Component ID for ARIA relationships
-  const componentId = useMemo(() => `triad-selector-${Math.random().toString(36).substr(2, 9)}`, []);
+  const triadNotes = useMemo(() => 
+    calculateTriadNotes(selection.rootNote, selection.quality),
+    [selection.rootNote, selection.quality, calculateTriadNotes]
+  );
 
   return (
     <div 
-      className={`triad-selector triad-selector--${size} ${className}`}
+      className={`triad-selector triad-selector--${size} ${isCompactMode ? 'triad-selector--collapsed' : ''} ${className}`}
       role="application"
-      aria-label={ariaLabel || 'Triad selector interface for guitar chords'}
+      aria-label={ariaLabel || 'Triad selector with large fretboard visualization'}
     >
-      {/* Screen reader description */}
-      <div id={`${componentId}-description`} className="sr-only">
-        Interactive triad selector with root note picker, quality selector, and position chooser.
-        Use arrow keys to navigate options within each section.
-        Current selection: {chordSymbol} in {NECK_POSITIONS.find(pos => pos.value === selection.neckPosition)?.label}.
+      {/* Compact Control Bar */}
+      <div className="triad-selector__controls">
+        <div className="triad-selector__control-group">
+          {/* Chord Display */}
+          <div className="triad-selector__chord-display">
+            <span className="triad-selector__chord-symbol">{chordSymbol}</span>
+            <span className="triad-selector__chord-notes">{triadNotes.join(' - ')}</span>
+          </div>
+
+          {/* Compact Selectors */}
+          <div className="triad-selector__selectors">
+            {/* Root Note Selector - Dropdown Style */}
+            <div className="triad-selector__selector">
+              <label className="triad-selector__label">Root</label>
+              <select 
+                className="triad-selector__select"
+                value={selection.rootNote}
+                onChange={(e) => handleSelectionChange('rootNote', e.target.value as NoteName)}
+                aria-label="Root note"
+                disabled={disabled}
+              >
+                {CHROMATIC_NOTES.map(note => (
+                  <option key={note} value={note}>{note}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Quality Selector - Button Group */}
+            <div className="triad-selector__selector">
+              <label className="triad-selector__label">Quality</label>
+              <div className="triad-selector__button-group" role="radiogroup">
+                {TRIAD_QUALITIES.map(quality => (
+                  <button
+                    key={quality.value}
+                    className={`triad-selector__button ${selection.quality === quality.value ? 'triad-selector__button--active' : ''}`}
+                    onClick={() => handleSelectionChange('quality', quality.value)}
+                    aria-pressed={selection.quality === quality.value}
+                    aria-label={quality.label}
+                    disabled={disabled}
+                  >
+                    {quality.shortLabel}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Position Selector - Compact Pills */}
+            <div className="triad-selector__selector">
+              <label className="triad-selector__label">Position</label>
+              <div className="triad-selector__pills" role="radiogroup">
+                {(showAdvancedPositions ? NECK_POSITIONS : NECK_POSITIONS.slice(0, 3)).map(position => (
+                  <button
+                    key={position.value}
+                    className={`triad-selector__pill ${selection.neckPosition === position.value ? 'triad-selector__pill--active' : ''}`}
+                    onClick={() => handleSelectionChange('neckPosition', position.value)}
+                    aria-pressed={selection.neckPosition === position.value}
+                    aria-label={position.label}
+                    disabled={disabled}
+                  >
+                    {position.shortLabel}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* View Toggle */}
+          <button
+            className="triad-selector__toggle"
+            onClick={() => setIsCompactMode(!isCompactMode)}
+            aria-label={isCompactMode ? 'Expand controls' : 'Collapse controls'}
+            disabled={disabled}
+          >
+            {isCompactMode ? '⋮' : '×'}
+          </button>
+        </div>
       </div>
 
-      <div className="triad-selector__controls" aria-describedby={`${componentId}-description`}>
-        {/* Root Note Picker */}
-        <fieldset 
-          ref={rootNoteRef}
-          className="triad-selector__section"
-          onKeyDown={(e) => handleKeyDown(e, 'rootNote')}
-        >
-          <legend className="triad-selector__legend">Root Note</legend>
-          <div className="triad-selector__options triad-selector__options--notes" role="radiogroup">
-            {CHROMATIC_NOTES.map((note, index) => (
-              <label 
-                key={note}
-                className={`triad-selector__option ${selection.rootNote === note ? 'triad-selector__option--selected' : ''}`}
-              >
-                <input
-                  type="radio"
-                  name={`${componentId}-root-note`}
-                  value={note}
-                  checked={selection.rootNote === note}
-                  onChange={() => handleSelectionChange('rootNote', note)}
-                  className="triad-selector__radio"
-                  aria-describedby={`${componentId}-root-note-${index}-description`}
-                />
-                <span className="triad-selector__label">{note}</span>
-                <span id={`${componentId}-root-note-${index}-description`} className="sr-only">
-                  {note} {note.includes('#') ? 'sharp' : ''} note
-                </span>
-              </label>
-            ))}
+      {/* Expanded Controls (when not in compact mode) */}
+      {!isCompactMode && (
+        <div className="triad-selector__expanded">
+          <div className="triad-selector__note-grid">
+            <span className="triad-selector__expanded-label">Select Root Note:</span>
+            <div className="triad-selector__notes">
+              {CHROMATIC_NOTES.map(note => (
+                <button
+                  key={note}
+                  className={`triad-selector__note ${selection.rootNote === note ? 'triad-selector__note--active' : ''}`}
+                  onClick={() => handleSelectionChange('rootNote', note)}
+                  aria-pressed={selection.rootNote === note}
+                  disabled={disabled}
+                >
+                  {note}
+                </button>
+              ))}
+            </div>
           </div>
-        </fieldset>
+        </div>
+      )}
 
-        {/* Triad Quality Selector */}
-        <fieldset 
-          ref={qualityRef}
-          className="triad-selector__section"
-          onKeyDown={(e) => handleKeyDown(e, 'quality')}
-        >
-          <legend className="triad-selector__legend">Triad Quality</legend>
-          <div className="triad-selector__options triad-selector__options--qualities" role="radiogroup">
-            {TRIAD_QUALITIES.map((quality) => (
-              <label 
-                key={quality.value}
-                className={`triad-selector__option ${selection.quality === quality.value ? 'triad-selector__option--selected' : ''}`}
-              >
-                <input
-                  type="radio"
-                  name={`${componentId}-quality`}
-                  value={quality.value}
-                  checked={selection.quality === quality.value}
-                  onChange={() => handleSelectionChange('quality', quality.value)}
-                  className="triad-selector__radio"
-                  aria-describedby={`${componentId}-quality-${quality.value}-description`}
-                />
-                <span className="triad-selector__label">{quality.label}</span>
-                <span id={`${componentId}-quality-${quality.value}-description`} className="sr-only">
-                  {quality.label} triad with intervals: {quality.intervals.join(', ')} semitones
-                </span>
-              </label>
-            ))}
-          </div>
-        </fieldset>
-
-        {/* Position Chooser */}
-        <fieldset 
-          ref={positionRef}
-          className="triad-selector__section"
-          onKeyDown={(e) => handleKeyDown(e, 'neckPosition')}
-        >
-          <legend className="triad-selector__legend">Neck Position</legend>
-          <div className="triad-selector__options triad-selector__options--positions" role="radiogroup">
-            {(showAdvancedPositions ? NECK_POSITIONS : NECK_POSITIONS.slice(0, 3)).map((position) => (
-              <label 
-                key={position.value}
-                className={`triad-selector__option ${selection.neckPosition === position.value ? 'triad-selector__option--selected' : ''}`}
-              >
-                <input
-                  type="radio"
-                  name={`${componentId}-position`}
-                  value={position.value}
-                  checked={selection.neckPosition === position.value}
-                  onChange={() => handleSelectionChange('neckPosition', position.value)}
-                  className="triad-selector__radio"
-                  aria-describedby={`${componentId}-position-${position.value}-description`}
-                />
-                <span className="triad-selector__label">{position.label}</span>
-                <span id={`${componentId}-position-${position.value}-description`} className="sr-only">
-                  {position.label} starting at fret {position.fret}
-                </span>
-              </label>
-            ))}
-          </div>
-        </fieldset>
-      </div>
-
-      {/* Current Selection Display */}
-      <div className="triad-selector__current" aria-live="polite" aria-atomic="true">
-        <h3 className="triad-selector__current-title">Current Selection:</h3>
-        <p className="triad-selector__current-chord">
-          <strong>{chordSymbol}</strong> chord in {NECK_POSITIONS.find(pos => pos.value === selection.neckPosition)?.label}
-        </p>
-        <p className="triad-selector__current-notes">
-          Notes: {calculateTriadNotes(selection.rootNote, selection.quality).join(' - ')}
-        </p>
-      </div>
-
-      {/* Visual Chord Chart */}
-      <div className="triad-selector__chart">
-        <h3 className="triad-selector__chart-title">Chord Chart</h3>
+      {/* Large Fretboard Visualization */}
+      <div className="triad-selector__fretboard">
         <Fretboard
           triadPositions={fretPositions}
           chord={chordSymbol}
           neckPosition={NECK_POSITIONS.find(pos => pos.value === selection.neckPosition)?.fret || 0}
-          size={size}
+          size="lg" // Always use large size for better visibility
           showNoteLabels={true}
           showFretNumbers={true}
           onFretClick={onFretClick}
-          aria-label={`${chordSymbol} chord chart showing triad positions`}
+          fretCount={15} // Show more frets for better context
+          aria-label={`${chordSymbol} chord visualization on fretboard`}
         />
       </div>
     </div>

@@ -1,40 +1,33 @@
 /**
- * Typography System - Optimized for Music Education
+ * Typography System - Notion-Inspired Design Language
  * 
- * Designed specifically for chord names, music theory notation,
- * and educational content with excellent readability.
+ * Clean, readable typography system based on Notion's design principles.
+ * Optimized for music education content with excellent accessibility.
  */
 
-// Font stacks optimized for different use cases
+// Font stacks - Notion's signature typography
 export const fontStacks = {
-  // Primary font stack - excellent readability for body text
+  // Primary font stack - Notion's system fonts
   primary: [
-    'Inter',
     '-apple-system',
     'BlinkMacSystemFont',
     '"Segoe UI"',
-    'Roboto',
     '"Helvetica Neue"',
-    'Arial',
     'sans-serif',
   ].join(', '),
 
-  // Chord notation font - optimized for musical symbols
+  // Chord notation font - clean system fonts
   chord: [
-    '"SF Pro Display"',
-    'Inter',
     '-apple-system',
     'BlinkMacSystemFont',
     '"Segoe UI"',
-    'Roboto',
+    '"Helvetica Neue"',
     'sans-serif',
   ].join(', '),
 
-  // Monospace for note names and intervals
+  // Monospace for note names and intervals - Notion style
   mono: [
-    '"JetBrains Mono"',
-    '"Fira Code"',
-    '"SF Mono"',
+    '"SFMono-Regular"',
     'Monaco',
     '"Cascadia Code"',
     '"Roboto Mono"',
@@ -43,26 +36,23 @@ export const fontStacks = {
     'monospace',
   ].join(', '),
 
-  // Display font for headings and branding
+  // Display font for headings - same as primary for consistency
   display: [
-    '"Inter Display"',
-    'Inter',
     '-apple-system',
     'BlinkMacSystemFont',
     '"Segoe UI"',
-    'Roboto',
+    '"Helvetica Neue"',
     'sans-serif',
   ].join(', '),
 } as const;
 
-// Font weights
+// Font weights - Notion's weight scale
 export const fontWeights = {
   light: 300,
   regular: 400,
   medium: 500,
   semibold: 600,
   bold: 700,
-  extrabold: 800,
 } as const;
 
 // Font sizes with fluid scaling
@@ -158,26 +148,26 @@ export const chordTypography = {
   },
 } as const;
 
-// Text styles for different contexts
+// Text styles - Notion's hierarchy
 export const textStyles = {
-  // Headings
+  // Headings - Notion style
   h1: {
-    fontSize: fontSizes['4xl'].size,
-    lineHeight: fontSizes['4xl'].lineHeight,
-    fontFamily: fontStacks.display,
-    fontWeight: fontWeights.bold,
-    letterSpacing: '-0.025em',
-  },
-  h2: {
     fontSize: fontSizes['3xl'].size,
     lineHeight: fontSizes['3xl'].lineHeight,
     fontFamily: fontStacks.display,
-    fontWeight: fontWeights.semibold,
-    letterSpacing: '-0.025em',
+    fontWeight: fontWeights.bold,
+    letterSpacing: '-0.01em',
   },
-  h3: {
+  h2: {
     fontSize: fontSizes['2xl'].size,
     lineHeight: fontSizes['2xl'].lineHeight,
+    fontFamily: fontStacks.display,
+    fontWeight: fontWeights.semibold,
+    letterSpacing: '-0.01em',
+  },
+  h3: {
+    fontSize: fontSizes.xl.size,
+    lineHeight: fontSizes.xl.lineHeight,
     fontFamily: fontStacks.primary,
     fontWeight: fontWeights.semibold,
   },
@@ -202,10 +192,10 @@ export const textStyles = {
     letterSpacing: '0.05em',
   },
   
-  // Body text
+  // Body text - Notion's clean body style
   body: {
-    fontSize: fontSizes.base.size,
-    lineHeight: fontSizes.base.lineHeight,
+    fontSize: '14px',
+    lineHeight: '20px',
     fontFamily: fontStacks.primary,
     fontWeight: fontWeights.regular,
   },
@@ -222,20 +212,20 @@ export const textStyles = {
     fontWeight: fontWeights.regular,
   },
   
-  // UI elements
+  // UI elements - Notion button styles
   button: {
-    fontSize: fontSizes.base.size,
-    lineHeight: fontSizes.base.lineHeight,
+    fontSize: '14px',
+    lineHeight: '20px',
     fontFamily: fontStacks.primary,
-    fontWeight: fontWeights.medium,
-    letterSpacing: '0.025em',
+    fontWeight: fontWeights.regular,
+    letterSpacing: '0',
   },
   buttonSmall: {
-    fontSize: fontSizes.sm.size,
-    lineHeight: fontSizes.sm.lineHeight,
+    fontSize: '12px',
+    lineHeight: '16px',
     fontFamily: fontStacks.primary,
-    fontWeight: fontWeights.medium,
-    letterSpacing: '0.025em',
+    fontWeight: fontWeights.regular,
+    letterSpacing: '0',
   },
   buttonLarge: {
     fontSize: fontSizes.lg.size,
@@ -245,17 +235,17 @@ export const textStyles = {
     letterSpacing: '0.025em',
   },
   
-  // Labels and captions
+  // Labels and captions - Notion style
   label: {
-    fontSize: fontSizes.sm.size,
-    lineHeight: fontSizes.sm.lineHeight,
+    fontSize: '12px',
+    lineHeight: '16px',
     fontFamily: fontStacks.primary,
     fontWeight: fontWeights.medium,
-    letterSpacing: '0.025em',
+    letterSpacing: '0',
   },
   caption: {
-    fontSize: fontSizes.xs.size,
-    lineHeight: fontSizes.xs.lineHeight,
+    fontSize: '11px',
+    lineHeight: '14px',
     fontFamily: fontStacks.primary,
     fontWeight: fontWeights.regular,
   },
@@ -270,28 +260,33 @@ export const textStyles = {
   },
 } as const;
 
+// Notion design system spacing
+export const notionSpacing = {
+  // Standard spacing scale
+  xs: '2px',
+  sm: '4px', 
+  md: '8px',
+  lg: '12px',
+  xl: '16px',
+  '2xl': '20px',
+  '3xl': '24px',
+  '4xl': '32px',
+  '5xl': '40px',
+  '6xl': '48px',
+} as const;
+
 // Responsive typography utilities
 export const responsiveTypography = {
-  // Scales for different screen sizes
+  // Notion-style responsive scaling
   mobile: {
-    scaleDown: 0.875, // 87.5% of desktop size
-    maxLineLength: '65ch',
-  },
-  tablet: {
-    scaleDown: 0.9375, // 93.75% of desktop size
-    maxLineLength: '70ch',
+    fontSize: '14px',
+    lineHeight: '20px',
+    maxLineLength: '60ch',
   },
   desktop: {
-    scaleDown: 1, // Full size
-    maxLineLength: '75ch',
-  },
-  
-  // Fluid typography for better responsive scaling
-  fluid: {
-    h1: 'clamp(2rem, 4vw + 1rem, 2.25rem)',
-    h2: 'clamp(1.75rem, 3vw + 1rem, 1.875rem)',
-    h3: 'clamp(1.5rem, 2.5vw + 1rem, 1.5rem)',
-    body: 'clamp(0.875rem, 2vw + 0.5rem, 1rem)',
+    fontSize: '14px',
+    lineHeight: '20px', 
+    maxLineLength: '65ch',
   },
 } as const;
 

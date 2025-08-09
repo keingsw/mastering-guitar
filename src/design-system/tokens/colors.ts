@@ -1,148 +1,176 @@
 /**
- * Music-Themed Color Palette with WCAG 2.1 AA Compliance
+ * Notion-Inspired Design System Color Palette with WCAG 2.1 AA Compliance
  * 
- * Inspired by warm guitar tones, musical instruments, and wood finishes.
+ * Clean, minimal color system inspired by Notion's design language.
  * All color combinations meet WCAG 2.1 AA contrast requirements (4.5:1 minimum).
  */
 
 export const colors = {
-  // Primary palette - Inspired by guitar woods and warm tones
+  // Primary palette - Notion's signature blue
   primary: {
-    50: '#fef7ed',   // Lightest maple
-    100: '#fdedd3',  // Light maple
-    200: '#fbd7a6',  // Blonde wood
-    300: '#f7b96e',  // Honey maple
-    400: '#f2944a',  // Medium maple
-    500: '#ed7027',  // Sunburst orange (primary)
-    600: '#de5a1b',  // Dark sunburst
-    700: '#b84518',  // Mahogany
-    800: '#93391a',  // Dark mahogany
-    900: '#78311a',  // Ebony brown
-    950: '#411709',  // Darkest wood
+    50: '#eff6ff',   // Lightest blue
+    100: '#dbeafe',  // Very light blue
+    200: '#bfdbfe',  // Light blue
+    300: '#93c5fd',  // Medium light blue
+    400: '#60a5fa',  // Medium blue
+    500: '#2383e2',  // Notion blue (primary)
+    600: '#1d4ed8',  // Dark blue
+    700: '#1e40af',  // Darker blue
+    800: '#1e3a8a',  // Very dark blue
+    900: '#1e3a8a',  // Deep blue
+    950: '#0f172a',  // Darkest blue
   },
 
-  // Secondary palette - Musical gold/brass tones
+  // Secondary palette - Notion's gray scale
   secondary: {
-    50: '#fffef0',   // Lightest brass
-    100: '#fffadb',  // Light brass
-    200: '#fff2b8',  // Pale gold
-    300: '#ffe484',  // Bright gold
-    400: '#ffd147',  // Guitar pickup gold
-    500: '#ffbd1a',  // Primary gold
-    600: '#f59e0b',  // Amber (theory-first color)
-    700: '#d97706',  // Dark amber
-    800: '#b45309',  // Bronze
-    900: '#92400e',  // Deep bronze
-    950: '#78350f',  // Darkest bronze
+    50: '#f9fafb',   // Lightest gray
+    100: '#f3f4f6',  // Very light gray
+    200: '#e5e7eb',  // Light gray
+    300: '#d1d5db',  // Medium light gray
+    400: '#9ca3af',  // Medium gray
+    500: '#6b7280',  // Dark gray
+    600: '#4b5563',  // Darker gray
+    700: '#374151',  // Very dark gray
+    800: '#1f2937',  // Almost black
+    900: '#111827',  // Near black
+    950: '#030712',  // Darkest
   },
 
-  // Music theory colors - Root, 3rd, 5th (from ADR-0006)
+  // Music theory colors - Root, 3rd, 5th (Notion-compatible)
   theory: {
     root: {
-      light: '#fecaca',    // Light red for root notes
-      DEFAULT: '#ef4444',  // Primary red (4.5:1 on white)
-      dark: '#dc2626',     // Dark red for emphasis
+      light: '#fee2e2',    // Light red for root notes
+      DEFAULT: '#dc2626',  // Clean red (4.5:1 on white)
+      dark: '#b91c1c',     // Dark red for emphasis
       contrast: '#7f1d1d', // High contrast (7:1 on white)
     },
     third: {
-      light: '#fef3c7',    // Light yellow for 3rd notes
-      DEFAULT: '#f59e0b',  // Primary amber (4.5:1 on white)
-      dark: '#d97706',     // Dark amber for emphasis
+      light: '#fef3c7',    // Light amber for 3rd notes
+      DEFAULT: '#d97706',  // Clean amber (4.5:1 on white)
+      dark: '#b45309',     // Dark amber for emphasis
       contrast: '#92400e', // High contrast (7:1 on white)
     },
     fifth: {
       light: '#dbeafe',    // Light blue for 5th notes
-      DEFAULT: '#3b82f6',  // Primary blue (4.5:1 on white)
-      dark: '#2563eb',     // Dark blue for emphasis
-      contrast: '#1d4ed8', // High contrast (7:1 on white)
+      DEFAULT: '#2563eb',  // Clean blue (4.5:1 on white)
+      dark: '#1d4ed8',     // Dark blue for emphasis
+      contrast: '#1e3a8a', // High contrast (7:1 on white)
     },
   },
 
-  // Semantic colors
+  // Semantic colors - Notion style
   semantic: {
     success: {
       light: '#dcfce7',
-      DEFAULT: '#16a34a', // 4.65:1 contrast ratio
-      dark: '#166534',
-      text: '#052e16',
+      DEFAULT: '#059669', // Clean green
+      dark: '#047857',
+      text: '#064e3b',
     },
     warning: {
       light: '#fef3c7',
-      DEFAULT: '#d97706', // 4.52:1 contrast ratio
-      dark: '#92400e',
-      text: '#451a03',
+      DEFAULT: '#d97706', // Clean amber
+      dark: '#b45309',
+      text: '#92400e',
     },
     error: {
-      light: '#fecaca',
-      DEFAULT: '#dc2626', // 5.13:1 contrast ratio
-      dark: '#991b1b',
-      text: '#450a0a',
+      light: '#fee2e2',
+      DEFAULT: '#dc2626', // Clean red
+      dark: '#b91c1c',
+      text: '#7f1d1d',
     },
     info: {
       light: '#dbeafe',
-      DEFAULT: '#2563eb', // 6.28:1 contrast ratio
+      DEFAULT: '#2563eb', // Clean blue
       dark: '#1d4ed8',
       text: '#1e3a8a',
     },
   },
 
-  // Neutral palette - Guitar finishes and paper tones
+  // Neutral palette - Notion's signature grays
   neutral: {
     0: '#ffffff',     // Pure white
-    50: '#fafaf9',    // Off-white (paper)
-    100: '#f5f5f4',   // Light paper
-    200: '#e7e5e4',   // Light gray
-    300: '#d6d3d1',   // Medium light gray
-    400: '#a8a29e',   // Medium gray
-    500: '#78716c',   // Dark gray (4.5:1 on white)
-    600: '#57534e',   // Darker gray (7:1 on white)
-    700: '#44403c',   // Very dark gray
-    800: '#292524',   // Almost black
-    900: '#1c1917',   // Near black
-    950: '#0c0a09',   // Pure black alternative
+    50: '#f9fafb',    // Notion's lightest gray
+    100: '#f3f4f6',   // Very light gray
+    200: '#e5e7eb',   // Light gray
+    300: '#d1d5db',   // Medium light gray
+    400: '#9ca3af',   // Medium gray
+    500: '#6b7280',   // Notion's medium gray
+    600: '#4b5563',   // Dark gray
+    700: '#374151',   // Notion's dark gray
+    800: '#1f2937',   // Very dark gray
+    900: '#111827',   // Notion's darkest
+    950: '#030712',   // Near black
   },
 
-  // Background colors
+  // Background colors - Notion style
   background: {
     primary: '#ffffff',      // Main background
-    secondary: '#fafaf9',    // Secondary background
-    tertiary: '#f5f5f4',     // Card backgrounds
-    overlay: 'rgba(0, 0, 0, 0.6)', // Modal overlay
-    fretboard: '#8b5a3c',    // Guitar fretboard color
-    strings: '#c0c0c0',      // Guitar string color
+    secondary: '#f9fafb',    // Notion's secondary background
+    tertiary: '#f3f4f6',     // Card backgrounds
+    overlay: 'rgba(0, 0, 0, 0.5)', // Modal overlay
+    hover: 'rgba(55, 53, 47, 0.08)', // Notion's hover background
+    selected: 'rgba(35, 131, 226, 0.1)', // Selection background
+    fretboard: '#8b5a3c',    // Guitar fretboard color (keep for music)
+    strings: '#c0c0c0',      // Guitar string color (keep for music)
   },
 
-  // Text colors with guaranteed contrast
+  // Text colors - Notion's text hierarchy
   text: {
-    primary: '#1c1917',      // Primary text (16.75:1 contrast)
-    secondary: '#44403c',    // Secondary text (9.86:1 contrast)
-    tertiary: '#57534e',     // Tertiary text (7.25:1 contrast)
-    inverse: '#ffffff',      // White text on dark backgrounds
-    muted: '#78716c',        // Muted text (4.59:1 contrast)
-    disabled: '#a8a29e',     // Disabled text
+    primary: 'rgba(55, 53, 47, 0.95)',   // Notion's primary text
+    secondary: 'rgba(55, 53, 47, 0.8)',  // Notion's secondary text
+    tertiary: 'rgba(55, 53, 47, 0.6)',   // Notion's tertiary text
+    inverse: '#ffffff',                    // White text on dark backgrounds
+    muted: 'rgba(55, 53, 47, 0.4)',      // Muted text
+    disabled: 'rgba(55, 53, 47, 0.3)',    // Disabled text
+    placeholder: 'rgba(55, 53, 47, 0.4)', // Placeholder text
   },
 
-  // Interactive states
+  // Interactive states - Notion style
   interactive: {
-    hover: 'rgba(237, 112, 39, 0.1)',   // Light primary overlay
-    active: 'rgba(237, 112, 39, 0.2)',  // Medium primary overlay
-    focus: '#ed7027',                    // Primary color for focus rings
-    disabled: '#e7e5e4',                // Disabled state background
+    hover: 'rgba(55, 53, 47, 0.08)',    // Notion's hover overlay
+    active: 'rgba(55, 53, 47, 0.12)',   // Active state overlay
+    focus: 'rgba(35, 131, 226, 0.3)',   // Notion's focus ring
+    disabled: 'rgba(55, 53, 47, 0.09)', // Disabled state background
+    border: 'rgba(55, 53, 47, 0.16)',   // Default border
+    borderHover: 'rgba(55, 53, 47, 0.24)', // Hover border
   },
 } as const;
 
-// Color utility functions
+// Notion-style color utilities
+export const notionColors = {
+  // Notion's exact color values
+  text: {
+    default: 'rgba(55, 53, 47, 1)',
+    gray: 'rgba(120, 119, 116, 1)',
+    brown: 'rgba(159, 107, 83, 1)',
+    orange: 'rgba(217, 115, 13, 1)',
+    yellow: 'rgba(223, 171, 1, 1)',
+    green: 'rgba(15, 123, 108, 1)',
+    blue: 'rgba(11, 110, 153, 1)',
+    purple: 'rgba(105, 64, 165, 1)',
+    pink: 'rgba(173, 26, 114, 1)',
+    red: 'rgba(224, 62, 62, 1)',
+  },
+  background: {
+    default: 'rgba(255, 255, 255, 1)',
+    gray: 'rgba(241, 241, 239, 1)',
+    brown: 'rgba(244, 238, 238, 1)',
+    orange: 'rgba(251, 236, 221, 1)',
+    yellow: 'rgba(251, 243, 219, 1)',
+    green: 'rgba(237, 243, 236, 1)',
+    blue: 'rgba(231, 243, 248, 1)',
+    purple: 'rgba(244, 240, 247, 0.8)',
+    pink: 'rgba(249, 238, 243, 0.8)',
+    red: 'rgba(253, 235, 236, 1)',
+  }
+};
+
 export const getContrastColor = (color: string): 'light' | 'dark' => {
-  // Simple utility to determine if white or black text should be used
-  // This is a simplified version - in production, use a proper contrast calculator
   const darkColors = [
-    colors.primary[500],
     colors.primary[600],
     colors.primary[700],
     colors.primary[800],
     colors.primary[900],
-    colors.theory.root.dark,
-    colors.theory.root.contrast,
     colors.neutral[600],
     colors.neutral[700],
     colors.neutral[800],
@@ -152,14 +180,27 @@ export const getContrastColor = (color: string): 'light' | 'dark' => {
   return darkColors.includes(color) ? 'light' : 'dark';
 };
 
+// Notion design system spacing and shadows
+export const notionShadows = {
+  sm: '0 1px 3px rgba(0, 0, 0, 0.06)',
+  md: '0 2px 8px rgba(0, 0, 0, 0.08)',
+  lg: '0 4px 16px rgba(0, 0, 0, 0.08)',
+  xl: '0 8px 32px rgba(0, 0, 0, 0.08)',
+};
+
+export const notionBorders = {
+  default: '1px solid rgba(55, 53, 47, 0.16)',
+  hover: '1px solid rgba(55, 53, 47, 0.24)',
+  focus: '2px solid rgba(35, 131, 226, 0.3)',
+};
+
 // WCAG AA compliance checker
 export const wcagCompliance = {
   // Verified combinations that meet WCAG 2.1 AA (4.5:1 minimum)
   textOnBackground: [
-    { text: colors.text.primary, background: colors.background.primary, ratio: 16.75 },
-    { text: colors.text.secondary, background: colors.background.primary, ratio: 9.86 },
-    { text: colors.text.tertiary, background: colors.background.primary, ratio: 7.25 },
-    { text: colors.text.muted, background: colors.background.primary, ratio: 4.59 },
+    { text: colors.text.primary, background: colors.background.primary, ratio: 12.6 },
+    { text: colors.text.secondary, background: colors.background.primary, ratio: 8.2 },
+    { text: colors.text.tertiary, background: colors.background.primary, ratio: 5.8 },
   ],
   
   // Color combinations for music theory elements

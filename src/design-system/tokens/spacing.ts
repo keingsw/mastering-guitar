@@ -1,11 +1,11 @@
 /**
- * Spacing System for Musical Interfaces
+ * Spacing System - Notion-Inspired Design Language
  * 
- * Based on 8px grid system with musical proportions inspired by
- * guitar neck measurements and fretboard geometry.
+ * Based on Notion's 8px grid system with clean, consistent spacing.
+ * Optimized for readability and modern interface design.
  */
 
-// Base unit for consistent spacing (8px)
+// Base unit for consistent spacing - Notion uses 8px
 const baseUnit = 8;
 
 // Core spacing scale - powers of the base unit
@@ -83,40 +83,40 @@ export const musicalSpacing = {
   },
 } as const;
 
-// Component-specific spacing tokens
+// Component-specific spacing tokens - Notion style
 export const componentSpacing = {
-  // Button spacing
+  // Button spacing - Notion's compact style
   button: {
     paddingX: {
-      sm: spacing[3],     // 24px horizontal padding small
-      md: spacing[4],     // 32px horizontal padding medium
-      lg: spacing[6],     // 48px horizontal padding large
+      sm: spacing[1],     // 8px horizontal padding small
+      md: spacing[1.5],   // 12px horizontal padding medium
+      lg: spacing[2],     // 16px horizontal padding large
     },
     paddingY: {
-      sm: spacing[2],     // 16px vertical padding small
-      md: spacing[2.5],   // 20px vertical padding medium
-      lg: spacing[3],     // 24px vertical padding large
+      sm: spacing[0.5],   // 4px vertical padding small
+      md: spacing[1],     // 8px vertical padding medium (Notion style)
+      lg: spacing[1],     // 8px vertical padding large
     },
-    gap: spacing[2],      // 16px gap between button elements
+    gap: spacing[1],      // 8px gap between button elements
   },
   
-  // Card spacing
+  // Card spacing - Notion's clean cards
   card: {
     padding: {
-      sm: spacing[4],     // 32px small card padding
-      md: spacing[6],     // 48px medium card padding
-      lg: spacing[8],     // 64px large card padding
+      sm: spacing[2],     // 16px small card padding
+      md: spacing[3],     // 24px medium card padding
+      lg: spacing[4],     // 32px large card padding
     },
-    gap: spacing[4],      // 32px gap between cards
-    borderRadius: spacing[2], // 16px border radius
+    gap: spacing[3],      // 24px gap between cards
+    borderRadius: spacing[1], // 8px border radius (Notion style)
   },
   
-  // Form elements
+  // Form elements - Notion's compact forms
   form: {
-    fieldGap: spacing[4],       // 32px gap between form fields
+    fieldGap: spacing[2.5],     // 20px gap between form fields
     labelGap: spacing[1],       // 8px gap between label and input
-    inputPadding: spacing[3],   // 24px input padding
-    groupGap: spacing[6],       // 48px gap between form groups
+    inputPadding: spacing[1.5], // 12px input padding
+    groupGap: spacing[3],       // 24px gap between form groups
   },
   
   // Navigation
@@ -126,18 +126,18 @@ export const componentSpacing = {
     padding: spacing[4],        // 32px navigation padding
   },
   
-  // Layout containers
+  // Layout containers - Notion's spacious layout
   layout: {
     containerPadding: {
-      mobile: spacing[4],       // 32px mobile container padding
-      tablet: spacing[6],       // 48px tablet container padding
-      desktop: spacing[8],      // 64px desktop container padding
+      mobile: spacing[3],       // 24px mobile container padding
+      tablet: spacing[4],       // 32px tablet container padding
+      desktop: spacing[6],      // 48px desktop container padding
     },
     sectionGap: {
-      sm: spacing[8],           // 64px small section gap
-      md: spacing[12],          // 96px medium section gap
-      lg: spacing[16],          // 128px large section gap
-      xl: spacing[20],          // 160px extra large section gap
+      sm: spacing[4],           // 32px small section gap
+      md: spacing[6],           // 48px medium section gap
+      lg: spacing[8],           // 64px large section gap
+      xl: spacing[12],          // 96px extra large section gap
     },
     maxWidth: '1200px',         // Maximum container width
   },
@@ -192,18 +192,33 @@ export const grid = {
   },
 } as const;
 
-// Accessibility spacing
+// Notion design system spacing
+export const notionSpacing = {
+  // Notion's exact spacing values
+  xs: '2px',
+  sm: '4px',
+  md: '8px',
+  lg: '12px',
+  xl: '16px',
+  '2xl': '20px',
+  '3xl': '24px',
+  '4xl': '32px',
+  '5xl': '40px',
+  '6xl': '48px',
+} as const;
+
+// Accessibility spacing - refined for Notion style
 export const accessibilitySpacing = {
   // Minimum spacing for touch targets
-  minTouchTarget: '44px',     // iOS/Android guideline
-  comfortableTouchTarget: spacing[14], // 112px for comfortable touch
+  minTouchTarget: '36px',     // Notion's minimum touch target
+  comfortableTouchTarget: '44px', // iOS/Android guideline
   
   // Focus outline spacing
   focusOffset: spacing[0.5],  // 4px offset for focus outlines
   
-  // Reading spacing
-  readingGap: spacing[4],     // 32px gap between reading sections
-  paragraphGap: spacing[3],   // 24px gap between paragraphs
+  // Reading spacing - Notion's clean reading experience
+  readingGap: spacing[3],     // 24px gap between reading sections
+  paragraphGap: spacing[2.5], // 20px gap between paragraphs
 } as const;
 
 // Animation and transition spacing

@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
 import { Fretboard } from './Fretboard';
 import type { FretPosition } from './Fretboard';
 import type { NoteName } from '../../types/music';
@@ -143,7 +142,7 @@ type Story = StoryObj<typeof meta>;
 // Default fretboard with no highlighted positions
 export const Default: Story = {
   args: {
-    onFretClick: action('fret-clicked'),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -160,7 +159,7 @@ export const CMajorChord: Story = {
     triadPositions: CMajorTriad,
     chord: 'C',
     showNoteLabels: true,
-    onFretClick: action('fret-clicked'),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -177,7 +176,7 @@ export const GMajorChord: Story = {
     triadPositions: GChordPositions,
     chord: 'G',
     showNoteLabels: true,
-    onFretClick: action('fret-clicked'),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -194,7 +193,7 @@ export const EMinorChord: Story = {
     triadPositions: EmChordPositions,
     chord: 'Em',
     showNoteLabels: true,
-    onFretClick: action('fret-clicked'),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -220,7 +219,7 @@ export const FifthPosition: Story = {
     ],
     chord: 'A',
     showNoteLabels: true,
-    onFretClick: action('fret-clicked'),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -239,7 +238,7 @@ export const PentatonicPattern: Story = {
     showNoteLabels: true,
     fretCount: 15,
     neckPosition: 5,
-    onFretClick: action('fret-clicked'),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -257,7 +256,7 @@ export const SmallSize: Story = {
     triadPositions: CMajorTriad,
     chord: 'C',
     showNoteLabels: true,
-    onFretClick: action('fret-clicked'),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -274,7 +273,7 @@ export const LargeSize: Story = {
     triadPositions: CMajorTriad,
     chord: 'C',
     showNoteLabels: true,
-    onFretClick: action('fret-clicked'),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -301,7 +300,7 @@ export const ExtendedFretboard: Story = {
     chord: 'E (12th Position)',
     showNoteLabels: true,
     neckPosition: 10,
-    onFretClick: action('fret-clicked'),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -318,7 +317,7 @@ export const WithoutLabels: Story = {
     triadPositions: GMajorChord,
     chord: 'G',
     showNoteLabels: false,
-    onFretClick: action('fret-clicked'),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -339,7 +338,7 @@ export const Interactive: Story = {
     size: 'md',
     fretCount: 12,
     neckPosition: 0,
-    onFretClick: action('fret-clicked'),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -356,7 +355,7 @@ export const AccessibilityDemo: Story = {
     triadPositions: CMajorTriad,
     chord: 'C Major',
     showNoteLabels: true,
-    onFretClick: action('fret-clicked'),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
     'aria-label': 'C Major chord demonstration fretboard',
   },
   parameters: {
@@ -394,7 +393,7 @@ export const DropDTuning: Story = {
     ],
     chord: 'D (Drop D)',
     showNoteLabels: true,
-    onFretClick: action('fret-clicked'),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {

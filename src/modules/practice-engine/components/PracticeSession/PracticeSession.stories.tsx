@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
 import { PracticeSession } from './PracticeSession';
 import type { PracticeSettings } from '../../types/practice';
 
@@ -89,8 +88,8 @@ const defaultSettings: PracticeSettings = {
 export const RecognitionModeBasic: Story = {
   args: {
     settings: defaultSettings,
-    onComplete: action('session-completed'),
-    onPause: action('session-paused'),
+    onComplete: (results) => console.log('session-completed', results),
+    onPause: () => console.log('session-paused'),
   },
   parameters: {
     docs: {
@@ -112,8 +111,8 @@ export const RecognitionModeIntermediate: Story = {
       includePositions: ['open', 'position-3', 'position-5'],
       includeQualities: ['major', 'minor', 'diminished'],
     },
-    onComplete: action('session-completed'),
-    onPause: action('session-paused'),
+    onComplete: (results) => console.log('session-completed', results),
+    onPause: () => console.log('session-paused'),
   },
   parameters: {
     docs: {
@@ -135,8 +134,8 @@ export const RecognitionModeAdvanced: Story = {
       includePositions: ['open', 'position-3', 'position-5', 'position-7'],
       includeQualities: ['major', 'minor', 'diminished', 'augmented'],
     },
-    onComplete: action('session-completed'),
-    onPause: action('session-paused'),
+    onComplete: (results) => console.log('session-completed', results),
+    onPause: () => console.log('session-paused'),
   },
   parameters: {
     docs: {
@@ -157,8 +156,8 @@ export const QuickPractice: Story = {
       includePositions: ['open'],
       includeQualities: ['major', 'minor'],
     },
-    onComplete: action('session-completed'),
-    onPause: action('session-paused'),
+    onComplete: (results) => console.log('session-completed', results),
+    onPause: () => console.log('session-paused'),
   },
   parameters: {
     docs: {
@@ -178,8 +177,8 @@ export const NoTimeLimit: Story = {
       questionCount: 6,
       includeQualities: ['major', 'minor', 'diminished'],
     },
-    onComplete: action('session-completed'),
-    onPause: action('session-paused'),
+    onComplete: (results) => console.log('session-completed', results),
+    onPause: () => console.log('session-paused'),
   },
   parameters: {
     docs: {
@@ -195,8 +194,8 @@ export const SmallSize: Story = {
   args: {
     settings: defaultSettings,
     size: 'sm',
-    onComplete: action('session-completed'),
-    onPause: action('session-paused'),
+    onComplete: (results) => console.log('session-completed', results),
+    onPause: () => console.log('session-paused'),
   },
   parameters: {
     docs: {
@@ -215,8 +214,8 @@ export const LargeSize: Story = {
       difficulty: 'intermediate',
     },
     size: 'lg',
-    onComplete: action('session-completed'),
-    onPause: action('session-paused'),
+    onComplete: (results) => console.log('session-completed', results),
+    onPause: () => console.log('session-paused'),
   },
   parameters: {
     docs: {
@@ -239,8 +238,8 @@ export const ConstructionModePlaceholder: Story = {
       includeQualities: ['major', 'minor'],
       enableAudio: false,
     },
-    onComplete: action('session-completed'),
-    onPause: action('session-paused'),
+    onComplete: (results) => console.log('session-completed', results),
+    onPause: () => console.log('session-paused'),
   },
   parameters: {
     docs: {
@@ -263,8 +262,8 @@ export const ProgressionModePlaceholder: Story = {
       includeQualities: ['major', 'minor'],
       enableAudio: false,
     },
-    onComplete: action('session-completed'),
-    onPause: action('session-paused'),
+    onComplete: (results) => console.log('session-completed', results),
+    onPause: () => console.log('session-paused'),
   },
   parameters: {
     docs: {
@@ -287,8 +286,8 @@ export const EarTrainingModePlaceholder: Story = {
       includeQualities: ['major', 'minor'],
       enableAudio: true,
     },
-    onComplete: action('session-completed'),
-    onPause: action('session-paused'),
+    onComplete: (results) => console.log('session-completed', results),
+    onPause: () => console.log('session-paused'),
   },
   parameters: {
     docs: {
@@ -310,8 +309,8 @@ export const EducationalProgression: Story = {
       includePositions: ['open'],
       includeQualities: ['major', 'minor'],
     },
-    onComplete: action('session-completed'),
-    onPause: action('session-paused'),
+    onComplete: (results) => console.log('session-completed', results),
+    onPause: () => console.log('session-paused'),
   },
   parameters: {
     docs: {

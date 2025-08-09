@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { colors, typography, componentTokens, musicalSpacing, wcagCompliance } from './tokens';
+import { colors, fontStacks, fontSizes, fontWeights, textStyles, componentTokens, musicalSpacing, wcagCompliance } from './tokens';
 
 const meta: Meta = {
   title: 'Design System/Design Tokens',
@@ -110,20 +110,20 @@ export const Typography: Story = {
         <div style={{ display: 'grid', gap: '16px' }}>
           <div style={{ padding: '16px', backgroundColor: '#fafafa', borderRadius: '8px' }}>
             <div style={{ fontSize: '14px', color: '#666', marginBottom: '8px' }}>Sans-serif (UI)</div>
-            <div style={{ fontFamily: typography.fontFamily.sans, fontSize: '24px', marginBottom: '4px' }}>
+            <div style={{ fontFamily: fontStacks.primary, fontSize: '24px', marginBottom: '4px' }}>
               The quick brown fox jumps over the lazy dog
             </div>
             <div style={{ fontSize: '12px', color: '#666', fontFamily: 'monospace' }}>
-              {typography.fontFamily.sans}
+              {fontStacks.primary}
             </div>
           </div>
           <div style={{ padding: '16px', backgroundColor: '#fafafa', borderRadius: '8px' }}>
             <div style={{ fontSize: '14px', color: '#666', marginBottom: '8px' }}>Monospace (Code & Music)</div>
-            <div style={{ fontFamily: typography.fontFamily.mono, fontSize: '24px', marginBottom: '4px' }}>
+            <div style={{ fontFamily: fontStacks.mono, fontSize: '24px', marginBottom: '4px' }}>
               Cmaj7 F#dim Am7 B♭sus4
             </div>
             <div style={{ fontSize: '12px', color: '#666', fontFamily: 'monospace' }}>
-              {typography.fontFamily.mono}
+              {fontStacks.mono}
             </div>
           </div>
         </div>
@@ -132,7 +132,7 @@ export const Typography: Story = {
       <div style={{ marginBottom: '32px' }}>
         <h3 style={{ marginBottom: '16px', fontFamily: 'Inter', fontSize: '18px', fontWeight: '500' }}>Font Sizes</h3>
         <div style={{ display: 'grid', gap: '12px' }}>
-          {Object.entries(typography.fontSize).map(([key, value]) => (
+          {Object.entries(fontSizes).map(([key, value]) => (
             <div key={key} style={{ display: 'flex', alignItems: 'baseline', gap: '16px' }}>
               <div style={{ 
                 width: '80px', 
@@ -143,14 +143,14 @@ export const Typography: Story = {
                 {key}
               </div>
               <div style={{ 
-                fontSize: value, 
+                fontSize: value.size, 
                 fontFamily: 'Inter',
-                lineHeight: typography.lineHeight[key === 'xs' ? 'tight' : key === 'sm' ? 'normal' : 'relaxed']
+                lineHeight: value.lineHeight
               }}>
-                Sample text at {value}
+                Sample text at {value.size}
               </div>
               <div style={{ fontSize: '12px', color: '#666', fontFamily: 'monospace' }}>
-                {value}
+                {value.size} / {value.lineHeight}
               </div>
             </div>
           ))}
@@ -160,7 +160,7 @@ export const Typography: Story = {
       <div>
         <h3 style={{ marginBottom: '16px', fontFamily: 'Inter', fontSize: '18px', fontWeight: '500' }}>Font Weights</h3>
         <div style={{ display: 'grid', gap: '12px' }}>
-          {Object.entries(typography.fontWeight).map(([key, value]) => (
+          {Object.entries(fontWeights).map(([key, value]) => (
             <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               <div style={{ 
                 width: '80px', 

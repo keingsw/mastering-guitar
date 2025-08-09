@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
 import { TriadSelector } from './TriadSelector';
 import type { TriadSelection } from './TriadSelector';
 import type { FretPosition } from '../Fretboard/Fretboard';
@@ -111,8 +110,8 @@ type Story = StoryObj<typeof meta>;
 // Default triad selector
 export const Default: Story = {
   args: {
-    onChange: action('selection-changed'),
-    onFretClick: action('fret-clicked'),
+    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -131,8 +130,8 @@ export const GMajor: Story = {
       quality: 'major',
       neckPosition: 'open',
     },
-    onChange: action('selection-changed'),
-    onFretClick: action('fret-clicked'),
+    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -151,8 +150,8 @@ export const AMinor: Story = {
       quality: 'minor',
       neckPosition: 'open',
     },
-    onChange: action('selection-changed'),
-    onFretClick: action('fret-clicked'),
+    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -171,8 +170,8 @@ export const FSharpDiminished: Story = {
       quality: 'diminished',
       neckPosition: 'position-3',
     },
-    onChange: action('selection-changed'),
-    onFretClick: action('fret-clicked'),
+    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -191,8 +190,8 @@ export const CAugmented: Story = {
       quality: 'augmented',
       neckPosition: 'position-5',
     },
-    onChange: action('selection-changed'),
-    onFretClick: action('fret-clicked'),
+    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -212,8 +211,8 @@ export const AdvancedPositions: Story = {
       quality: 'major',
       neckPosition: 'position-12',
     },
-    onChange: action('selection-changed'),
-    onFretClick: action('fret-clicked'),
+    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -233,8 +232,8 @@ export const SmallSize: Story = {
       quality: 'minor',
       neckPosition: 'open',
     },
-    onChange: action('selection-changed'),
-    onFretClick: action('fret-clicked'),
+    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -254,8 +253,8 @@ export const LargeSize: Story = {
       quality: 'major',
       neckPosition: 'position-7',
     },
-    onChange: action('selection-changed'),
-    onFretClick: action('fret-clicked'),
+    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -271,8 +270,8 @@ export const Interactive: Story = {
   args: {
     showAdvancedPositions: true,
     size: 'md',
-    onChange: action('selection-changed'),
-    onFretClick: action('fret-clicked'),
+    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -292,8 +291,8 @@ export const AccessibilityDemo: Story = {
       quality: 'major',
       neckPosition: 'open',
     },
-    onChange: action('selection-changed'),
-    onFretClick: action('fret-clicked'),
+    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -332,8 +331,8 @@ export const EducationalMajorTriads: Story = {
       quality: 'major',
       neckPosition: 'open',
     },
-    onChange: action('selection-changed'),
-    onFretClick: action('fret-clicked'),
+    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -366,8 +365,8 @@ export const EducationalMinorMajorComparison: Story = {
       quality: 'minor',
       neckPosition: 'open',
     },
-    onChange: action('selection-changed'),
-    onFretClick: action('fret-clicked'),
+    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -405,8 +404,8 @@ export const PositionComparison: Story = {
       quality: 'major',
       neckPosition: 'open',
     },
-    onChange: action('selection-changed'),
-    onFretClick: action('fret-clicked'),
+    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
+    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
   },
   parameters: {
     docs: {
@@ -439,7 +438,7 @@ export const CustomHandlers: Story = {
       neckPosition: 'open',
     },
     onChange: (selection: TriadSelection) => {
-      action('selection-changed')(selection);
+      console.log('selection-changed', selection);
       console.log('Chord selected:', {
         chord: `${selection.rootNote}${selection.quality === 'major' ? '' : selection.quality}`,
         position: selection.neckPosition,
@@ -447,7 +446,7 @@ export const CustomHandlers: Story = {
       });
     },
     onFretClick: (position: FretPosition) => {
-      action('fret-clicked')(position);
+      console.log('fret-clicked', position);
       console.log('Fret clicked:', {
         location: `Fret ${position.fret}, String ${position.string}`,
         note: position.note,

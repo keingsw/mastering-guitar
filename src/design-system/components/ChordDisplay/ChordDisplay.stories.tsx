@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
 import { ChordDisplay } from './ChordDisplay';
 
 const meta: Meta<typeof ChordDisplay> = {
@@ -47,7 +46,7 @@ const meta: Meta<typeof ChordDisplay> = {
     },
   },
   args: {
-    onClick: fn(),
+    onClick: () => {},
     chord: 'Cmaj7',
   },
 };
@@ -135,7 +134,7 @@ export const Interactive: Story = {
     chord: 'Em',
     notes: ['E', 'G', 'B'],
     showNotes: true,
-    onClick: fn(),
+    onClick: () => {},
   },
   parameters: {
     docs: {
@@ -229,8 +228,8 @@ export const AccessibilityDemo: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '400px' }}>
       <div style={{ display: 'flex', gap: '16px' }}>
-        <ChordDisplay chord="Cmaj7" notes={['C', 'E', 'G', 'B']} showNotes onClick={fn()} />
-        <ChordDisplay chord="Am7" notes={['A', 'C', 'E', 'G']} showNotes onClick={fn()} />
+        <ChordDisplay chord="Cmaj7" notes={['C', 'E', 'G', 'B']} showNotes onClick={() => {}} />
+        <ChordDisplay chord="Am7" notes={['A', 'C', 'E', 'G']} showNotes onClick={() => {}} />
       </div>
       <p style={{ fontSize: '14px', color: '#666', margin: 0 }}>
         Chord displays have proper ARIA labels that announce both the chord name and notes.

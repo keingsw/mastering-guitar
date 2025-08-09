@@ -24,6 +24,18 @@ export interface ChordDisplayProps {
   onClick?: () => void;
 }
 
+// Helper function to format chord symbols with proper superscript styling
+const formatChordSymbol = (chord: string) => {
+  // Replace diminished symbol with superscript version
+  const formattedChord = chord
+    .replace(/°/g, '<sup>°</sup>')
+    .replace(/#/g, '<sup>#</sup>')
+    .replace(/♭/g, '<sup>♭</sup>')
+    .replace(/♯/g, '<sup>♯</sup>');
+  
+  return formattedChord;
+};
+
 export const ChordDisplay: React.FC<ChordDisplayProps> = ({
   chord,
   notes = [],
@@ -102,8 +114,8 @@ export const ChordDisplay: React.FC<ChordDisplayProps> = ({
   const variantStyles = {
     default: {
       container: {
-        backgroundColor: colors.background.tertiary, // #f5f5f4
-        borderColor: colors.neutral[300],
+        backgroundColor: colors.background.primary,
+        borderColor: 'rgba(55, 53, 47, 0.16)',
         color: colors.text.primary,
       },
       chord: {
@@ -118,10 +130,10 @@ export const ChordDisplay: React.FC<ChordDisplayProps> = ({
     },
     highlighted: {
       container: {
-        backgroundColor: colors.primary[50], // #fef7ed
-        borderColor: colors.primary[300],
+        backgroundColor: 'rgba(35, 131, 226, 0.08)',
+        borderColor: 'rgba(35, 131, 226, 0.24)',
         color: colors.text.primary,
-        boxShadow: componentTokens.shadows.chord, // 0 4px 12px rgba(0, 0, 0, 0.15)
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
       },
       chord: {
         color: colors.primary[700],
@@ -135,8 +147,8 @@ export const ChordDisplay: React.FC<ChordDisplayProps> = ({
     },
     muted: {
       container: {
-        backgroundColor: colors.neutral[100], // #f5f5f4
-        borderColor: colors.neutral[200],
+        backgroundColor: colors.background.secondary,
+        borderColor: 'rgba(55, 53, 47, 0.09)',
         color: colors.text.tertiary,
       },
       chord: {
@@ -160,13 +172,14 @@ export const ChordDisplay: React.FC<ChordDisplayProps> = ({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: spacing[4], // 32px
-    borderRadius: componentTokens.borderRadius.lg, // 12px
+    padding: '16px',
+    borderRadius: '6px',
     border: '1px solid',
-    transition: `all ${componentTokens.animation.duration.fast} ${componentTokens.animation.easing.easeOut}`,
+    transition: 'all 0.15s ease',
     cursor: onClick ? 'pointer' : 'default',
-    minWidth: '120px',
-    gap: spacing[2], // 16px
+    minWidth: '100px',
+    gap: '8px',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.06)',
     ...currentColors.container,
   };
 
@@ -174,11 +187,20 @@ export const ChordDisplay: React.FC<ChordDisplayProps> = ({
     ...sizeStyles[size].chord,
     ...currentColors.chord,
     margin: 0,
-    fontFamily: chordTypography.symbol.fontFamily,
-    fontWeight: chordTypography.symbol.fontWeight, // 600 (semibold)
-    letterSpacing: chordTypography.symbol.letterSpacing,
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
+    fontWeight: 600,
+    letterSpacing: '-0.01em',
     textAlign: 'center',
   };
+
+  // Add styles for superscript elements
+  const superscriptCSS = `
+    .chord-display sup {
+      font-size: 0.6em;
+      vertical-align: super;
+      line-height: 0;
+    }
+  `;
 
   const notesStyles: React.CSSProperties = {
     ...sizeStyles[size].notes,
@@ -200,15 +222,15 @@ export const ChordDisplay: React.FC<ChordDisplayProps> = ({
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
     if (onClick) {
-      e.currentTarget.style.transform = 'translateY(-2px)';
-      e.currentTarget.style.boxShadow = componentTokens.shadows.md; // 0 4px 6px -1px rgba(0, 0, 0, 0.1)
+      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)';
+      e.currentTarget.style.backgroundColor = 'rgba(55, 53, 47, 0.06)';
     }
   };
 
   const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
     if (onClick) {
-      e.currentTarget.style.transform = '';
-      e.currentTarget.style.boxShadow = currentColors.container.boxShadow || '';
+      e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.06)';
+      e.currentTarget.style.backgroundColor = currentColors.container.backgroundColor;
     }
   };
 
@@ -226,23 +248,27 @@ export const ChordDisplay: React.FC<ChordDisplayProps> = ({
   };
 
   return (
-    <div
-      className={className}
-      style={{
-        ...containerStyles,
-        ...style,
-      }}
-      onClick={handleClick}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      role={onClick ? 'button' : undefined}
-      tabIndex={onClick ? 0 : undefined}
-      aria-label={onClick ? `Select ${chord} chord` : undefined}
-      onKeyDown={handleKeyDown}
-    >
-      <div style={chordStyles} aria-label={`Chord: ${chord}`}>
-        {chord}
-      </div>
+    <>
+      <style>{superscriptCSS}</style>
+      <div
+        className={`chord-display ${className || ''}`}
+        style={{
+          ...containerStyles,
+          ...style,
+        }}
+        onClick={handleClick}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        role={onClick ? 'button' : undefined}
+        tabIndex={onClick ? 0 : undefined}
+        aria-label={onClick ? `Select ${chord} chord` : undefined}
+        onKeyDown={handleKeyDown}
+      >
+      <div 
+        style={chordStyles} 
+        aria-label={`Chord: ${chord}`}
+        dangerouslySetInnerHTML={{ __html: formatChordSymbol(chord) }}
+      />
 
       {showNotes && notes.length > 0 && (
         <div style={notesStyles} aria-label={`Notes: ${notes.join(', ')}`}>
@@ -256,5 +282,6 @@ export const ChordDisplay: React.FC<ChordDisplayProps> = ({
         </div>
       )}
     </div>
+    </>
   );
 };

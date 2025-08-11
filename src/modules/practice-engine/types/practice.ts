@@ -1,26 +1,17 @@
-/**
- * Practice engine types for guitar chord education
- * Supports multiple practice modes with scoring and progress tracking
- */
-
 import type { NoteName, TriadQuality } from '../../../design-system/types/music';
 import type { TriadSelection, NeckPosition } from '../../../design-system/components/TriadSelector/TriadSelector';
 
-// Practice mode types
 export type PracticeMode = 'recognition' | 'construction' | 'progression' | 'ear-training';
 
-// Question types for different practice modes
 export type QuestionType = 
-  | 'identify-quality'    // Recognition: show triad → identify quality
-  | 'build-triad'         // Construction: instruction → build triad
-  | 'chord-progression'   // Progression: play sequence of chords
-  | 'ear-training'        // Ear training: audio identification
-  | 'hear-quality';       // Ear training: audio → identify quality
+  | 'identify-quality'
+  | 'build-triad'
+  | 'chord-progression'
+  | 'ear-training'
+  | 'hear-quality';
 
-// Difficulty levels
 export type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
 
-// Practice session settings
 export interface PracticeSettings {
   mode: PracticeMode;
   difficulty: DifficultyLevel;
@@ -31,7 +22,6 @@ export interface PracticeSettings {
   enableAudio: boolean;
 }
 
-// Individual practice question
 export interface PracticeQuestion {
   id: string;
   type: QuestionType;
@@ -54,7 +44,6 @@ export interface UserAnswer {
   isCorrect?: boolean; // Set after validation
 }
 
-// Question result after validation
 export interface QuestionResult {
   question: PracticeQuestion;
   userAnswer: UserAnswer;

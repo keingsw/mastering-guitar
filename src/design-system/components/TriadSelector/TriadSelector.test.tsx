@@ -11,39 +11,44 @@ describe('TriadSelector Component', () => {
   });
 
   describe('Rendering', () => {
-    it('renders the triad selector interface with vertical controls', () => {
+    it('renders the triad selector interface with horizontal header', () => {
       render(<TriadSelector />);
       
       // Check main component structure
-      const selector = screen.getByRole('application', { name: /vertical triad selector with maximized fretboard space/i });
+      const selector = screen.getByRole('application', { name: /triad selector with horizontal header and maximized fretboard/i });
       expect(selector).toBeInTheDocument();
 
-      // Check vertical control sections
-      expect(screen.getAllByRole('radiogroup')).toHaveLength(2); // Note grid, Quality controls
+      // Check horizontal header - dropdown + quality buttons
+      expect(screen.getAllByRole('radiogroup')).toHaveLength(1); // Only Quality controls (no note grid)
+      expect(screen.getByRole('combobox', { name: /select root note/i })).toBeInTheDocument(); // Root note dropdown
       expect(screen.getByText('Maj')).toBeInTheDocument(); // Quality button (short labels)
-      expect(screen.getByText('C - E - G')).toBeInTheDocument(); // Chord formula display
+      expect(screen.getByText('C - E - G')).toBeInTheDocument(); // Chord display (in header)
     });
 
-    it('renders note grid with all 12 chromatic notes', () => {
+    it('renders root note dropdown with all 12 chromatic notes', () => {
       render(<TriadSelector />);
       
-      // Find the note grid (no longer needs specific name, just find the radiogroup with notes)
-      const noteButtons = screen.getAllByRole('button', { name: /^[A-G]#?$/ }); // Match note names
-      expect(noteButtons).toHaveLength(12);
+      // Find the root note dropdown
+      const dropdown = screen.getByRole('combobox', { name: /select root note/i });
+      expect(dropdown).toBeInTheDocument();
       
-      // Check for specific notes
-      expect(screen.getByRole('button', { name: 'C' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'C#' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'G' })).toBeInTheDocument();
+      // Check dropdown has all 12 options
+      const options = Array.from(dropdown.querySelectorAll('option'));
+      expect(options).toHaveLength(12);
       
-      // Check C is initially active
-      expect(screen.getByRole('button', { name: 'C' })).toHaveAttribute('aria-pressed', 'true');
+      // Check for specific note options
+      expect(options.find(opt => opt.value === 'C')).toBeInTheDocument();
+      expect(options.find(opt => opt.value === 'C#')).toBeInTheDocument();
+      expect(options.find(opt => opt.value === 'G')).toBeInTheDocument();
+      
+      // Check C is initially selected
+      expect(dropdown).toHaveValue('C');
     });
 
-    it('renders quality button group with all four triad qualities', () => {
+    it('renders quality button grid with all four triad qualities', () => {
       render(<TriadSelector />);
       
-      // Quality buttons use short labels now
+      // Quality buttons use short labels in a 2x2 grid
       expect(screen.getByRole('button', { name: 'Maj' })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Min' })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Dim' })).toBeInTheDocument();
@@ -76,12 +81,12 @@ describe('TriadSelector Component', () => {
   });
 
   describe('User Interactions', () => {
-    it('calls onChange when root note is changed', async () => {
+    it('calls onChange when root note dropdown is changed', async () => {
       const user = userEvent.setup();
       render(<TriadSelector onChange={mockOnChange} />);
       
-      const gNoteButton = screen.getByRole('button', { name: 'G' });
-      await user.click(gNoteButton);
+      const dropdown = screen.getByRole('combobox', { name: /select root note/i });
+      await user.selectOptions(dropdown, 'G');
       
       await waitFor(() => {
         expect(mockOnChange).toHaveBeenCalledWith(
@@ -114,13 +119,13 @@ describe('TriadSelector Component', () => {
 
     // Position selector removed - always passes 'open' to onChange
 
-    it('selects root note from note grid', async () => {
+    it('selects root note from dropdown', async () => {
       const user = userEvent.setup();
       render(<TriadSelector onChange={mockOnChange} />);
       
-      // Click on F# in the grid (always visible now)
-      const fSharpButton = screen.getByRole('button', { name: 'F#' });
-      await user.click(fSharpButton);
+      // Select F# from dropdown
+      const dropdown = screen.getByRole('combobox', { name: /select root note/i });
+      await user.selectOptions(dropdown, 'F#');
       
       await waitFor(() => {
         expect(mockOnChange).toHaveBeenCalledWith(
@@ -143,9 +148,9 @@ describe('TriadSelector Component', () => {
       const initialChordNotes = document.querySelector('.triad-selector__chord-notes');
       expect(initialChordNotes?.textContent).toBe('C - E - G');
       
-      // Change to A minor using new interface
-      const aButton = screen.getByRole('button', { name: 'A' });
-      await user.click(aButton);
+      // Change to A minor using dropdown and button
+      const dropdown = screen.getByRole('combobox', { name: /select root note/i });
+      await user.selectOptions(dropdown, 'A');
       
       const minorButton = screen.getByRole('button', { name: 'Min' });
       await user.click(minorButton);
@@ -178,9 +183,9 @@ describe('TriadSelector Component', () => {
       const chordNotes = document.querySelector('.triad-selector__chord-notes');
       expect(chordNotes?.textContent).toBe('E - G - B');
       
-      // Check note button is active
-      const eButton = screen.getByRole('button', { name: 'E' });
-      expect(eButton).toHaveAttribute('aria-pressed', 'true');
+      // Check dropdown has correct value
+      const dropdown = screen.getByRole('combobox', { name: /select root note/i });
+      expect(dropdown).toHaveValue('E');
       
       // Minor button should be active
       const minorButton = screen.getByRole('button', { name: 'Min' });
@@ -210,11 +215,9 @@ describe('TriadSelector Component', () => {
     it('disables all controls when disabled prop is true', () => {
       render(<TriadSelector disabled={true} />);
       
-      // Note buttons should be disabled
-      const noteButtons = screen.getAllByRole('button', { name: /^[A-G]#?$/ });
-      noteButtons.forEach(button => {
-        expect(button).toBeDisabled();
-      });
+      // Root note dropdown should be disabled
+      const dropdown = screen.getByRole('combobox', { name: /select root note/i });
+      expect(dropdown).toBeDisabled();
       
       // Quality buttons should be disabled - use new names
       const qualityButtons = screen.getAllByRole('button', { name: /^(Maj|Min|Dim|Aug)$/ });
@@ -243,13 +246,13 @@ describe('TriadSelector Component', () => {
       // Main component
       expect(screen.getByRole('application')).toHaveAttribute('aria-label');
       
-      // Radiogroups - now only note grid and quality row
+      // Radiogroups - now only quality row (root note is dropdown)
       const radiogroups = screen.getAllByRole('radiogroup');
-      expect(radiogroups).toHaveLength(2); // Note grid and Quality row
+      expect(radiogroups).toHaveLength(1); // Only Quality row
       
-      // Note buttons have aria-pressed
-      const cButton = screen.getByRole('button', { name: 'C' });
-      expect(cButton).toHaveAttribute('aria-pressed', 'true');
+      // Root note dropdown has proper value
+      const dropdown = screen.getByRole('combobox', { name: /select root note/i });
+      expect(dropdown).toHaveValue('C');
       
       // Quality buttons have aria-pressed
       const majButton = screen.getByRole('button', { name: 'Maj' });
@@ -267,9 +270,9 @@ describe('TriadSelector Component', () => {
         />
       );
       
-      // Note button should have aria-pressed
-      const dButton = screen.getByRole('button', { name: 'D' });
-      expect(dButton).toHaveAttribute('aria-pressed', 'true');
+      // Root note dropdown should have correct value
+      const dropdown = screen.getByRole('combobox', { name: /select root note/i });
+      expect(dropdown).toHaveValue('D');
       
       // Quality button should have aria-pressed - use new name
       const dimButton = screen.getByRole('button', { name: 'Dim' });

@@ -94,9 +94,9 @@ describe('Fretboard Component', () => {
     it('highlights triad positions with correct colors', () => {
       render(<Fretboard triadPositions={mockTriadPositions} />);
       
-      // Check that highlighted positions exist
+      // Check that highlighted positions exist (now using group selector)
       const fretboard = screen.getByRole('img');
-      const highlightedElements = fretboard.querySelectorAll('circle.fret-position__indicator');
+      const highlightedElements = fretboard.querySelectorAll('g.fret-position__indicator');
       expect(highlightedElements.length).toBeGreaterThan(0);
     });
 

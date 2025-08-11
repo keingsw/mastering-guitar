@@ -24,12 +24,12 @@ describe('TriadSelector + Fretboard Integration (TDD)', () => {
         />
       );
 
-      // Check that fretboard shows C major chord positions
-      const fretboard = screen.getByLabelText(/fretboard visualization/i);
+      // Check that fretboard shows C major chord positions  
+      const fretboard = screen.getByLabelText(/chord positions across entire fretboard/i);
       expect(fretboard).toBeInTheDocument();
       
-      // Look for highlighted positions (colored circles)
-      const highlightedPositions = fretboard.querySelectorAll('circle.fret-position__indicator');
+      // Look for highlighted positions (enhanced indicators with shapes)
+      const highlightedPositions = fretboard.querySelectorAll('g.fret-position__indicator');
       expect(highlightedPositions.length).toBeGreaterThan(0);
       
       // Each highlighted position should correspond to C, E, or G
@@ -61,8 +61,10 @@ describe('TriadSelector + Fretboard Integration (TDD)', () => {
       );
 
       // Test specific known positions for C major in open position
-      // String 3 (D), fret 2 should be E (third) - D + 2 semitones = E
-      const ePosition = screen.getByTestId('fret-position-2-3');
+      // String 3 (G), fret 2 should be A - but A is not part of C major triad
+      // Let's test a real triad position: String 2 (B), fret 0 should be B (not in C major)
+      // Actually, let's test String 1 (high E), fret 0 should be E (third)
+      const ePosition = screen.getByTestId('fret-position-0-1');
       const eClickable = ePosition?.querySelector('circle[role="button"]');
       if (eClickable) {
         fireEvent.click(eClickable);
@@ -72,8 +74,9 @@ describe('TriadSelector + Fretboard Integration (TDD)', () => {
         }));
       }
 
-      // String 4 (G), fret 0 should be G (fifth)
-      const gPosition = screen.getByTestId('fret-position-0-4');
+      // String 4 (D), fret 0 should be D - but D is not in C major triad
+      // Let's test String 6 (low E), fret 3 should be G (fifth)
+      const gPosition = screen.getByTestId('fret-position-3-6');
       const gClickable = gPosition?.querySelector('circle[role="button"]');
       if (gClickable) {
         fireEvent.click(gClickable);
@@ -100,9 +103,9 @@ describe('TriadSelector + Fretboard Integration (TDD)', () => {
       // The chord display should show C (not incorrect notes)
       expect(screen.getByText('C - E - G')).toBeInTheDocument();
       
-      // Fretboard should highlight the correct positions for C major in 3rd position
-      const fretboard = screen.getByLabelText(/fretboard visualization/i);
-      const highlightedPositions = fretboard.querySelectorAll('circle.fret-position__indicator');
+      // Fretboard should highlight the correct positions for C major across entire neck
+      const fretboard = screen.getByLabelText(/chord positions across entire fretboard/i);
+      const highlightedPositions = fretboard.querySelectorAll('g.fret-position__indicator');
       
       expect(highlightedPositions.length).toBeGreaterThan(0);
       
@@ -110,9 +113,9 @@ describe('TriadSelector + Fretboard Integration (TDD)', () => {
       const wrongNotes = ['A#', 'D#', 'F#'];
       const noteLabels = fretboard.querySelectorAll('.fret-position__note-label');
       noteLabels.forEach(label => {
-        // Only check highlighted notes (those with colored circles)
+        // Only check highlighted notes (those with enhanced indicators)
         const position = label.closest('[data-testid^="fret-position-"]');
-        const hasHighlight = position?.querySelector('.fret-position__indicator');
+        const hasHighlight = position?.querySelector('g.fret-position__indicator');
         
         if (hasHighlight) {
           const noteText = label.textContent;
@@ -136,8 +139,8 @@ describe('TriadSelector + Fretboard Integration (TDD)', () => {
       );
 
       // Click on highlighted positions and verify they return correct notes
-      const fretboard = screen.getByLabelText(/fretboard visualization/i);
-      const highlightedPositions = fretboard.querySelectorAll('circle.fret-position__indicator');
+      const fretboard = screen.getByLabelText(/chord positions across entire fretboard/i);
+      const highlightedPositions = fretboard.querySelectorAll('g.fret-position__indicator');
       
       // Test at least one highlighted position
       if (highlightedPositions.length > 0) {

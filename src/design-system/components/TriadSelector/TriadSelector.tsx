@@ -52,27 +52,19 @@ const TRIAD_QUALITIES: Array<{ value: TriadQuality; label: string; intervals: nu
   { value: 'augmented', label: 'Augmented', intervals: [0, 4, 8], symbol: 'aug', shortLabel: 'Aug' },
 ];
 
-// Neck position mappings
-const NECK_POSITIONS: Array<{ value: NeckPosition; label: string; fret: number; shortLabel: string }> = [
-  { value: 'open', label: 'Open Position', fret: 0, shortLabel: 'Open' },
-  { value: 'position-3', label: '3rd Position', fret: 3, shortLabel: '3rd' },
-  { value: 'position-5', label: '5th Position', fret: 5, shortLabel: '5th' },
-  { value: 'position-7', label: '7th Position', fret: 7, shortLabel: '7th' },
-  { value: 'position-9', label: '9th Position', fret: 9, shortLabel: '9th' },
-  { value: 'position-12', label: '12th Position', fret: 12, shortLabel: '12th' },
-];
+// Note: NECK_POSITIONS removed as we no longer show position selector in vertical layout
 
 // Standard guitar tuning for fret position calculations
 const STANDARD_TUNING: NoteName[] = ['E', 'A', 'D', 'G', 'B', 'E'];
 
 /**
  * Interactive triad selection interface component for guitar chord education.
- * Features a compact control bar with maximized fretboard visualization.
+ * Features a vertical control sidebar with maximized fretboard visualization.
  * 
  * Features:
- * - Compact controls with dropdown and button groups
- * - Large fretboard visualization (85% of component space)
- * - Optional expandable note grid for detailed selection
+ * - Vertical control sidebar on the left
+ * - Maximized fretboard visualization (80%+ of component space)
+ * - Vertical note grid and quality controls
  * - Full keyboard navigation support
  * - Screen reader accessibility with ARIA labels
  * - WCAG 2.1 AA compliant
@@ -80,22 +72,19 @@ const STANDARD_TUNING: NoteName[] = ['E', 'A', 'D', 'G', 'B', 'E'];
 export const TriadSelector: React.FC<TriadSelectorProps> = ({
   initialSelection = {},
   size = 'md',
-  showAdvancedPositions = false,
   onChange,
   onFretClick,
   className = '',
   'aria-label': ariaLabel,
-  expandedView = false,
   disabled = false,
 }) => {
-  // Component state
-  const [selection, setSelection] = useState<TriadSelection>({
+  // Component state - no position selection needed
+  const [selection, setSelection] = useState<{ rootNote: NoteName; quality: TriadQuality }>({
     rootNote: initialSelection.rootNote || 'C',
     quality: initialSelection.quality || 'major',
-    neckPosition: initialSelection.neckPosition || 'open',
   });
 
-  const [isCompactMode, setIsCompactMode] = useState(!expandedView);
+  // Remove compact mode - always show enhanced controls
 
   // Calculate triad notes from root note and quality
   const calculateTriadNotes = useCallback((rootNote: NoteName, quality: TriadQuality): NoteName[] => {
@@ -110,15 +99,12 @@ export const TriadSelector: React.FC<TriadSelectorProps> = ({
     });
   }, []);
 
-  // Calculate fret positions for the current triad
+  // Calculate fret positions for the current triad across entire fretboard (0-15)
   const fretPositions = useMemo((): FretPosition[] => {
     const triadNotes = calculateTriadNotes(selection.rootNote, selection.quality);
     const positions: FretPosition[] = [];
-    const neckFret = NECK_POSITIONS.find(pos => pos.value === selection.neckPosition)?.fret || 0;
     
-    // Search for triad notes within reasonable fret range
-    const searchRange = { min: Math.max(0, neckFret - 2), max: neckFret + 5 };
-    
+    // Search entire fretboard for triad notes (0-15 frets)
     for (let stringIndex = 0; stringIndex < 6; stringIndex++) {
       // Convert from visual string position (0-5) to tuning array index
       // String 0 (visual top) = tuning[5] (high E)
@@ -128,7 +114,7 @@ export const TriadSelector: React.FC<TriadSelectorProps> = ({
       const openStringNote = STANDARD_TUNING[tuningIndex];
       const openStringIndex = CHROMATIC_NOTES.indexOf(openStringNote);
       
-      for (let fret = searchRange.min; fret <= searchRange.max; fret++) {
+      for (let fret = 0; fret <= 15; fret++) {
         const noteIndex = (openStringIndex + fret) % 12;
         const currentNote = CHROMATIC_NOTES[noteIndex];
         
@@ -149,7 +135,7 @@ export const TriadSelector: React.FC<TriadSelectorProps> = ({
     }
     
     return positions;
-  }, [selection, calculateTriadNotes]);
+  }, [selection.rootNote, selection.quality, calculateTriadNotes]);
 
   // Generate chord symbol
   const chordSymbol: ChordSymbol = useMemo(() => {
@@ -159,12 +145,14 @@ export const TriadSelector: React.FC<TriadSelectorProps> = ({
 
   // Handle selection changes
   const handleSelectionChange = useCallback((
-    field: keyof TriadSelection,
-    value: NoteName | TriadQuality | NeckPosition
+    field: keyof typeof selection,
+    value: NoteName | TriadQuality
   ) => {
     const newSelection = { ...selection, [field]: value };
     setSelection(newSelection);
-    onChange?.(newSelection);
+    // Create full selection for onChange callback
+    const fullSelection: TriadSelection = { ...newSelection, neckPosition: 'open' };
+    onChange?.(fullSelection);
   }, [selection, onChange]);
 
   const triadNotes = useMemo(() => 
@@ -174,98 +162,30 @@ export const TriadSelector: React.FC<TriadSelectorProps> = ({
 
   return (
     <div 
-      className={`triad-selector triad-selector--${size} ${isCompactMode ? 'triad-selector--collapsed' : ''} ${className}`}
+      className={`triad-selector triad-selector--${size} triad-selector--vertical ${className}`}
       role="application"
-      aria-label={ariaLabel || 'Triad selector with large fretboard visualization'}
+      aria-label={ariaLabel || 'Vertical triad selector with maximized fretboard space'}
     >
-      {/* Compact Control Bar */}
-      <div className="triad-selector__controls">
-        <div className="triad-selector__control-group">
-          {/* Chord Display */}
-          <div className="triad-selector__chord-display">
-            <span className="triad-selector__chord-symbol">{chordSymbol}</span>
-            <span className="triad-selector__chord-notes">{triadNotes.join(' - ')}</span>
-          </div>
-
-          {/* Compact Selectors */}
-          <div className="triad-selector__selectors">
-            {/* Root Note Selector - Dropdown Style */}
-            <div className="triad-selector__selector">
-              <label className="triad-selector__label">Root</label>
-              <select 
-                className="triad-selector__select"
-                value={selection.rootNote}
-                onChange={(e) => handleSelectionChange('rootNote', e.target.value as NoteName)}
-                aria-label="Root note"
-                disabled={disabled}
-              >
-                {CHROMATIC_NOTES.map(note => (
-                  <option key={note} value={note}>{note}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Quality Selector - Button Group */}
-            <div className="triad-selector__selector">
-              <label className="triad-selector__label">Quality</label>
-              <div className="triad-selector__button-group" role="radiogroup">
-                {TRIAD_QUALITIES.map(quality => (
-                  <button
-                    key={quality.value}
-                    className={`triad-selector__button ${selection.quality === quality.value ? 'triad-selector__button--active' : ''}`}
-                    onClick={() => handleSelectionChange('quality', quality.value)}
-                    aria-pressed={selection.quality === quality.value}
-                    aria-label={quality.label}
-                    disabled={disabled}
-                  >
-                    {quality.shortLabel}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Position Selector - Compact Pills */}
-            <div className="triad-selector__selector">
-              <label className="triad-selector__label">Position</label>
-              <div className="triad-selector__pills" role="radiogroup">
-                {(showAdvancedPositions ? NECK_POSITIONS : NECK_POSITIONS.slice(0, 3)).map(position => (
-                  <button
-                    key={position.value}
-                    className={`triad-selector__pill ${selection.neckPosition === position.value ? 'triad-selector__pill--active' : ''}`}
-                    onClick={() => handleSelectionChange('neckPosition', position.value)}
-                    aria-pressed={selection.neckPosition === position.value}
-                    aria-label={position.label}
-                    disabled={disabled}
-                  >
-                    {position.shortLabel}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* View Toggle */}
-          <button
-            className="triad-selector__toggle"
-            onClick={() => setIsCompactMode(!isCompactMode)}
-            aria-label={isCompactMode ? 'Expand controls' : 'Collapse controls'}
-            disabled={disabled}
-          >
-            {isCompactMode ? '⋮' : '×'}
-          </button>
+      {/* Left Sidebar Controls */}
+      <div className="triad-selector__sidebar">
+        {/* Current Chord Display */}
+        <div className="triad-selector__chord-display">
+          <div className="triad-selector__chord-symbol">{chordSymbol}</div>
+          <div className="triad-selector__chord-notes">{triadNotes.join(' - ')}</div>
         </div>
-      </div>
 
-      {/* Expanded Controls (when not in compact mode) */}
-      {!isCompactMode && (
-        <div className="triad-selector__expanded">
-          <div className="triad-selector__note-grid">
-            <span className="triad-selector__expanded-label">Select Root Note:</span>
-            <div className="triad-selector__notes">
+        {/* Vertical Controls */}
+        <div className="triad-selector__vertical-controls">
+          {/* Root Note Selection */}
+          <div className="triad-selector__control-section">
+            <label className="triad-selector__section-label">Root Note</label>
+            <div className="triad-selector__vertical-note-grid" role="radiogroup">
               {CHROMATIC_NOTES.map(note => (
                 <button
                   key={note}
-                  className={`triad-selector__note ${selection.rootNote === note ? 'triad-selector__note--active' : ''}`}
+                  className={`triad-selector__vertical-note ${
+                    selection.rootNote === note ? 'triad-selector__vertical-note--active' : ''
+                  }`}
                   onClick={() => handleSelectionChange('rootNote', note)}
                   aria-pressed={selection.rootNote === note}
                   disabled={disabled}
@@ -275,21 +195,41 @@ export const TriadSelector: React.FC<TriadSelectorProps> = ({
               ))}
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Large Fretboard Visualization */}
-      <div className="triad-selector__fretboard">
+          {/* Quality Selection */}
+          <div className="triad-selector__control-section">
+            <label className="triad-selector__section-label">Quality</label>
+            <div className="triad-selector__vertical-quality" role="radiogroup">
+              {TRIAD_QUALITIES.map(quality => (
+                <button
+                  key={quality.value}
+                  className={`triad-selector__vertical-quality-btn ${
+                    selection.quality === quality.value ? 'triad-selector__vertical-quality-btn--active' : ''
+                  }`}
+                  onClick={() => handleSelectionChange('quality', quality.value)}
+                  aria-pressed={selection.quality === quality.value}
+                  disabled={disabled}
+                >
+                  {quality.shortLabel}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Maximized Fretboard Area */}
+      <div className="triad-selector__fretboard-area">
         <Fretboard
           triadPositions={fretPositions}
           chord={chordSymbol}
-          neckPosition={NECK_POSITIONS.find(pos => pos.value === selection.neckPosition)?.fret || 0}
+          neckPosition={0} // Always start from open position
           size="lg" // Always use large size for better visibility
           showNoteLabels={true}
           showFretNumbers={true}
           onFretClick={onFretClick}
-          fretCount={15} // Show more frets for better context
-          aria-label={`${chordSymbol} chord visualization on fretboard`}
+          fretCount={15} // Show full 15-fret range
+          aria-label={`${chordSymbol} chord positions across entire fretboard (0-15)`}
         />
       </div>
     </div>

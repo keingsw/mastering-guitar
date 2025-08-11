@@ -1,53 +1,56 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TriadSelector } from './TriadSelector';
 
 describe('TriadSelector Component', () => {
   const mockOnChange = vi.fn();
-  const mockOnFretClick = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('Rendering', () => {
-    it('renders the triad selector interface with compact controls', () => {
+    it('renders the triad selector interface with vertical controls', () => {
       render(<TriadSelector />);
       
       // Check main component structure
-      const selector = screen.getByRole('application', { name: /triad selector with large fretboard visualization/i });
+      const selector = screen.getByRole('application', { name: /vertical triad selector with maximized fretboard space/i });
       expect(selector).toBeInTheDocument();
 
-      // Check compact control sections
-      expect(screen.getByLabelText(/root note/i)).toBeInTheDocument(); // Dropdown
-      expect(screen.getAllByRole('radiogroup')).toHaveLength(2); // Quality and Position groups
-      expect(screen.getByText('Maj')).toBeInTheDocument(); // Quality button
+      // Check vertical control sections
+      expect(screen.getAllByRole('radiogroup')).toHaveLength(2); // Note grid, Quality controls
+      expect(screen.getByText('Maj')).toBeInTheDocument(); // Quality button (short labels)
+      expect(screen.getByText('C - E - G')).toBeInTheDocument(); // Chord formula display
     });
 
-    it('renders root note dropdown with all 12 chromatic notes', () => {
+    it('renders note grid with all 12 chromatic notes', () => {
       render(<TriadSelector />);
       
-      const rootNoteSelect = screen.getByLabelText(/root note/i);
-      expect(rootNoteSelect).toBeInTheDocument();
-      expect(rootNoteSelect.tagName).toBe('SELECT');
-      
-      // Check that all options are present
-      const options = within(rootNoteSelect).getAllByRole('option');
-      expect(options).toHaveLength(12);
+      // Find the note grid (no longer needs specific name, just find the radiogroup with notes)
+      const noteButtons = screen.getAllByRole('button', { name: /^[A-G]#?$/ }); // Match note names
+      expect(noteButtons).toHaveLength(12);
       
       // Check for specific notes
-      expect(within(rootNoteSelect).getByRole('option', { name: 'C' })).toBeInTheDocument();
-      expect(within(rootNoteSelect).getByRole('option', { name: 'C#' })).toBeInTheDocument();
-      expect(within(rootNoteSelect).getByRole('option', { name: 'G' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'C' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'C#' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'G' })).toBeInTheDocument();
+      
+      // Check C is initially active
+      expect(screen.getByRole('button', { name: 'C' })).toHaveAttribute('aria-pressed', 'true');
     });
 
     it('renders quality button group with all four triad qualities', () => {
       render(<TriadSelector />);
       
-      // Quality buttons are in a radiogroup
-      const qualityButtons = screen.getAllByRole('button', { name: /major|minor|diminished|augmented/i });
-      expect(qualityButtons).toHaveLength(4);
+      // Quality buttons use short labels now
+      expect(screen.getByRole('button', { name: 'Maj' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Min' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Dim' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Aug' })).toBeInTheDocument();
+      
+      // Major is initially active
+      expect(screen.getByRole('button', { name: 'Maj' })).toHaveAttribute('aria-pressed', 'true');
       
       // Check short labels
       expect(screen.getByText('Maj')).toBeInTheDocument();
@@ -56,44 +59,20 @@ describe('TriadSelector Component', () => {
       expect(screen.getByText('Aug')).toBeInTheDocument();
     });
 
-    it('renders position pills for neck positions', () => {
-      render(<TriadSelector />);
-      
-      // Basic positions shown by default
-      expect(screen.getByText('Open')).toBeInTheDocument();
-      expect(screen.getByText('3rd')).toBeInTheDocument();
-      expect(screen.getByText('5th')).toBeInTheDocument();
-    });
-
-    it('shows advanced positions when enabled', () => {
-      render(<TriadSelector showAdvancedPositions={true} />);
-      
-      expect(screen.getByText('Open')).toBeInTheDocument();
-      expect(screen.getByText('3rd')).toBeInTheDocument();
-      expect(screen.getByText('5th')).toBeInTheDocument();
-      expect(screen.getByText('7th')).toBeInTheDocument();
-      expect(screen.getByText('9th')).toBeInTheDocument();
-      expect(screen.getByText('12th')).toBeInTheDocument();
-    });
+    // Position selector removed - now shows all positions on full fretboard
 
     it('displays current chord symbol and notes', () => {
       render(<TriadSelector initialSelection={{ rootNote: 'D', quality: 'minor' }} />);
       
-      // Check chord symbol display - use the specific class
+      // Check chord symbol display - now in chord-symbol class (vertical layout)
       const chordSymbol = document.querySelector('.triad-selector__chord-symbol');
       expect(chordSymbol?.textContent).toBe('Dm');
-      // Check notes display
+      // Check notes display - now in chord-notes class (vertical layout)
       const chordNotes = document.querySelector('.triad-selector__chord-notes');
       expect(chordNotes?.textContent).toBe('D - F - A');
     });
 
-    it('shows toggle button for expanded view', () => {
-      render(<TriadSelector />);
-      
-      const toggleButton = screen.getByLabelText(/expand controls/i);
-      expect(toggleButton).toBeInTheDocument();
-      expect(toggleButton).toHaveTextContent('⋮');
-    });
+    // Toggle button removed - always shows minimal controls
   });
 
   describe('User Interactions', () => {
@@ -101,8 +80,8 @@ describe('TriadSelector Component', () => {
       const user = userEvent.setup();
       render(<TriadSelector onChange={mockOnChange} />);
       
-      const rootNoteSelect = screen.getByLabelText(/root note/i);
-      await user.selectOptions(rootNoteSelect, 'G');
+      const gNoteButton = screen.getByRole('button', { name: 'G' });
+      await user.click(gNoteButton);
       
       await waitFor(() => {
         expect(mockOnChange).toHaveBeenCalledWith(
@@ -119,7 +98,7 @@ describe('TriadSelector Component', () => {
       const user = userEvent.setup();
       render(<TriadSelector onChange={mockOnChange} />);
       
-      const minorButton = screen.getByRole('button', { name: /minor/i });
+      const minorButton = screen.getByRole('button', { name: 'Min' });
       await user.click(minorButton);
       
       await waitFor(() => {
@@ -133,54 +112,13 @@ describe('TriadSelector Component', () => {
       });
     });
 
-    it('calls onChange when position is changed', async () => {
+    // Position selector removed - always passes 'open' to onChange
+
+    it('selects root note from note grid', async () => {
       const user = userEvent.setup();
       render(<TriadSelector onChange={mockOnChange} />);
       
-      const position3Button = screen.getByText('3rd');
-      await user.click(position3Button);
-      
-      await waitFor(() => {
-        expect(mockOnChange).toHaveBeenCalledWith(
-          expect.objectContaining({
-            rootNote: 'C',
-            quality: 'major',
-            neckPosition: 'position-3'
-          })
-        );
-      });
-    });
-
-    it('expands note grid when toggle is clicked', async () => {
-      const user = userEvent.setup();
-      render(<TriadSelector />);
-      
-      const toggleButton = screen.getByLabelText(/expand controls/i);
-      await user.click(toggleButton);
-      
-      // Should show expanded note grid
-      await waitFor(() => {
-        expect(screen.getByText('Select Root Note:')).toBeInTheDocument();
-      });
-      
-      // Should show all 12 note buttons in the expanded grid
-      const noteButtons = screen.getAllByRole('button').filter(btn => 
-        ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'].includes(btn.textContent || '')
-      );
-      expect(noteButtons).toHaveLength(12);
-      
-      // Toggle button should now show close icon
-      expect(toggleButton).toHaveTextContent('×');
-    });
-
-    it('selects root note from expanded grid', async () => {
-      const user = userEvent.setup();
-      render(<TriadSelector onChange={mockOnChange} expandedView={true} />);
-      
-      // Grid should be visible
-      expect(screen.getByText('Select Root Note:')).toBeInTheDocument();
-      
-      // Click on F# in the grid
+      // Click on F# in the grid (always visible now)
       const fSharpButton = screen.getByRole('button', { name: 'F#' });
       await user.click(fSharpButton);
       
@@ -199,17 +137,17 @@ describe('TriadSelector Component', () => {
       const user = userEvent.setup();
       render(<TriadSelector />);
       
-      // Initial state
+      // Initial state - use vertical layout class names
       const initialChordSymbol = document.querySelector('.triad-selector__chord-symbol');
       expect(initialChordSymbol?.textContent).toBe('C');
       const initialChordNotes = document.querySelector('.triad-selector__chord-notes');
       expect(initialChordNotes?.textContent).toBe('C - E - G');
       
-      // Change to A minor
-      const rootNoteSelect = screen.getByLabelText(/root note/i);
-      await user.selectOptions(rootNoteSelect, 'A');
+      // Change to A minor using new interface
+      const aButton = screen.getByRole('button', { name: 'A' });
+      await user.click(aButton);
       
-      const minorButton = screen.getByRole('button', { name: /minor/i });
+      const minorButton = screen.getByRole('button', { name: 'Min' });
       await user.click(minorButton);
       
       // Check updated display
@@ -229,28 +167,26 @@ describe('TriadSelector Component', () => {
           initialSelection={{
             rootNote: 'E',
             quality: 'minor',
-            neckPosition: 'position-5'
+            neckPosition: 'position-5' // This is ignored in new UI but still accepted
           }}
         />
       );
       
-      // Check chord display
+      // Check chord display - use vertical layout class names
       const chordSymbol = document.querySelector('.triad-selector__chord-symbol');
       expect(chordSymbol?.textContent).toBe('Em');
       const chordNotes = document.querySelector('.triad-selector__chord-notes');
       expect(chordNotes?.textContent).toBe('E - G - B');
       
-      // Check selections
-      const rootNoteSelect = screen.getByLabelText(/root note/i) as HTMLSelectElement;
-      expect(rootNoteSelect.value).toBe('E');
+      // Check note button is active
+      const eButton = screen.getByRole('button', { name: 'E' });
+      expect(eButton).toHaveAttribute('aria-pressed', 'true');
       
       // Minor button should be active
-      const minorButton = screen.getByRole('button', { name: /minor/i });
+      const minorButton = screen.getByRole('button', { name: 'Min' });
       expect(minorButton).toHaveAttribute('aria-pressed', 'true');
       
-      // 5th position should be active
-      const position5Button = screen.getByText('5th');
-      expect(position5Button).toHaveAttribute('aria-pressed', 'true');
+      // Position selector removed - no position buttons to check
     });
 
     it('handles partial initial selection', () => {
@@ -262,7 +198,7 @@ describe('TriadSelector Component', () => {
         />
       );
       
-      // Should use G as root with defaults for others
+      // Should use G as root with defaults for others - use vertical layout class names
       const chordSymbol = document.querySelector('.triad-selector__chord-symbol');
       expect(chordSymbol?.textContent).toBe('G');
       const chordNotes = document.querySelector('.triad-selector__chord-notes');
@@ -274,36 +210,26 @@ describe('TriadSelector Component', () => {
     it('disables all controls when disabled prop is true', () => {
       render(<TriadSelector disabled={true} />);
       
-      // Root note select should be disabled
-      const rootNoteSelect = screen.getByLabelText(/root note/i);
-      expect(rootNoteSelect).toBeDisabled();
+      // Note buttons should be disabled
+      const noteButtons = screen.getAllByRole('button', { name: /^[A-G]#?$/ });
+      noteButtons.forEach(button => {
+        expect(button).toBeDisabled();
+      });
       
-      // Quality buttons should be disabled
-      const qualityButtons = screen.getAllByRole('button', { name: /major|minor|diminished|augmented/i });
+      // Quality buttons should be disabled - use new names
+      const qualityButtons = screen.getAllByRole('button', { name: /^(Maj|Min|Dim|Aug)$/ });
       qualityButtons.forEach(button => {
         expect(button).toBeDisabled();
       });
       
-      // Position buttons should be disabled
-      const positionButtons = [
-        screen.getByText('Open'),
-        screen.getByText('3rd'),
-        screen.getByText('5th')
-      ];
-      positionButtons.forEach(button => {
-        expect(button).toBeDisabled();
-      });
-      
-      // Toggle button should be disabled
-      const toggleButton = screen.getByLabelText(/expand controls/i);
-      expect(toggleButton).toBeDisabled();
+      // Position selector and toggle button removed - test is complete
     });
 
     it('does not call onChange when disabled', async () => {
       const user = userEvent.setup();
       render(<TriadSelector onChange={mockOnChange} disabled={true} />);
       
-      const minorButton = screen.getByRole('button', { name: /minor/i });
+      const minorButton = screen.getByRole('button', { name: 'Min' });
       await user.click(minorButton);
       
       expect(mockOnChange).not.toHaveBeenCalled();
@@ -317,15 +243,17 @@ describe('TriadSelector Component', () => {
       // Main component
       expect(screen.getByRole('application')).toHaveAttribute('aria-label');
       
-      // Root note select
-      expect(screen.getByLabelText(/root note/i)).toBeInTheDocument();
-      
-      // Quality buttons in radiogroup
+      // Radiogroups - now only note grid and quality row
       const radiogroups = screen.getAllByRole('radiogroup');
-      expect(radiogroups).toHaveLength(2); // Quality and Position groups
+      expect(radiogroups).toHaveLength(2); // Note grid and Quality row
       
-      // Toggle button
-      expect(screen.getByLabelText(/expand controls/i)).toBeInTheDocument();
+      // Note buttons have aria-pressed
+      const cButton = screen.getByRole('button', { name: 'C' });
+      expect(cButton).toHaveAttribute('aria-pressed', 'true');
+      
+      // Quality buttons have aria-pressed
+      const majButton = screen.getByRole('button', { name: 'Maj' });
+      expect(majButton).toHaveAttribute('aria-pressed', 'true');
     });
 
     it('properly indicates selected states', () => {
@@ -334,18 +262,20 @@ describe('TriadSelector Component', () => {
           initialSelection={{
             rootNote: 'D',
             quality: 'diminished',
-            neckPosition: 'position-3'
+            neckPosition: 'position-3' // Ignored in new UI
           }}
         />
       );
       
-      // Quality button should have aria-pressed
-      const dimButton = screen.getByRole('button', { name: /diminished/i });
+      // Note button should have aria-pressed
+      const dButton = screen.getByRole('button', { name: 'D' });
+      expect(dButton).toHaveAttribute('aria-pressed', 'true');
+      
+      // Quality button should have aria-pressed - use new name
+      const dimButton = screen.getByRole('button', { name: 'Dim' });
       expect(dimButton).toHaveAttribute('aria-pressed', 'true');
       
-      // Position button should have aria-pressed
-      const position3Button = screen.getByText('3rd');
-      expect(position3Button).toHaveAttribute('aria-pressed', 'true');
+      // Position selector removed - no position buttons to check
     });
 
     it('supports custom aria-label', () => {

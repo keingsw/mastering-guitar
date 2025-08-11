@@ -17,6 +17,14 @@
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
 }
 
+/* Vertical Layout - Sidebar + Fretboard */
+.triad-selector--vertical {
+  flex-direction: row;
+  gap: 20px;
+  padding: 20px;
+  min-height: 600px;
+}
+
 /* Size variants */
 .triad-selector--sm {
   padding: 12px;
@@ -34,6 +42,31 @@
   padding: 20px;
   gap: 20px;
   font-size: 1.125rem;
+}
+
+/* Vertical Size Variants */
+.triad-selector--vertical.triad-selector--sm {
+  gap: 16px;
+  padding: 16px;
+}
+
+.triad-selector--vertical.triad-selector--sm .triad-selector__sidebar {
+  width: 160px;
+  min-width: 160px;
+  gap: 20px;
+  padding: 12px;
+}
+
+.triad-selector--vertical.triad-selector--lg {
+  gap: 24px;
+  padding: 24px;
+}
+
+.triad-selector--vertical.triad-selector--lg .triad-selector__sidebar {
+  width: 200px;
+  min-width: 200px;
+  gap: 28px;
+  padding: 20px;
 }
 
 /* Control Bar - Minimal height, maximum function */
@@ -288,7 +321,159 @@
   transform: scale(1.05);
 }
 
-/* Fretboard Container - MAXIMIZED */
+/* Vertical Layout Components */
+.triad-selector__sidebar {
+  width: 180px;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 16px;
+  background: rgba(55, 53, 47, 0.03);
+  border-radius: 8px;
+  border: 1px solid rgba(55, 53, 47, 0.08);
+}
+
+.triad-selector__chord-display {
+  text-align: center;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(55, 53, 47, 0.12);
+}
+
+.triad-selector__chord-symbol {
+  font-size: 32px;
+  font-weight: 700;
+  color: rgba(55, 53, 47, 0.95);
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.triad-selector__chord-notes {
+  font-size: 11px;
+  color: rgba(55, 53, 47, 0.65);
+  font-family: 'SFMono-Regular', 'Monaco', 'Cascadia Code', monospace;
+  letter-spacing: 0.5px;
+}
+
+.triad-selector__vertical-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+}
+
+.triad-selector__control-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.triad-selector__section-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(55, 53, 47, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding-left: 4px;
+}
+
+/* Vertical Note Grid */
+.triad-selector__vertical-note-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.triad-selector__vertical-note {
+  aspect-ratio: 1;
+  min-height: 36px;
+  border: 1.5px solid rgba(55, 53, 47, 0.16);
+  background: white;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(55, 53, 47, 0.8);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.triad-selector__vertical-note:hover {
+  background: rgba(55, 53, 47, 0.06);
+  border-color: rgba(55, 53, 47, 0.32);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.triad-selector__vertical-note--active {
+  background: rgba(35, 131, 226, 1);
+  border-color: rgba(35, 131, 226, 1);
+  color: white;
+  box-shadow: 0 2px 8px rgba(35, 131, 226, 0.3);
+}
+
+.triad-selector__vertical-note--active:hover {
+  background: rgba(35, 131, 226, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(35, 131, 226, 0.4);
+}
+
+/* Vertical Quality Controls */
+.triad-selector__vertical-quality {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.triad-selector__vertical-quality-btn {
+  padding: 10px 12px;
+  border: 1.5px solid rgba(55, 53, 47, 0.16);
+  background: white;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(55, 53, 47, 0.8);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-align: center;
+}
+
+.triad-selector__vertical-quality-btn:hover {
+  background: rgba(55, 53, 47, 0.06);
+  border-color: rgba(55, 53, 47, 0.32);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.triad-selector__vertical-quality-btn--active {
+  background: rgba(35, 131, 226, 1);
+  border-color: rgba(35, 131, 226, 1);
+  color: white;
+  box-shadow: 0 2px 8px rgba(35, 131, 226, 0.3);
+}
+
+.triad-selector__vertical-quality-btn--active:hover {
+  background: rgba(35, 131, 226, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(35, 131, 226, 0.4);
+}
+
+/* Maximized Fretboard Area */
+.triad-selector__fretboard-area {
+  flex: 1;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(55, 53, 47, 0.02), transparent);
+  border-radius: 8px;
+  border: 1px solid rgba(55, 53, 47, 0.06);
+}
+
+/* Legacy Fretboard Container - MAXIMIZED */
 .triad-selector__fretboard {
   flex: 1;
   min-height: 350px;
@@ -482,6 +667,586 @@
   outline-offset: 2px;
 }
 
+/* ==================== MINIMAL SYSTEMATIC CONTROLS ==================== */
+
+/* Minimal Control Bar - Small, Integrated */
+.triad-selector__minimal-controls {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+/* Current Chord Display - Prominent but Clean */
+.triad-selector__current-chord {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 4px solid #007bff;
+}
+
+.triad-selector__chord-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  letter-spacing: -0.01em;
+}
+
+.triad-selector__chord-formula {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #6c757d;
+  letter-spacing: 0.02em;
+}
+
+/* Simple Selectors Layout */
+.triad-selector__simple-selectors {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.triad-selector__selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.triad-selector__label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #495057;
+  min-width: 60px;
+  text-align: right;
+}
+
+/* Note Grid - Compact Single Row */
+.triad-selector__note-grid {
+  display: flex;
+  gap: 2px;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.triad-selector__note {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #dee2e6;
+  background: white;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #495057;
+  flex-shrink: 0;
+}
+
+.triad-selector__note:hover {
+  border-color: #007bff;
+  background: #e3f2fd;
+}
+
+.triad-selector__note--active {
+  border-color: #007bff;
+  background: #007bff;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.25);
+}
+
+/* Quality Row - Simple Clean Buttons */
+.triad-selector__quality-row {
+  display: flex;
+  gap: 6px;
+}
+
+.triad-selector__quality {
+  padding: 8px 12px;
+  border: 1px solid #dee2e6;
+  background: white;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  color: #495057;
+  min-width: 50px;
+}
+
+.triad-selector__quality:hover {
+  border-color: #28a745;
+  background: #e8f5e8;
+}
+
+.triad-selector__quality--active {
+  border-color: #28a745;
+  background: #28a745;
+  color: white;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.25);
+}
+
+/* Position Row - All Positions Visible */
+.triad-selector__position-row {
+  display: flex;
+  gap: 4px;
+}
+
+.triad-selector__position {
+  padding: 6px 10px;
+  border: 1px solid #dee2e6;
+  background: white;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  color: #495057;
+  white-space: nowrap;
+}
+
+.triad-selector__position:hover {
+  border-color: #6f42c1;
+  background: #f0e6ff;
+}
+
+.triad-selector__position--active {
+  border-color: #6f42c1;
+  background: #6f42c1;
+  color: white;
+  box-shadow: 0 2px 4px rgba(111, 66, 193, 0.25);
+}
+
+/* Minimal mode adjustments */
+.triad-selector--minimal {
+  min-height: 500px;
+}
+
+.triad-selector--minimal .triad-selector__fretboard {
+  flex: 1;
+  min-height: 400px;
+}
+
+/* Responsive for minimal controls */
+@media (max-width: 768px) {
+  .triad-selector__simple-selectors {
+    gap: 12px;
+  }
+  
+  .triad-selector__selector {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .triad-selector__label {
+    min-width: auto;
+    text-align: left;
+  }
+  
+  .triad-selector__chord-name {
+    font-size: 1.3rem;
+  }
+  
+  .triad-selector__chord-formula {
+    font-size: 1rem;
+  }
+  
+  /* Keep note grid horizontal even on mobile */
+  .triad-selector__note-grid {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+}
+
+/* Focus styles for minimal controls */
+.triad-selector__note:focus-visible,
+.triad-selector__quality:focus-visible,
+.triad-selector__position:focus-visible {
+  outline: 2px solid rgba(0, 123, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* ==================== ENHANCED VISUAL CONTROLS (DEPRECATED) ==================== */
+
+/* Enhanced Control Bar */
+.triad-selector__enhanced-controls {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 249, 250, 0.9));
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(8px);
+}
+
+/* Chord Header */
+.triad-selector__chord-header {
+  text-align: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.06);
+}
+
+.triad-selector__chord-header .triad-selector__chord-symbol {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.02em;
+}
+
+.triad-selector__chord-header .triad-selector__chord-notes {
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  margin: 0;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+/* Selectors Row */
+.triad-selector__selectors-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.triad-selector__selector-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.triad-selector__section-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #34495e;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+
+/* Note Wheel Styles */
+.triad-selector__note-wheel {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border: 2px solid rgba(52, 73, 94, 0.1);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(248, 249, 250, 0.7));
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.triad-selector__note-button {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border: 2px solid #bdc3c7;
+  border-radius: 50%;
+  background: white;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2c3e50;
+  margin: -14px 0 0 -14px;
+}
+
+.triad-selector__note-button:hover {
+  border-color: #3498db;
+  background: #ecf0f1;
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+  z-index: 1;
+}
+
+.triad-selector__note-button--active {
+  border-color: #e74c3c;
+  background: #e74c3c;
+  color: white;
+  box-shadow: 0 3px 12px rgba(231, 76, 60, 0.3);
+  z-index: 2;
+}
+
+.triad-selector__note-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Quality Grid */
+.triad-selector__quality-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  max-width: 240px;
+}
+
+.triad-selector__quality-button {
+  padding: 16px 12px;
+  border: 2px solid #bdc3c7;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 80px;
+  justify-content: center;
+}
+
+.triad-selector__quality-button:hover {
+  border-color: #3498db;
+  background: #ecf0f1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+}
+
+.triad-selector__quality-button--active {
+  border-color: #f39c12;
+  background: #f39c12;
+  color: white;
+  box-shadow: 0 4px 16px rgba(243, 156, 18, 0.3);
+}
+
+.triad-selector__quality-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.triad-selector__quality-symbol {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  font-style: italic;
+}
+
+.triad-selector__quality-intervals {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  font-family: monospace;
+}
+
+/* Position Selector */
+.triad-selector__position-selector {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 280px;
+}
+
+.triad-selector__position-button {
+  padding: 12px 8px;
+  border: 2px solid #bdc3c7;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 80px;
+}
+
+.triad-selector__position-button:hover {
+  border-color: #9b59b6;
+  background: #ecf0f1;
+  transform: translateY(-1px);
+}
+
+.triad-selector__position-button--active {
+  border-color: #9b59b6;
+  background: #9b59b6;
+  color: white;
+  box-shadow: 0 3px 12px rgba(155, 89, 182, 0.3);
+}
+
+.triad-selector__position-label {
+  font-weight: 600;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.triad-selector__position-visual {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+.triad-selector__mini-frets {
+  display: flex;
+  gap: 2px;
+}
+
+.triad-selector__mini-fret {
+  width: 8px;
+  height: 16px;
+  background: #ecf0f1;
+  border-radius: 1px;
+}
+
+.triad-selector__mini-fret--active {
+  background: currentColor;
+}
+
+.triad-selector__position-fret {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+/* Enhanced mode styles */
+.triad-selector--enhanced {
+  min-height: 600px;
+}
+
+.triad-selector--enhanced .triad-selector__fretboard {
+  flex: 1;
+  min-height: 450px;
+}
+
+/* Responsive design for enhanced controls */
+@media (max-width: 1024px) {
+  .triad-selector__selectors-row {
+    gap: 24px;
+  }
+  
+  .triad-selector__chord-header .triad-selector__chord-symbol {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .triad-selector__selectors-row {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    text-align: center;
+  }
+  
+  .triad-selector__enhanced-controls {
+    padding: 16px;
+  }
+  
+  .triad-selector__chord-header .triad-selector__chord-symbol {
+    font-size: 1.8rem;
+  }
+  
+  .triad-selector__chord-header .triad-selector__chord-notes {
+    font-size: 1rem;
+  }
+}
+
+/* Focus styles for enhanced controls */
+.triad-selector__note-button:focus-visible,
+.triad-selector__quality-button:focus-visible,
+.triad-selector__position-button:focus-visible {
+  outline: 2px solid rgba(35, 131, 226, 0.5);
+  outline-offset: 2px;
+}
+
+/* Responsive Design for Vertical Layout */
+@media (max-width: 768px) {
+  .triad-selector--vertical {
+    flex-direction: column;
+    gap: 16px;
+    min-height: 500px;
+  }
+  
+  .triad-selector__sidebar {
+    width: 100%;
+    flex-direction: row;
+    gap: 16px;
+    padding: 12px;
+  }
+  
+  .triad-selector__chord-display {
+    border-bottom: none;
+    border-right: 1px solid rgba(55, 53, 47, 0.12);
+    padding: 0 16px 0 0;
+    text-align: left;
+    min-width: 100px;
+  }
+  
+  .triad-selector__chord-symbol {
+    font-size: 24px;
+    margin-bottom: 2px;
+  }
+  
+  .triad-selector__chord-notes {
+    font-size: 10px;
+  }
+  
+  .triad-selector__vertical-controls {
+    flex-direction: row;
+    gap: 16px;
+    flex: 1;
+  }
+  
+  .triad-selector__vertical-note-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 4px;
+  }
+  
+  .triad-selector__vertical-note {
+    min-height: 32px;
+    font-size: 12px;
+  }
+  
+  .triad-selector__vertical-quality {
+    flex-direction: row;
+    gap: 4px;
+  }
+  
+  .triad-selector__vertical-quality-btn {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+  
+  .triad-selector__fretboard-area {
+    min-height: 300px;
+    padding: 12px;
+  }
+}
+
+/* Focus and Accessibility for Vertical Layout */
+.triad-selector__vertical-note:focus,
+.triad-selector__vertical-quality-btn:focus {
+  outline: 2px solid rgba(35, 131, 226, 0.6);
+  outline-offset: 2px;
+}
+
+.triad-selector__vertical-note:disabled,
+.triad-selector__vertical-quality-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.triad-selector__vertical-note:disabled:hover,
+.triad-selector__vertical-quality-btn:disabled:hover {
+  background: white;
+  border-color: rgba(55, 53, 47, 0.16);
+  transform: none;
+  box-shadow: none;
+}
+
 /* Print styles */
 @media print {
   .triad-selector {
@@ -492,5 +1257,14 @@
 
   .triad-selector__fretboard {
     break-inside: avoid;
+  }
+  
+  .triad-selector--vertical {
+    flex-direction: column;
+  }
+  
+  .triad-selector__sidebar {
+    width: 100%;
+    flex-direction: row;
   }
 }

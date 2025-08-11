@@ -169,6 +169,20 @@ export const Fretboard: React.FC<FretboardProps> = ({
     }
   };
 
+  // Get shape for harmonic function (for accessibility)
+  const getFunctionShape = (func: HarmonicFunction): 'circle' | 'triangle' | 'diamond' => {
+    switch (func) {
+      case 'root':
+        return 'circle';
+      case 'third':
+        return 'triangle';
+      case 'fifth':
+        return 'diamond';
+      default:
+        return 'circle';
+    }
+  };
+
   const fretboardId = `fretboard-${Math.random().toString(36).substr(2, 9)}`;
   const descriptionId = `${fretboardId}-description`;
 
@@ -341,18 +355,44 @@ export const Fretboard: React.FC<FretboardProps> = ({
                 onKeyDown={(e) => handleKeyDown(e, fret, string)}
               />
 
-              {/* Visual indicator for highlighted positions */}
+              {/* Visual indicator for highlighted positions with shape encoding */}
               {isHighlighted && (
-                <circle
-                  cx={x}
-                  cy={y}
-                  r="6"
-                  fill={getFunctionColor(harmonicFunction!)}
-                  stroke={colors.background.primary}
-                  strokeWidth="2"
-                  className="fret-position__indicator"
-                  pointerEvents="none"
-                />
+                <g className="fret-position__indicator" pointerEvents="none">
+                  {/* Background circle for better contrast */}
+                  <circle
+                    cx={x}
+                    cy={y}
+                    r="9"
+                    fill={colors.background.primary}
+                    stroke={getFunctionColor(harmonicFunction!)}
+                    strokeWidth="2"
+                    opacity="0.95"
+                  />
+                  
+                  {/* Shape encoding for accessibility */}
+                  {getFunctionShape(harmonicFunction!) === 'circle' && (
+                    <circle
+                      cx={x}
+                      cy={y}
+                      r="6"
+                      fill={getFunctionColor(harmonicFunction!)}
+                    />
+                  )}
+                  
+                  {getFunctionShape(harmonicFunction!) === 'triangle' && (
+                    <polygon
+                      points={`${x},${y-5} ${x-4.5},${y+3} ${x+4.5},${y+3}`}
+                      fill={getFunctionColor(harmonicFunction!)}
+                    />
+                  )}
+                  
+                  {getFunctionShape(harmonicFunction!) === 'diamond' && (
+                    <polygon
+                      points={`${x},${y-5.5} ${x+5.5},${y} ${x},${y+5.5} ${x-5.5},${y}`}
+                      fill={getFunctionColor(harmonicFunction!)}
+                    />
+                  )}
+                </g>
               )}
 
               {/* Hover feedback */}
@@ -367,21 +407,72 @@ export const Fretboard: React.FC<FretboardProps> = ({
                 />
               )}
 
-              {/* Note labels */}
-              {showNoteLabels && (isHighlighted || isHovered) && (
-                <text
-                  x={x}
-                  y={y}
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  fontSize="10"
-                  fontWeight="bold"
-                  fill={isHighlighted ? colors.text.inverse : colors.text.primary}
-                  className="fret-position__note-label"
-                  pointerEvents="none"
-                >
-                  {note}
-                </text>
+              {/* Note labels - Always visible for triad notes, hover for others */}
+              {showNoteLabels && (
+                <g pointerEvents="none">
+                  {/* Always visible triad notes with enhanced readability */}
+                  {isHighlighted && (
+                    <>
+                      {/* Semi-transparent background for better contrast */}
+                      <rect
+                        x={x - 10}
+                        y={y - 8}
+                        width="20"
+                        height="16"
+                        rx="3"
+                        fill={colors.background.primary}
+                        fillOpacity="0.9"
+                        stroke={getFunctionColor(harmonicFunction!)}
+                        strokeWidth="1"
+                        strokeOpacity="0.3"
+                      />
+                      
+                      {/* Large, bold note name */}
+                      <text
+                        x={x}
+                        y={y}
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                        fontSize="14"
+                        fontWeight="bold"
+                        fill={colors.text.primary}
+                        className="fret-position__note-label fret-position__note-label--triad"
+                      >
+                        {note}
+                      </text>
+                    </>
+                  )}
+                  
+                  {/* Hover-only labels for non-triad notes */}
+                  {!isHighlighted && isHovered && (
+                    <>
+                      {/* Subtle background */}
+                      <rect
+                        x={x - 8}
+                        y={y - 6}
+                        width="16"
+                        height="12"
+                        rx="2"
+                        fill={colors.background.secondary}
+                        fillOpacity="0.8"
+                      />
+                      
+                      {/* Smaller note name for context */}
+                      <text
+                        x={x}
+                        y={y}
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                        fontSize="11"
+                        fontWeight="500"
+                        fill={colors.text.secondary}
+                        className="fret-position__note-label fret-position__note-label--hover"
+                      >
+                        {note}
+                      </text>
+                    </>
+                  )}
+                </g>
               )}
             </g>
           );

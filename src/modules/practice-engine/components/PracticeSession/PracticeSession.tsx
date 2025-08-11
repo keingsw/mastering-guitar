@@ -16,31 +16,14 @@ import { calculateSessionScore } from '../../services/scoring-system';
 import './PracticeSession.css';
 
 export interface PracticeSessionProps {
-  /** Practice session settings */
   settings: PracticeSettings;
-  /** Component size variant */
   size?: ComponentSize;
-  /** Callback when session is completed */
   onComplete: (session: PracticeSessionType) => void;
-  /** Callback when session is paused */
   onPause?: (session: PracticeSessionType) => void;
-  /** Additional CSS class name */
   className?: string;
-  /** ARIA label for accessibility */
   'aria-label'?: string;
 }
 
-/**
- * Practice Session Component
- * 
- * Orchestrates practice questions and manages session state.
- * Features:
- * - Multiple practice modes support
- * - Progress tracking and scoring
- * - Question generation and validation
- * - Session persistence capabilities
- * - Accessibility compliance
- */
 export const PracticeSession: React.FC<PracticeSessionProps> = ({
   settings,
   size = 'md',
@@ -49,7 +32,6 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
   className = '',
   'aria-label': ariaLabel,
 }) => {
-  // Generate session ID
   const sessionId = useMemo(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`, []);
   
   // Create stable dependency key for question generation
@@ -58,7 +40,6 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
     [settings.mode, settings.difficulty, settings.questionCount, settings.includeQualities, settings.includePositions]
   );
 
-  // Generate questions for the session (only when key configuration changes)
   const questions = useMemo(() => {
     return PracticeQuestionGenerator.generateQuestions({
       difficulty: settings.difficulty,
@@ -69,32 +50,26 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
     });
   }, [questionsKey, settings.difficulty, settings.mode, settings.questionCount, settings.includeQualities, settings.includePositions]);
 
-  // Session state
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<QuestionResult[]>([]);
   const [sessionStartTime] = useState<Date>(new Date());
   const [isCompleted, setIsCompleted] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Current question
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex >= questions.length - 1;
 
-  // Progress calculation
   const progress: ProgressIndicator = useMemo(() => ({
     current: currentQuestionIndex + 1,
     total: questions.length,
     percentage: Math.round(((currentQuestionIndex + 1) / questions.length) * 100),
     questionsRemaining: questions.length - (currentQuestionIndex + 1),
   }), [currentQuestionIndex, questions.length]);
-
-  // Handle answer submission
   const handleAnswer = useCallback((result: QuestionResult) => {
     const newAnswers = [...answers, result];
     setAnswers(newAnswers);
 
     if (isLastQuestion) {
-      // Session completed
       const endTime = new Date();
       const totalTime = endTime.getTime() - sessionStartTime.getTime();
       const score = calculateSessionScore(newAnswers, settings.difficulty, totalTime);
@@ -117,12 +92,9 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
       setIsCompleted(true);
       onComplete(completedSession);
     } else {
-      // Move to next question
       setCurrentQuestionIndex(prev => prev + 1);
     }
   }, [answers, isLastQuestion, sessionId, settings, questions, sessionStartTime, onComplete]);
-
-  // Handle pause
   const handlePause = useCallback(() => {
     if (isPaused || isCompleted) return;
 

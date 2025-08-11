@@ -1,49 +1,40 @@
-/**
- * Spacing System - Notion-Inspired Design Language
- * 
- * Based on Notion's 8px grid system with clean, consistent spacing.
- * Optimized for readability and modern interface design.
- */
-
-// Base unit for consistent spacing - Notion uses 8px
 const baseUnit = 8;
 
-// Core spacing scale - powers of the base unit
 export const spacing = {
   0: '0px',
-  0.5: `${baseUnit * 0.5}px`,   // 4px
-  1: `${baseUnit * 1}px`,       // 8px
-  1.5: `${baseUnit * 1.5}px`,   // 12px
-  2: `${baseUnit * 2}px`,       // 16px
-  2.5: `${baseUnit * 2.5}px`,   // 20px
-  3: `${baseUnit * 3}px`,       // 24px
-  3.5: `${baseUnit * 3.5}px`,   // 28px
-  4: `${baseUnit * 4}px`,       // 32px
-  5: `${baseUnit * 5}px`,       // 40px
-  6: `${baseUnit * 6}px`,       // 48px
-  7: `${baseUnit * 7}px`,       // 56px
-  8: `${baseUnit * 8}px`,       // 64px
-  9: `${baseUnit * 9}px`,       // 72px
-  10: `${baseUnit * 10}px`,     // 80px
-  11: `${baseUnit * 11}px`,     // 88px
-  12: `${baseUnit * 12}px`,     // 96px
-  14: `${baseUnit * 14}px`,     // 112px
-  16: `${baseUnit * 16}px`,     // 128px
-  20: `${baseUnit * 20}px`,     // 160px
-  24: `${baseUnit * 24}px`,     // 192px
-  28: `${baseUnit * 28}px`,     // 224px
-  32: `${baseUnit * 32}px`,     // 256px
-  36: `${baseUnit * 36}px`,     // 288px
-  40: `${baseUnit * 40}px`,     // 320px
-  44: `${baseUnit * 44}px`,     // 352px
-  48: `${baseUnit * 48}px`,     // 384px
-  52: `${baseUnit * 52}px`,     // 416px
-  56: `${baseUnit * 56}px`,     // 448px
-  60: `${baseUnit * 60}px`,     // 480px
-  64: `${baseUnit * 64}px`,     // 512px
-  72: `${baseUnit * 72}px`,     // 576px
-  80: `${baseUnit * 80}px`,     // 640px
-  96: `${baseUnit * 96}px`,     // 768px
+  0.5: `${baseUnit * 0.5}px`,
+  1: `${baseUnit * 1}px`,
+  1.5: `${baseUnit * 1.5}px`,
+  2: `${baseUnit * 2}px`,
+  2.5: `${baseUnit * 2.5}px`,
+  3: `${baseUnit * 3}px`,
+  3.5: `${baseUnit * 3.5}px`,
+  4: `${baseUnit * 4}px`,
+  5: `${baseUnit * 5}px`,
+  6: `${baseUnit * 6}px`,
+  7: `${baseUnit * 7}px`,
+  8: `${baseUnit * 8}px`,
+  9: `${baseUnit * 9}px`,
+  10: `${baseUnit * 10}px`,
+  11: `${baseUnit * 11}px`,
+  12: `${baseUnit * 12}px`,
+  14: `${baseUnit * 14}px`,
+  16: `${baseUnit * 16}px`,
+  20: `${baseUnit * 20}px`,
+  24: `${baseUnit * 24}px`,
+  28: `${baseUnit * 28}px`,
+  32: `${baseUnit * 32}px`,
+  36: `${baseUnit * 36}px`,
+  40: `${baseUnit * 40}px`,
+  44: `${baseUnit * 44}px`,
+  48: `${baseUnit * 48}px`,
+  52: `${baseUnit * 52}px`,
+  56: `${baseUnit * 56}px`,
+  60: `${baseUnit * 60}px`,
+  64: `${baseUnit * 64}px`,
+  72: `${baseUnit * 72}px`,
+  80: `${baseUnit * 80}px`,
+  96: `${baseUnit * 96}px`,
 } as const;
 
 // Musical interface specific spacing

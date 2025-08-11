@@ -4,47 +4,32 @@ import type { FretPosition } from '../Fretboard/Fretboard';
 import type { NoteName, ComponentSize, ChordSymbol, HarmonicFunction } from '../../types/music';
 import './TriadSelector.css';
 
-// Triad quality types
 export type TriadQuality = 'major' | 'minor' | 'diminished' | 'augmented';
 
-// Guitar neck position presets
 export type NeckPosition = 'open' | 'position-3' | 'position-5' | 'position-7' | 'position-9' | 'position-12';
 
-// Triad selection state interface
 export interface TriadSelection {
   rootNote: NoteName;
   quality: TriadQuality;
   neckPosition: NeckPosition;
 }
 
-// Component props interface
 export interface TriadSelectorProps {
-  /** Initial triad selection */
   initialSelection?: Partial<TriadSelection>;
-  /** Component size variant */
   size?: ComponentSize;
-  /** Show advanced position options */
   showAdvancedPositions?: boolean;
-  /** Callback when triad selection changes */
   onChange?: (selection: TriadSelection) => void;
-  /** Callback when a fret is clicked on the chart */
   onFretClick?: (position: FretPosition) => void;
-  /** Additional CSS class name */
   className?: string;
-  /** ARIA label for accessibility */
   'aria-label'?: string;
-  /** Start with expanded note grid visible */
   expandedView?: boolean;
-  /** Disable all interactions */
   disabled?: boolean;
 }
 
-// Chromatic notes for the root note picker
 const CHROMATIC_NOTES: NoteName[] = [
   'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'
 ];
 
-// Triad qualities with their interval structures
 const TRIAD_QUALITIES: Array<{ value: TriadQuality; label: string; intervals: number[]; symbol: string; shortLabel: string }> = [
   { value: 'major', label: 'Major', intervals: [0, 4, 7], symbol: '', shortLabel: 'Maj' },
   { value: 'minor', label: 'Minor', intervals: [0, 3, 7], symbol: 'm', shortLabel: 'Min' },
@@ -52,9 +37,6 @@ const TRIAD_QUALITIES: Array<{ value: TriadQuality; label: string; intervals: nu
   { value: 'augmented', label: 'Augmented', intervals: [0, 4, 8], symbol: 'aug', shortLabel: 'Aug' },
 ];
 
-// Note: NECK_POSITIONS removed as we no longer show position selector in vertical layout
-
-// Standard guitar tuning for fret position calculations
 const STANDARD_TUNING: NoteName[] = ['E', 'A', 'D', 'G', 'B', 'E'];
 
 /**
@@ -99,16 +81,13 @@ export const TriadSelector: React.FC<TriadSelectorProps> = ({
     });
   }, []);
 
-  // Calculate fret positions for the current triad across entire fretboard (0-15)
   const fretPositions = useMemo((): FretPosition[] => {
     const triadNotes = calculateTriadNotes(selection.rootNote, selection.quality);
     const positions: FretPosition[] = [];
     
-    // Search entire fretboard for triad notes (0-15 frets)
     for (let stringIndex = 0; stringIndex < 6; stringIndex++) {
       // Convert from visual string position (0-5) to tuning array index
       // String 0 (visual top) = tuning[5] (high E)
-      // String 4 (5th string) = tuning[1] (A string) 
       // String 5 (visual bottom) = tuning[0] (low E)
       const tuningIndex = (6 - 1) - stringIndex;
       const openStringNote = STANDARD_TUNING[tuningIndex];
@@ -137,13 +116,10 @@ export const TriadSelector: React.FC<TriadSelectorProps> = ({
     return positions;
   }, [selection.rootNote, selection.quality, calculateTriadNotes]);
 
-  // Generate chord symbol
   const chordSymbol: ChordSymbol = useMemo(() => {
     const qualityData = TRIAD_QUALITIES.find(q => q.value === selection.quality);
     return `${selection.rootNote}${qualityData?.symbol || ''}` as ChordSymbol;
   }, [selection.rootNote, selection.quality]);
-
-  // Handle selection changes
   const handleSelectionChange = useCallback((
     field: keyof typeof selection,
     value: NoteName | TriadQuality

@@ -1,8 +1,3 @@
-/**
- * Practice question generator service
- * Creates randomized questions for different practice modes
- */
-
 import type { NoteName, TriadQuality } from '../../../design-system/types/music';
 import type { TriadSelection, NeckPosition } from '../../../design-system/components/TriadSelector/TriadSelector';
 import type { 
@@ -13,32 +8,19 @@ import type {
   QuestionResult
 } from '../types/practice';
 
-// Available note names for random generation
 const ALL_NOTES: NoteName[] = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-
-// Available triad qualities
 const ALL_QUALITIES: TriadQuality[] = ['major', 'minor', 'diminished', 'augmented'];
-
-// Available positions
 const ALL_POSITIONS: NeckPosition[] = ['open', 'position-3', 'position-5', 'position-7', 'position-9', 'position-12'];
 
-/**
- * Generate a unique ID for practice questions
- */
 function generateQuestionId(): string {
   return `q_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 }
 
-/**
- * Pick a random element from an array
- */
 function randomPick<T>(array: T[]): T {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-/**
- * Shuffle an array using Fisher-Yates algorithm
- */
+// Fisher-Yates shuffle algorithm
 function shuffle<T>(array: T[]): T[] {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {

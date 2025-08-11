@@ -120,7 +120,12 @@ export const TriadSelector: React.FC<TriadSelectorProps> = ({
     const searchRange = { min: Math.max(0, neckFret - 2), max: neckFret + 5 };
     
     for (let stringIndex = 0; stringIndex < 6; stringIndex++) {
-      const openStringNote = STANDARD_TUNING[stringIndex];
+      // Convert from visual string position (0-5) to tuning array index
+      // String 0 (visual top) = tuning[5] (high E)
+      // String 4 (5th string) = tuning[1] (A string) 
+      // String 5 (visual bottom) = tuning[0] (low E)
+      const tuningIndex = (6 - 1) - stringIndex;
+      const openStringNote = STANDARD_TUNING[tuningIndex];
       const openStringIndex = CHROMATIC_NOTES.indexOf(openStringNote);
       
       for (let fret = searchRange.min; fret <= searchRange.max; fret++) {

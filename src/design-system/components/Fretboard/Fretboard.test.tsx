@@ -156,13 +156,13 @@ describe('Fretboard Component', () => {
         note: 'G'
       }));
       
-      // String 2 (A), fret 3 should be C (A + 3 semitones = C)
+      // String 2 (B), fret 3 should be D (B + 3 semitones = D)
       const string2Fret3 = screen.getByTestId('fret-position-3-2').querySelector('circle[role="button"]');
       fireEvent.click(string2Fret3!);
       expect(onFretClick).toHaveBeenCalledWith(expect.objectContaining({
         fret: 3,
         string: 2,
-        note: 'C'
+        note: 'D'
       }));
     });
 

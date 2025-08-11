@@ -79,11 +79,16 @@ export const Fretboard: React.FC<FretboardProps> = ({
 
   // Calculate note at specific fret position
   const calculateNote = useCallback((stringIndex: number, fret: number): NoteName => {
-    const openStringNote = tuning[stringIndex];
+    // Convert from visual string position (0-5) to tuning array index
+    // String 0 (visual top) = tuning[5] (high E)
+    // String 4 (5th string) = tuning[1] (A string) 
+    // String 5 (visual bottom) = tuning[0] (low E)
+    const tuningIndex = (stringCount - 1) - stringIndex;
+    const openStringNote = tuning[tuningIndex];
     const openStringIndex = CHROMATIC_NOTES.indexOf(openStringNote);
     const noteIndex = (openStringIndex + fret) % 12;
     return CHROMATIC_NOTES[noteIndex];
-  }, [tuning]);
+  }, [tuning, stringCount]);
 
   // Memoized fret positions for performance
   const fretPositions = useMemo(() => {

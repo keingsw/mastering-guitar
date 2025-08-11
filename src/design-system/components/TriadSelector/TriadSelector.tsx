@@ -162,49 +162,48 @@ export const TriadSelector: React.FC<TriadSelectorProps> = ({
 
   return (
     <div 
-      className={`triad-selector triad-selector--${size} triad-selector--vertical ${className}`}
+      className={`triad-selector triad-selector--${size} ${className}`}
       role="application"
-      aria-label={ariaLabel || 'Vertical triad selector with maximized fretboard space'}
+      aria-label={ariaLabel || 'Triad selector with horizontal header and maximized fretboard'}
     >
-      {/* Left Sidebar Controls */}
-      <div className="triad-selector__sidebar">
-        {/* Current Chord Display */}
+      {/* Horizontal Header: Chord Display + Controls */}
+      <div className="triad-selector__header">
+        {/* Chord Display */}
         <div className="triad-selector__chord-display">
           <div className="triad-selector__chord-symbol">{chordSymbol}</div>
           <div className="triad-selector__chord-notes">{triadNotes.join(' - ')}</div>
         </div>
 
-        {/* Vertical Controls */}
-        <div className="triad-selector__vertical-controls">
-          {/* Root Note Selection */}
+        {/* Controls Section */}
+        <div className="triad-selector__controls">
+          {/* Root Note Dropdown */}
           <div className="triad-selector__control-section">
-            <label className="triad-selector__section-label">Root Note</label>
-            <div className="triad-selector__vertical-note-grid" role="radiogroup">
+            <label className="triad-selector__section-label" htmlFor="root-note-select">
+              Root
+            </label>
+            <select
+              id="root-note-select"
+              className="triad-selector__dropdown"
+              value={selection.rootNote}
+              onChange={(e) => handleSelectionChange('rootNote', e.target.value as NoteName)}
+              disabled={disabled}
+              aria-label="Select root note"
+            >
               {CHROMATIC_NOTES.map(note => (
-                <button
-                  key={note}
-                  className={`triad-selector__vertical-note ${
-                    selection.rootNote === note ? 'triad-selector__vertical-note--active' : ''
-                  }`}
-                  onClick={() => handleSelectionChange('rootNote', note)}
-                  aria-pressed={selection.rootNote === note}
-                  disabled={disabled}
-                >
-                  {note}
-                </button>
+                <option key={note} value={note}>{note}</option>
               ))}
-            </div>
+            </select>
           </div>
 
-          {/* Quality Selection */}
+          {/* Quality Button Grid */}
           <div className="triad-selector__control-section">
             <label className="triad-selector__section-label">Quality</label>
-            <div className="triad-selector__vertical-quality" role="radiogroup">
+            <div className="triad-selector__quality-grid" role="radiogroup" aria-label="Select chord quality">
               {TRIAD_QUALITIES.map(quality => (
                 <button
                   key={quality.value}
-                  className={`triad-selector__vertical-quality-btn ${
-                    selection.quality === quality.value ? 'triad-selector__vertical-quality-btn--active' : ''
+                  className={`triad-selector__quality-button ${
+                    selection.quality === quality.value ? 'triad-selector__quality-button--active' : ''
                   }`}
                   onClick={() => handleSelectionChange('quality', quality.value)}
                   aria-pressed={selection.quality === quality.value}
@@ -218,11 +217,10 @@ export const TriadSelector: React.FC<TriadSelectorProps> = ({
         </div>
       </div>
 
-      {/* Maximized Fretboard Area */}
+      {/* Full-Width Fretboard Area */}
       <div className="triad-selector__fretboard-area">
         <Fretboard
           triadPositions={fretPositions}
-          chord={chordSymbol}
           neckPosition={0} // Always start from open position
           size="lg" // Always use large size for better visibility
           showNoteLabels={true}

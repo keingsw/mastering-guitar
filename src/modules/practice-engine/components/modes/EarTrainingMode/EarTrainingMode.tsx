@@ -1,8 +1,9 @@
-import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import type { ComponentSize, TriadQuality } from '../../../../../design-system/types/music';
-import type { PracticeQuestion, QuestionResult, UserAnswer } from '../../../types/practice';
-import { validateAnswer } from '../../../services/scoring-system';
-import './EarTrainingMode.css';
+import type React from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { ComponentSize, TriadQuality } from "../../../../../design-system/types/music";
+import { validateAnswer } from "../../../services/scoring-system";
+import type { PracticeQuestion, QuestionResult, UserAnswer } from "../../../types/practice";
+import "./EarTrainingMode.css";
 
 export interface EarTrainingModeProps {
   /** The practice question to answer */
@@ -18,7 +19,7 @@ export interface EarTrainingModeProps {
   /** Additional CSS class name */
   className?: string;
   /** ARIA label for accessibility */
-  'aria-label'?: string;
+  "aria-label"?: string;
 }
 
 // Audio synthesis utilities
@@ -33,14 +34,14 @@ class AudioSynthesizer {
 
   private async initializeAudio(): Promise<void> {
     if (this.audioContext) return;
-    
+
     try {
       this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       this.gainNode = this.audioContext.createGain();
       this.gainNode.connect(this.audioContext.destination);
       this.gainNode.gain.value = 0.1; // Low volume
     } catch (error) {
-      console.warn('Web Audio API not supported:', error);
+      console.warn("Web Audio API not supported:", error);
     }
   }
 
@@ -49,18 +50,18 @@ class AudioSynthesizer {
     if (!this.audioContext || !this.gainNode) return;
 
     const noteFrequencies: Record<string, number> = {
-      'C': 261.63,
-      'C#': 277.18,
-      'D': 293.66,
-      'D#': 311.13,
-      'E': 329.63,
-      'F': 349.23,
-      'F#': 369.99,
-      'G': 392.00,
-      'G#': 415.30,
-      'A': 440.00,
-      'A#': 466.16,
-      'B': 493.88,
+      C: 261.63,
+      "C#": 277.18,
+      D: 293.66,
+      "D#": 311.13,
+      E: 329.63,
+      F: 349.23,
+      "F#": 369.99,
+      G: 392.0,
+      "G#": 415.3,
+      A: 440.0,
+      "A#": 466.16,
+      B: 493.88,
     };
 
     const rootFreq = noteFrequencies[rootNote];
@@ -69,25 +70,23 @@ class AudioSynthesizer {
     // Calculate triad intervals
     let intervals: number[];
     switch (quality) {
-      case 'major':
+      case "major":
         intervals = [0, 4, 7]; // Root, major third, perfect fifth
         break;
-      case 'minor':
+      case "minor":
         intervals = [0, 3, 7]; // Root, minor third, perfect fifth
         break;
-      case 'diminished':
+      case "diminished":
         intervals = [0, 3, 6]; // Root, minor third, diminished fifth
         break;
-      case 'augmented':
+      case "augmented":
         intervals = [0, 4, 8]; // Root, major third, augmented fifth
         break;
       default:
         intervals = [0, 4, 7];
     }
 
-    const frequencies = intervals.map(semitones => 
-      rootFreq * Math.pow(2, semitones / 12)
-    );
+    const frequencies = intervals.map((semitones) => rootFreq * 2 ** (semitones / 12));
 
     // Play each note of the triad
     frequencies.forEach((freq, index) => {
@@ -102,19 +101,19 @@ class AudioSynthesizer {
 
     const oscillator = this.audioContext.createOscillator();
     const envelope = this.audioContext.createGain();
-    
+
     oscillator.connect(envelope);
     envelope.connect(this.gainNode);
-    
+
     oscillator.frequency.value = frequency;
-    oscillator.type = 'sine';
-    
+    oscillator.type = "sine";
+
     // Simple envelope for smoother sound
     const now = this.audioContext.currentTime;
     envelope.gain.setValueAtTime(0, now);
     envelope.gain.linearRampToValueAtTime(0.1, now + 0.01);
     envelope.gain.exponentialRampToValueAtTime(0.001, now + duration / 1000);
-    
+
     oscillator.start(now);
     oscillator.stop(now + duration / 1000);
   }
@@ -124,8 +123,8 @@ class AudioSynthesizer {
       clearTimeout(this.cleanupTimer);
       this.cleanupTimer = undefined;
     }
-    
-    if (this.audioContext && this.audioContext.state !== 'closed') {
+
+    if (this.audioContext && this.audioContext.state !== "closed") {
       this.audioContext.close().catch(console.warn);
       // Force cleanup after timeout to prevent memory leaks
       this.cleanupTimer = setTimeout(() => {
@@ -142,7 +141,7 @@ class AudioSynthesizer {
 
 /**
  * Ear Training Mode Component
- * 
+ *
  * Audio-based triad identification practice.
  * Features:
  * - Web Audio API synthesis for triad playback
@@ -153,12 +152,12 @@ class AudioSynthesizer {
  */
 export const EarTrainingMode: React.FC<EarTrainingModeProps> = ({
   question,
-  size = 'md',
+  size = "md",
   timeLimit,
   onAnswer,
   onTimeOut,
-  className = '',
-  'aria-label': ariaLabel,
+  className = "",
+  "aria-label": ariaLabel,
 }) => {
   const [selectedQuality, setSelectedQuality] = useState<TriadQuality | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -168,13 +167,13 @@ export const EarTrainingMode: React.FC<EarTrainingModeProps> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasPlayedOnce, setHasPlayedOnce] = useState(false);
   const [audioSupported, setAudioSupported] = useState(true);
-  
+
   const synthesizerRef = useRef<AudioSynthesizer | null>(null);
 
   // Initialize synthesizer
   useEffect(() => {
     synthesizerRef.current = new AudioSynthesizer();
-    
+
     // Check Web Audio API support
     const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
     if (!AudioContext) {
@@ -191,7 +190,7 @@ export const EarTrainingMode: React.FC<EarTrainingModeProps> = ({
     if (!timeLimit || isSubmitted) return;
 
     const timer = setInterval(() => {
-      setTimeRemaining(prev => {
+      setTimeRemaining((prev) => {
         if (prev === null || prev <= 1) {
           if (prev !== null && onTimeOut) {
             onTimeOut();
@@ -207,15 +206,15 @@ export const EarTrainingMode: React.FC<EarTrainingModeProps> = ({
 
   // Available quality options for multiple choice
   const qualityOptions: TriadQuality[] = useMemo(() => {
-    const baseOptions: TriadQuality[] = ['major', 'minor'];
-    
+    const baseOptions: TriadQuality[] = ["major", "minor"];
+
     // Add advanced options based on difficulty
-    if (question.difficulty === 'intermediate') {
-      baseOptions.push('diminished');
-    } else if (question.difficulty === 'advanced') {
-      baseOptions.push('diminished', 'augmented');
+    if (question.difficulty === "intermediate") {
+      baseOptions.push("diminished");
+    } else if (question.difficulty === "advanced") {
+      baseOptions.push("diminished", "augmented");
     }
-    
+
     return baseOptions;
   }, [question.difficulty]);
 
@@ -223,27 +222,23 @@ export const EarTrainingMode: React.FC<EarTrainingModeProps> = ({
   const formatTime = useCallback((seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
   }, []);
 
   // Play the triad audio
   const handlePlayTriad = useCallback(async () => {
     if (isPlaying || !synthesizerRef.current || !audioSupported) return;
-    
+
     setIsPlaying(true);
     setHasPlayedOnce(true);
-    
+
     try {
-      await synthesizerRef.current.playTriad(
-        question.target.rootNote,
-        question.target.quality,
-        2000
-      );
+      await synthesizerRef.current.playTriad(question.target.rootNote, question.target.quality, 2000);
     } catch (error) {
-      console.warn('Audio playback failed:', error);
+      console.warn("Audio playback failed:", error);
       setAudioSupported(false);
     }
-    
+
     // Reset playing state after duration
     setTimeout(() => {
       setIsPlaying(false);
@@ -251,10 +246,13 @@ export const EarTrainingMode: React.FC<EarTrainingModeProps> = ({
   }, [isPlaying, question.target, audioSupported]);
 
   // Handle quality selection
-  const handleQualitySelect = useCallback((quality: TriadQuality) => {
-    if (isSubmitted) return;
-    setSelectedQuality(quality);
-  }, [isSubmitted]);
+  const handleQualitySelect = useCallback(
+    (quality: TriadQuality) => {
+      if (isSubmitted) return;
+      setSelectedQuality(quality);
+    },
+    [isSubmitted],
+  );
 
   // Handle answer submission
   const handleSubmit = useCallback(() => {
@@ -262,7 +260,7 @@ export const EarTrainingMode: React.FC<EarTrainingModeProps> = ({
 
     const responseTime = new Date().getTime() - startTime.getTime();
     const isCorrect = selectedQuality === question.target.quality;
-    
+
     const userAnswer: UserAnswer = {
       questionId: question.id,
       answer: selectedQuality,
@@ -272,16 +270,16 @@ export const EarTrainingMode: React.FC<EarTrainingModeProps> = ({
     };
 
     const validationResult = validateAnswer(question, userAnswer);
-    
-    setFeedback(validationResult.explanation);
+
+    setFeedback(validationResult.explanation || "");
     setIsSubmitted(true);
-    
+
     const result: QuestionResult = {
       question,
       userAnswer,
       correctAnswer: question.target.quality,
       isCorrect,
-      feedback: validationResult.explanation,
+      feedback: validationResult.explanation || "",
       points: validationResult.points,
     };
 
@@ -295,14 +293,14 @@ export const EarTrainingMode: React.FC<EarTrainingModeProps> = ({
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (isSubmitted) return;
-      
-      if (event.key === 'Enter' && selectedQuality) {
+
+      if (event.key === "Enter" && selectedQuality) {
         event.preventDefault();
         handleSubmit();
-      } else if (event.key === ' ') {
+      } else if (event.key === " ") {
         event.preventDefault();
         handlePlayTriad();
-      } else if (event.key >= '1' && event.key <= '4') {
+      } else if (event.key >= "1" && event.key <= "4") {
         const index = parseInt(event.key) - 1;
         if (index < qualityOptions.length) {
           handleQualitySelect(qualityOptions[index]);
@@ -310,32 +308,32 @@ export const EarTrainingMode: React.FC<EarTrainingModeProps> = ({
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleSubmit, handlePlayTriad, handleQualitySelect, selectedQuality, isSubmitted, qualityOptions]);
 
   // Timer warning threshold
   const isTimeWarning = timeRemaining !== null && timeRemaining <= 5;
 
   return (
-    <div 
+    <div
       className={`ear-training-mode ear-training-mode--${size} ${className}`}
       role="main"
-      aria-label={ariaLabel || 'Ear training mode practice question'}
+      aria-label={ariaLabel || "Ear training mode practice question"}
     >
       {/* Screen reader description */}
       <div className="sr-only">
-        Ear training mode: Listen to the triad and identify its quality. 
-        Use the play button or spacebar to hear the audio. Select your answer from the options.
+        Ear training mode: Listen to the triad and identify its quality. Use the play button or spacebar to hear the
+        audio. Select your answer from the options.
       </div>
 
       {/* Timer (if enabled) */}
       {timeLimit && timeRemaining !== null && (
         <div className="ear-training-mode__timer">
           <span className="ear-training-mode__timer-label">Time:</span>
-          <span 
+          <span
             className={`ear-training-mode__timer-value ${
-              isTimeWarning ? 'ear-training-mode__timer-value--warning' : ''
+              isTimeWarning ? "ear-training-mode__timer-value--warning" : ""
             }`}
           >
             {formatTime(timeRemaining)}
@@ -347,7 +345,8 @@ export const EarTrainingMode: React.FC<EarTrainingModeProps> = ({
       <div className="ear-training-mode__instructions">
         <h2 className="ear-training-mode__question">Listen and Identify</h2>
         <p className="ear-training-mode__description">
-          {question.instructions || 'Listen to the triad and identify its quality. You can replay the audio as many times as needed.'}
+          {question.instructions ||
+            "Listen to the triad and identify its quality. You can replay the audio as many times as needed."}
         </p>
       </div>
 
@@ -358,10 +357,8 @@ export const EarTrainingMode: React.FC<EarTrainingModeProps> = ({
             type="button"
             onClick={handlePlayTriad}
             disabled={isPlaying}
-            className={`ear-training-mode__play-button ${
-              isPlaying ? 'ear-training-mode__play-button--playing' : ''
-            } ${
-              hasPlayedOnce ? 'ear-training-mode__play-button--played' : ''
+            className={`ear-training-mode__play-button ${isPlaying ? "ear-training-mode__play-button--playing" : ""} ${
+              hasPlayedOnce ? "ear-training-mode__play-button--played" : ""
             }`}
             aria-describedby="audio-instructions"
           >
@@ -373,7 +370,7 @@ export const EarTrainingMode: React.FC<EarTrainingModeProps> = ({
             ) : (
               <>
                 <span className="ear-training-mode__play-icon">🔊</span>
-                {hasPlayedOnce ? 'Play Again' : 'Play Triad'}
+                {hasPlayedOnce ? "Play Again" : "Play Triad"}
               </>
             )}
           </button>
@@ -381,10 +378,13 @@ export const EarTrainingMode: React.FC<EarTrainingModeProps> = ({
           <div className="ear-training-mode__audio-fallback">
             <div className="ear-training-mode__fallback-icon">🔇</div>
             <div className="ear-training-mode__fallback-text">
-              <strong>Audio not available</strong><br />
+              <strong>Audio not available</strong>
+              <br />
               Web Audio API is not supported in this browser.
               <br />
-              <small>Target: {question.target.rootNote} {question.target.quality}</small>
+              <small>
+                Target: {question.target.rootNote} {question.target.quality}
+              </small>
             </div>
           </div>
         )}
@@ -392,9 +392,7 @@ export const EarTrainingMode: React.FC<EarTrainingModeProps> = ({
 
       {/* Quality options */}
       <div className="ear-training-mode__options">
-        <div className="ear-training-mode__options-label">
-          What quality do you hear?
-        </div>
+        <div className="ear-training-mode__options-label">What quality do you hear?</div>
         <div className="ear-training-mode__quality-grid">
           {qualityOptions.map((quality, index) => (
             <button
@@ -403,15 +401,13 @@ export const EarTrainingMode: React.FC<EarTrainingModeProps> = ({
               onClick={() => handleQualitySelect(quality)}
               disabled={isSubmitted}
               className={`ear-training-mode__quality-option ${
-                selectedQuality === quality ? 'ear-training-mode__quality-option--selected' : ''
+                selectedQuality === quality ? "ear-training-mode__quality-option--selected" : ""
               } ${
-                isSubmitted && quality === question.target.quality 
-                  ? 'ear-training-mode__quality-option--correct' 
-                  : ''
+                isSubmitted && quality === question.target.quality ? "ear-training-mode__quality-option--correct" : ""
               } ${
                 isSubmitted && selectedQuality === quality && quality !== question.target.quality
-                  ? 'ear-training-mode__quality-option--incorrect'
-                  : ''
+                  ? "ear-training-mode__quality-option--incorrect"
+                  : ""
               }`}
               aria-label={`Select ${quality} quality. Keyboard shortcut: ${index + 1}`}
             >
@@ -429,22 +425,20 @@ export const EarTrainingMode: React.FC<EarTrainingModeProps> = ({
           onClick={handleSubmit}
           disabled={isSubmitted || !selectedQuality}
           className={`ear-training-mode__submit-button ${
-            selectedQuality ? 'ear-training-mode__submit-button--ready' : ''
-          } ${
-            isSubmitted ? 'ear-training-mode__submit-button--submitted' : ''
-          }`}
+            selectedQuality ? "ear-training-mode__submit-button--ready" : ""
+          } ${isSubmitted ? "ear-training-mode__submit-button--submitted" : ""}`}
         >
-          {isSubmitted ? 'Submitted' : 'Submit Answer'}
+          {isSubmitted ? "Submitted" : "Submit Answer"}
         </button>
       </div>
 
       {/* Feedback */}
       {feedback && (
-        <div 
+        <div
           className={`ear-training-mode__feedback ${
-            selectedQuality === question.target.quality 
-              ? 'ear-training-mode__feedback--correct' 
-              : 'ear-training-mode__feedback--incorrect'
+            selectedQuality === question.target.quality
+              ? "ear-training-mode__feedback--correct"
+              : "ear-training-mode__feedback--incorrect"
           }`}
           role="alert"
           aria-live="assertive"
@@ -456,9 +450,7 @@ export const EarTrainingMode: React.FC<EarTrainingModeProps> = ({
               <span className="ear-training-mode__feedback-icon">✗ Incorrect</span>
             )}
           </div>
-          <div className="ear-training-mode__feedback-text">
-            {feedback}
-          </div>
+          <div className="ear-training-mode__feedback-text">{feedback}</div>
           {selectedQuality !== question.target.quality && (
             <div className="ear-training-mode__correct-answer">
               The correct answer was: <strong>{question.target.quality}</strong>
@@ -469,9 +461,8 @@ export const EarTrainingMode: React.FC<EarTrainingModeProps> = ({
 
       {/* Hidden instructions for screen readers */}
       <div id="audio-instructions" className="sr-only">
-        Click to play the triad audio, or press spacebar. 
-        Use number keys 1-{qualityOptions.length} to select quality options.
-        Press Enter to submit your answer when ready.
+        Click to play the triad audio, or press spacebar. Use number keys 1-{qualityOptions.length} to select quality
+        options. Press Enter to submit your answer when ready.
         {timeLimit && ` Time limit: ${timeLimit} seconds.`}
       </div>
     </div>
@@ -479,8 +470,8 @@ export const EarTrainingMode: React.FC<EarTrainingModeProps> = ({
 };
 
 // Validation in development mode
-if (process.env.NODE_ENV === 'development') {
-  EarTrainingMode.displayName = 'EarTrainingMode';
+if (process.env.NODE_ENV === "development") {
+  EarTrainingMode.displayName = "EarTrainingMode";
 }
 
 export default EarTrainingMode;

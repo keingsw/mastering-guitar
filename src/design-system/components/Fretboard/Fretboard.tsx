@@ -1,15 +1,14 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { colors } from '../../tokens/colors';
-import type { NoteName, HarmonicFunction, ComponentSize, ChordSymbol } from '../../types/music';
-import './Fretboard.css';
+import type React from "react";
+import { useCallback, useMemo, useState } from "react";
+import { colors } from "../../tokens/colors";
+import type { ChordSymbol, ComponentSize, HarmonicFunction, NoteName } from "../../types/music";
+import "./Fretboard.css";
 
 // Standard guitar tuning (6th string to 1st string)
-const STANDARD_TUNING: NoteName[] = ['E', 'A', 'D', 'G', 'B', 'E'];
+const STANDARD_TUNING: NoteName[] = ["E", "A", "D", "G", "B", "E"];
 
 // Chromatic note sequence for fret calculations
-const CHROMATIC_NOTES: NoteName[] = [
-  'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'
-];
+const CHROMATIC_NOTES: NoteName[] = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
 // Standard position markers (frets with dots) - extended to 24th fret
 const POSITION_MARKERS = [3, 5, 7, 9, 12, 15, 17, 19, 21, 24];
@@ -46,13 +45,13 @@ export interface FretboardProps {
   /** Additional CSS class name */
   className?: string;
   /** ARIA label for accessibility */
-  'aria-label'?: string;
+  "aria-label"?: string;
 }
 
 /**
  * Interactive SVG guitar fretboard component with clickable frets,
  * triad highlighting, multiple neck positions, and chord visualization.
- * 
+ *
  * Features:
  * - Clickable fret positions with hover states
  * - Harmonic function color coding (root, third, fifth)
@@ -69,74 +68,84 @@ export const Fretboard: React.FC<FretboardProps> = ({
   chord,
   showNoteLabels = true,
   showFretNumbers = true,
-  size = 'md',
+  size = "md",
   tuning = STANDARD_TUNING,
   onFretClick,
-  className = '',
-  'aria-label': ariaLabel,
+  className = "",
+  "aria-label": ariaLabel,
 }) => {
   const [hoveredPosition, setHoveredPosition] = useState<string | null>(null);
 
   // Calculate note at specific fret position
-  const calculateNote = useCallback((stringIndex: number, fret: number): NoteName => {
-    // Convert from visual string position (0-5) to tuning array index
-    // String 0 (visual top) = tuning[5] (high E)
-    // String 4 (5th string) = tuning[1] (A string) 
-    // String 5 (visual bottom) = tuning[0] (low E)
-    const tuningIndex = (stringCount - 1) - stringIndex;
-    const openStringNote = tuning[tuningIndex];
-    const openStringIndex = CHROMATIC_NOTES.indexOf(openStringNote);
-    const noteIndex = (openStringIndex + fret) % 12;
-    return CHROMATIC_NOTES[noteIndex];
-  }, [tuning, stringCount]);
+  const calculateNote = useCallback(
+    (stringIndex: number, fret: number): NoteName => {
+      // Convert from visual string position (0-5) to tuning array index
+      // String 0 (visual top) = tuning[5] (high E)
+      // String 4 (5th string) = tuning[1] (A string)
+      // String 5 (visual bottom) = tuning[0] (low E)
+      const tuningIndex = stringCount - 1 - stringIndex;
+      const openStringNote = tuning[tuningIndex];
+      const openStringIndex = CHROMATIC_NOTES.indexOf(openStringNote);
+      const noteIndex = (openStringIndex + fret) % 12;
+      return CHROMATIC_NOTES[noteIndex];
+    },
+    [tuning, stringCount],
+  );
 
   // Memoized fret positions for performance
   const fretPositions = useMemo(() => {
     const positions: Array<{ fret: number; string: number; note: NoteName; id: string }> = [];
-    
+
     for (let stringIndex = 0; stringIndex < stringCount; stringIndex++) {
       for (let fret = 0; fret <= fretCount; fret++) {
         const note = calculateNote(stringIndex, fret);
         const stringNum = stringIndex + 1;
         const id = `fret-position-${fret}-${stringNum}`;
-        
+
         positions.push({ fret, string: stringNum, note, id });
       }
     }
-    
+
     return positions;
   }, [fretCount, stringCount, calculateNote]);
 
   // Find triad position for a specific fret/string combination
-  const getTriadFunction = useCallback((fret: number, string: number): HarmonicFunction | null => {
-    const position = triadPositions.find(pos => 
-      pos.fret === fret && pos.string === string
-    );
-    return position?.function || null;
-  }, [triadPositions]);
+  const getTriadFunction = useCallback(
+    (fret: number, string: number): HarmonicFunction | null => {
+      const position = triadPositions.find((pos) => pos.fret === fret && pos.string === string);
+      return position?.function || null;
+    },
+    [triadPositions],
+  );
 
   // Handle fret click
-  const handleFretClick = useCallback((fret: number, string: number) => {
-    if (!onFretClick) return;
+  const handleFretClick = useCallback(
+    (fret: number, string: number) => {
+      if (!onFretClick) return;
 
-    const note = calculateNote(string - 1, fret);
-    const harmonicFunction = getTriadFunction(fret, string);
-    
-    onFretClick({
-      fret,
-      string,
-      note,
-      function: harmonicFunction || undefined
-    });
-  }, [onFretClick, calculateNote, getTriadFunction]);
+      const note = calculateNote(string - 1, fret);
+      const harmonicFunction = getTriadFunction(fret, string);
+
+      onFretClick({
+        fret,
+        string,
+        note,
+        function: harmonicFunction || undefined,
+      });
+    },
+    [onFretClick, calculateNote, getTriadFunction],
+  );
 
   // Handle keyboard interaction
-  const handleKeyDown = useCallback((event: React.KeyboardEvent, fret: number, string: number) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      handleFretClick(fret, string);
-    }
-  }, [handleFretClick]);
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent, fret: number, string: number) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        handleFretClick(fret, string);
+      }
+    },
+    [handleFretClick],
+  );
 
   // SVG dimensions and layout calculations
   const fretWidth = 50; // Fixed narrower width to fit 21 frets comfortably
@@ -149,7 +158,7 @@ export const Fretboard: React.FC<FretboardProps> = ({
   const sizeScale = {
     sm: 0.75,
     md: 1,
-    lg: 1.25
+    lg: 1.25,
   }[size];
 
   const scaledWidth = fretboardWidth * sizeScale;
@@ -158,42 +167,28 @@ export const Fretboard: React.FC<FretboardProps> = ({
   // Get color for harmonic function
   const getFunctionColor = (func: HarmonicFunction): string => {
     switch (func) {
-      case 'root':
+      case "root":
         return colors.theory.root.DEFAULT;
-      case 'third':
+      case "third":
         return colors.theory.third.DEFAULT;
-      case 'fifth':
+      case "fifth":
         return colors.theory.fifth.DEFAULT;
       default:
         return colors.neutral[400];
     }
   };
 
-  // Get shape for harmonic function (for accessibility and better UX)
-  const getFunctionShape = (func: HarmonicFunction): 'circle' | 'triangle' | 'diamond' => {
-    switch (func) {
-      case 'root':
-        return 'circle';
-      case 'third':
-        return 'triangle';
-      case 'fifth':
-        return 'diamond';
-      default:
-        return 'circle';
-    }
-  };
-
-  // Get text label for harmonic function (new intuitive approach)
+  // Get text label for harmonic function (clear accessibility approach)
   const getFunctionLabel = (func: HarmonicFunction): string => {
     switch (func) {
-      case 'root':
-        return 'R';
-      case 'third':
-        return '3';
-      case 'fifth':
-        return '5';
+      case "root":
+        return "R";
+      case "third":
+        return "3";
+      case "fifth":
+        return "5";
       default:
-        return '';
+        return "";
     }
   };
 
@@ -204,8 +199,8 @@ export const Fretboard: React.FC<FretboardProps> = ({
     <div className={`fretboard-container fretboard-container--${size} ${className}`}>
       {/* Screen reader description */}
       <div id={descriptionId} className="sr-only">
-        {chord ? `${chord} chord on guitar fretboard` : 'Interactive guitar fretboard'} 
-        with {fretCount} frets. 
+        {chord ? `${chord} chord on guitar fretboard` : "Interactive guitar fretboard"}
+        with {fretCount} frets.
         {triadPositions.length > 0 && `Showing ${triadPositions.length} highlighted positions.`}
         Use tab to navigate fret positions and enter to select.
       </div>
@@ -226,7 +221,7 @@ export const Fretboard: React.FC<FretboardProps> = ({
         preserveAspectRatio="xMidYMid meet"
         role="img"
         aria-labelledby={descriptionId}
-        aria-label={ariaLabel || 'Interactive guitar fretboard'}
+        aria-label={ariaLabel || "Interactive guitar fretboard"}
         data-neck-position={neckPosition}
       >
         <defs>
@@ -291,7 +286,7 @@ export const Fretboard: React.FC<FretboardProps> = ({
         ))}
 
         {/* Position markers */}
-        {POSITION_MARKERS.filter(fret => fret <= fretCount + neckPosition && fret > neckPosition).map(fret => {
+        {POSITION_MARKERS.filter((fret) => fret <= fretCount + neckPosition && fret > neckPosition).map((fret) => {
           const adjustedFret = fret - neckPosition;
           const isDouble = DOUBLE_MARKERS.includes(fret);
           const centerX = 40 + nutWidth + adjustedFret * fretWidth - fretWidth / 2;
@@ -299,18 +294,8 @@ export const Fretboard: React.FC<FretboardProps> = ({
 
           return isDouble ? (
             <g key={`marker-${fret}`} data-testid={`position-marker-${fret}`}>
-              <circle
-                cx={centerX}
-                cy={centerY - 6}
-                r="4"
-                fill={colors.neutral[300]}
-              />
-              <circle
-                cx={centerX}
-                cy={centerY + 6}
-                r="4"
-                fill={colors.neutral[300]}
-              />
+              <circle cx={centerX} cy={centerY - 6} r="4" fill={colors.neutral[300]} />
+              <circle cx={centerX} cy={centerY + 6} r="4" fill={colors.neutral[300]} />
             </g>
           ) : (
             <circle
@@ -325,22 +310,23 @@ export const Fretboard: React.FC<FretboardProps> = ({
         })}
 
         {/* Fret numbers */}
-        {showFretNumbers && Array.from({ length: fretCount }, (_, i) => {
-          const fretNumber = i + 1 + neckPosition;
-          return (
-            <text
-              key={`fret-number-${i + 1}`}
-              x={40 + nutWidth + (i + 1) * fretWidth - fretWidth / 2}
-              y="15"
-              textAnchor="middle"
-              fontSize="12"
-              fill={colors.text.secondary}
-              className="fretboard__fret-number"
-            >
-              {fretNumber}
-            </text>
-          );
-        })}
+        {showFretNumbers &&
+          Array.from({ length: fretCount }, (_, i) => {
+            const fretNumber = i + 1 + neckPosition;
+            return (
+              <text
+                key={`fret-number-${i + 1}`}
+                x={40 + nutWidth + (i + 1) * fretWidth - fretWidth / 2}
+                y="15"
+                textAnchor="middle"
+                fontSize="12"
+                fill={colors.text.secondary}
+                className="fretboard__fret-number"
+              >
+                {fretNumber}
+              </text>
+            );
+          })}
 
         {/* Clickable fret positions */}
         {fretPositions.map(({ fret, string, note, id }) => {
@@ -358,11 +344,11 @@ export const Fretboard: React.FC<FretboardProps> = ({
                 cy={y}
                 r="8"
                 fill="transparent"
-                className={`fret-position ${isHovered ? 'fret-position--hover' : ''}`}
+                className={`fret-position ${isHovered ? "fret-position--hover" : ""}`}
                 data-function={harmonicFunction}
                 tabIndex={0}
                 role="button"
-                aria-label={`Fret ${fret}, string ${string}, note ${note}${harmonicFunction ? `, ${harmonicFunction}` : ''}`}
+                aria-label={`Fret ${fret}, string ${string}, note ${note}${harmonicFunction ? `, ${harmonicFunction}` : ""}`}
                 onMouseEnter={() => setHoveredPosition(id)}
                 onMouseLeave={() => setHoveredPosition(null)}
                 onClick={() => handleFretClick(fret, string)}
@@ -382,7 +368,7 @@ export const Fretboard: React.FC<FretboardProps> = ({
                     strokeWidth="2"
                     opacity="0.95"
                   />
-                  
+
                   {/* Harmonic function label - clear but not too large */}
                   <text
                     x={x}
@@ -424,7 +410,7 @@ export const Fretboard: React.FC<FretboardProps> = ({
                     fill={colors.background.secondary}
                     fillOpacity="0.8"
                   />
-                  
+
                   {/* Note name on hover */}
                   <text
                     x={x}
@@ -449,8 +435,8 @@ export const Fretboard: React.FC<FretboardProps> = ({
 };
 
 // Validation in development mode
-if (process.env.NODE_ENV === 'development') {
-  Fretboard.displayName = 'Fretboard';
+if (process.env.NODE_ENV === "development") {
+  Fretboard.displayName = "Fretboard";
 }
 
 export default Fretboard;

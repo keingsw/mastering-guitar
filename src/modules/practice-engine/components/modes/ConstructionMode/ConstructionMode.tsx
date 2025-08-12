@@ -1,10 +1,11 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import { TriadSelector } from '../../../../../design-system/components/TriadSelector/TriadSelector';
-import type { TriadSelection } from '../../../../../design-system/components/TriadSelector/TriadSelector';
-import type { ComponentSize } from '../../../../../design-system/types/music';
-import type { PracticeQuestion, QuestionResult, UserAnswer } from '../../../types/practice';
-import { validateAnswer } from '../../../services/scoring-system';
-import './ConstructionMode.css';
+import type React from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type { TriadSelection } from "../../../../../design-system/components/TriadSelector/TriadSelector";
+import { TriadSelector } from "../../../../../design-system/components/TriadSelector/TriadSelector";
+import type { ComponentSize } from "../../../../../design-system/types/music";
+import { validateAnswer } from "../../../services/scoring-system";
+import type { PracticeQuestion, QuestionResult, UserAnswer } from "../../../types/practice";
+import "./ConstructionMode.css";
 
 export interface ConstructionModeProps {
   /** The practice question to answer */
@@ -20,12 +21,12 @@ export interface ConstructionModeProps {
   /** Additional CSS class name */
   className?: string;
   /** ARIA label for accessibility */
-  'aria-label'?: string;
+  "aria-label"?: string;
 }
 
 /**
  * Construction Mode Component
- * 
+ *
  * Presents written instructions and allows users to build triads.
  * Features:
  * - Clear construction instructions
@@ -36,17 +37,17 @@ export interface ConstructionModeProps {
  */
 export const ConstructionMode: React.FC<ConstructionModeProps> = ({
   question,
-  size = 'md',
+  size = "md",
   timeLimit,
   onAnswer,
   onTimeOut,
-  className = '',
-  'aria-label': ariaLabel,
+  className = "",
+  "aria-label": ariaLabel,
 }) => {
   const [selectedTriad, setSelectedTriad] = useState<TriadSelection>({
-    rootNote: 'C',
-    quality: 'major',
-    neckPosition: 'open',
+    rootNote: "C",
+    quality: "major",
+    neckPosition: "open",
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -58,7 +59,7 @@ export const ConstructionMode: React.FC<ConstructionModeProps> = ({
     if (!timeLimit || isSubmitted) return;
 
     const timer = setInterval(() => {
-      setTimeRemaining(prev => {
+      setTimeRemaining((prev) => {
         if (prev === null || prev <= 1) {
           if (prev !== null && onTimeOut) {
             onTimeOut();
@@ -76,28 +77,33 @@ export const ConstructionMode: React.FC<ConstructionModeProps> = ({
   const formatTime = useCallback((seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
   }, []);
 
   // Check if current selection matches target
   const isCorrectSelection = useMemo(() => {
-    return selectedTriad.rootNote === question.target.rootNote &&
-           selectedTriad.quality === question.target.quality &&
-           selectedTriad.neckPosition === question.target.neckPosition;
+    return (
+      selectedTriad.rootNote === question.target.rootNote &&
+      selectedTriad.quality === question.target.quality &&
+      selectedTriad.neckPosition === question.target.neckPosition
+    );
   }, [selectedTriad, question.target]);
 
   // Handle triad selection change
-  const handleTriadChange = useCallback((newSelection: TriadSelection) => {
-    if (isSubmitted) return;
-    setSelectedTriad(newSelection);
-  }, [isSubmitted]);
+  const handleTriadChange = useCallback(
+    (newSelection: TriadSelection) => {
+      if (isSubmitted) return;
+      setSelectedTriad(newSelection);
+    },
+    [isSubmitted],
+  );
 
   // Handle answer submission
   const handleSubmit = useCallback(() => {
     if (isSubmitted) return;
 
     const responseTime = new Date().getTime() - startTime.getTime();
-    
+
     const userAnswer: UserAnswer = {
       questionId: question.id,
       answer: selectedTriad,
@@ -107,16 +113,16 @@ export const ConstructionMode: React.FC<ConstructionModeProps> = ({
     };
 
     const validationResult = validateAnswer(question, userAnswer);
-    
-    setFeedback(validationResult.explanation);
+
+    setFeedback(validationResult.explanation || "");
     setIsSubmitted(true);
-    
+
     const result: QuestionResult = {
       question,
       userAnswer,
       correctAnswer: question.target,
       isCorrect: isCorrectSelection,
-      feedback: validationResult.explanation,
+      feedback: validationResult.explanation || "",
       points: validationResult.points,
     };
 
@@ -129,38 +135,38 @@ export const ConstructionMode: React.FC<ConstructionModeProps> = ({
   // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Enter' && !isSubmitted && isCorrectSelection) {
+      if (event.key === "Enter" && !isSubmitted && isCorrectSelection) {
         event.preventDefault();
         handleSubmit();
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleSubmit, isSubmitted, isCorrectSelection]);
 
   // Timer warning threshold
   const isTimeWarning = timeRemaining !== null && timeRemaining <= 5;
 
   return (
-    <div 
+    <div
       className={`construction-mode construction-mode--${size} ${className}`}
       role="main"
-      aria-label={ariaLabel || 'Construction mode practice question'}
+      aria-label={ariaLabel || "Construction mode practice question"}
     >
       {/* Screen reader description */}
       <div className="sr-only">
-        Construction mode: Build the specified triad using the interactive selector. 
-        Read the instructions carefully and construct the requested chord.
+        Construction mode: Build the specified triad using the interactive selector. Read the instructions carefully and
+        construct the requested chord.
       </div>
 
       {/* Timer (if enabled) */}
       {timeLimit && timeRemaining !== null && (
         <div className="construction-mode__timer">
           <span className="construction-mode__timer-label">Time:</span>
-          <span 
+          <span
             className={`construction-mode__timer-value ${
-              isTimeWarning ? 'construction-mode__timer-value--warning' : ''
+              isTimeWarning ? "construction-mode__timer-value--warning" : ""
             }`}
           >
             {formatTime(timeRemaining)}
@@ -175,7 +181,8 @@ export const ConstructionMode: React.FC<ConstructionModeProps> = ({
           Follow the instructions below and use the selector to build the correct triad:
         </p>
         <div className="construction-mode__target-instructions">
-          {question.instructions || `Build a ${question.target.rootNote} ${question.target.quality} triad in ${question.target.neckPosition}`}
+          {question.instructions ||
+            `Build a ${question.target.rootNote} ${question.target.quality} triad in ${question.target.neckPosition}`}
         </div>
       </div>
 
@@ -193,9 +200,13 @@ export const ConstructionMode: React.FC<ConstructionModeProps> = ({
       {/* Validation indicator */}
       {!isSubmitted && (
         <div className="construction-mode__validation">
-          <div className={`construction-mode__validation-indicator ${
-            isCorrectSelection ? 'construction-mode__validation-indicator--correct' : 'construction-mode__validation-indicator--incomplete'
-          }`}>
+          <div
+            className={`construction-mode__validation-indicator ${
+              isCorrectSelection
+                ? "construction-mode__validation-indicator--correct"
+                : "construction-mode__validation-indicator--incomplete"
+            }`}
+          >
             {isCorrectSelection ? (
               <>
                 <span className="construction-mode__validation-icon">✓</span>
@@ -218,21 +229,19 @@ export const ConstructionMode: React.FC<ConstructionModeProps> = ({
           onClick={handleSubmit}
           disabled={isSubmitted || !isCorrectSelection}
           className={`construction-mode__submit-button ${
-            isCorrectSelection ? 'construction-mode__submit-button--ready' : ''
-          } ${
-            isSubmitted ? 'construction-mode__submit-button--submitted' : ''
-          }`}
+            isCorrectSelection ? "construction-mode__submit-button--ready" : ""
+          } ${isSubmitted ? "construction-mode__submit-button--submitted" : ""}`}
           aria-describedby="construction-mode-instructions"
         >
-          {isSubmitted ? 'Submitted' : 'Submit Answer'}
+          {isSubmitted ? "Submitted" : "Submit Answer"}
         </button>
       </div>
 
       {/* Feedback */}
       {feedback && (
-        <div 
+        <div
           className={`construction-mode__feedback ${
-            isCorrectSelection ? 'construction-mode__feedback--correct' : 'construction-mode__feedback--incorrect'
+            isCorrectSelection ? "construction-mode__feedback--correct" : "construction-mode__feedback--incorrect"
           }`}
           role="alert"
           aria-live="assertive"
@@ -244,16 +253,14 @@ export const ConstructionMode: React.FC<ConstructionModeProps> = ({
               <span className="construction-mode__feedback-icon">✗ Incorrect</span>
             )}
           </div>
-          <div className="construction-mode__feedback-text">
-            {feedback}
-          </div>
+          <div className="construction-mode__feedback-text">{feedback}</div>
         </div>
       )}
 
       {/* Hidden instructions for screen readers */}
       <div id="construction-mode-instructions" className="sr-only">
-        Construction mode practice question. Use the triad selector to build the requested chord. 
-        Press Enter to submit your answer when ready.
+        Construction mode practice question. Use the triad selector to build the requested chord. Press Enter to submit
+        your answer when ready.
         {timeLimit && ` Time limit: ${timeLimit} seconds.`}
       </div>
     </div>
@@ -261,8 +268,8 @@ export const ConstructionMode: React.FC<ConstructionModeProps> = ({
 };
 
 // Validation in development mode
-if (process.env.NODE_ENV === 'development') {
-  ConstructionMode.displayName = 'ConstructionMode';
+if (process.env.NODE_ENV === "development") {
+  ConstructionMode.displayName = "ConstructionMode";
 }
 
 export default ConstructionMode;

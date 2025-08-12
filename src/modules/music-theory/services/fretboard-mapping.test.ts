@@ -18,7 +18,7 @@ describe("Fretboard mapping", () => {
         new Note("G"),
         new Note("D"),
         new Note("A"),
-        new Note("E")
+        new Note("E"),
       ]);
     });
   });

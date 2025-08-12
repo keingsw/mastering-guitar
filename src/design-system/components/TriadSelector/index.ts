@@ -1,7 +1,7 @@
-export { TriadSelector } from './TriadSelector';
-export type { 
-  TriadSelection, 
-  TriadSelectorProps, 
-  TriadQuality, 
-  NeckPosition 
-} from './TriadSelector';
+export type {
+  NeckPosition,
+  TriadQuality,
+  TriadSelection,
+  TriadSelectorProps,
+} from "./TriadSelector";
+export { TriadSelector } from "./TriadSelector";

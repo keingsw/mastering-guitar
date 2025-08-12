@@ -1,5 +1,5 @@
-import { Component, ErrorInfo, ReactNode } from 'react';
-import './PracticeErrorBoundary.css';
+import { Component, type ErrorInfo, type ReactNode } from "react";
+import "./PracticeErrorBoundary.css";
 
 interface Props {
   children: ReactNode;
@@ -14,10 +14,10 @@ interface State {
 
 /**
  * Practice Error Boundary Component
- * 
+ *
  * Catches JavaScript errors in practice mode components and provides
  * graceful fallback UI instead of crashing the entire application.
- * 
+ *
  * Features:
  * - Catches render errors and component lifecycle errors
  * - Provides user-friendly error message
@@ -40,17 +40,17 @@ export class PracticeErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log error for monitoring/debugging
-    console.error('Practice mode error caught by boundary:', error, errorInfo);
-    
+    console.error("Practice mode error caught by boundary:", error, errorInfo);
+
     // Report error to parent component if callback provided
     this.props.onError?.(error, errorInfo);
 
     // In development, provide additional debugging info
-    if (process.env.NODE_ENV === 'development') {
-      console.group('🚨 Practice Error Boundary Debug Info');
-      console.error('Error:', error);
-      console.error('Component Stack:', errorInfo.componentStack);
-      console.error('Error Boundary Props:', this.props);
+    if (process.env.NODE_ENV === "development") {
+      console.group("🚨 Practice Error Boundary Debug Info");
+      console.error("Error:", error);
+      console.error("Component Stack:", errorInfo.componentStack);
+      console.error("Error Boundary Props:", this.props);
       console.groupEnd();
     }
   }
@@ -64,7 +64,7 @@ export class PracticeErrorBoundary extends Component<Props, State> {
   handleRetry = () => {
     // Clear error state to retry rendering
     this.setState({ hasError: false, error: undefined });
-    
+
     // Add small delay to prevent immediate re-error in some cases
     this.retryTimeoutId = setTimeout(() => {
       // Force a re-render after state update
@@ -89,14 +89,12 @@ export class PracticeErrorBoundary extends Component<Props, State> {
         <div className="practice-error-boundary">
           <div className="practice-error-boundary__content">
             <div className="practice-error-boundary__icon">⚠️</div>
-            <h2 className="practice-error-boundary__title">
-              Practice Mode Error
-            </h2>
+            <h2 className="practice-error-boundary__title">Practice Mode Error</h2>
             <p className="practice-error-boundary__message">
               Something went wrong with this practice mode. This might be a temporary issue.
             </p>
-            
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+
+            {process.env.NODE_ENV === "development" && this.state.error && (
               <details className="practice-error-boundary__details">
                 <summary>Error Details (Development)</summary>
                 <pre className="practice-error-boundary__error">
@@ -105,7 +103,7 @@ export class PracticeErrorBoundary extends Component<Props, State> {
                 </pre>
               </details>
             )}
-            
+
             <div className="practice-error-boundary__actions">
               <button
                 type="button"
@@ -124,7 +122,7 @@ export class PracticeErrorBoundary extends Component<Props, State> {
                 Refresh Page
               </button>
             </div>
-            
+
             <div className="practice-error-boundary__help">
               <p className="practice-error-boundary__help-text">
                 <strong>Troubleshooting tips:</strong>
@@ -146,6 +144,6 @@ export class PracticeErrorBoundary extends Component<Props, State> {
 }
 
 // Set display name for debugging
-PracticeErrorBoundary.displayName = 'PracticeErrorBoundary';
+(PracticeErrorBoundary as any).displayName = "PracticeErrorBoundary";
 
 export default PracticeErrorBoundary;

@@ -1,8 +1,8 @@
-import '@testing-library/jest-dom';
-import { vi, expect } from 'vitest';
+import "@testing-library/jest-dom";
+import { expect, vi } from "vitest";
 
 // Mock CSS custom properties for jsdom environment
-Object.defineProperty(window, 'CSS', {
+Object.defineProperty(window, "CSS", {
   value: {
     supports: () => false,
   },
@@ -16,15 +16,15 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
 }));
 
 // Mock getComputedStyle for tests
-Object.defineProperty(window, 'getComputedStyle', {
+Object.defineProperty(window, "getComputedStyle", {
   value: () => ({
-    getPropertyValue: () => '',
+    getPropertyValue: () => "",
   }),
 });
 
 // Add CSS keyframes for animations
-if (typeof document !== 'undefined') {
-  const style = document.createElement('style');
+if (typeof document !== "undefined") {
+  const style = document.createElement("style");
   style.textContent = `
     @keyframes spin {
       from { transform: rotate(0deg); }
@@ -34,23 +34,28 @@ if (typeof document !== 'undefined') {
   document.head.appendChild(style);
 }
 
+// Define interface for elements that support getBoundingClientRect
+interface DOMElement {
+  getBoundingClientRect(): DOMRect;
+}
+
 // Add custom matchers for accessibility testing
 expect.extend({
-  toHaveMinimumTouchTarget(received: any) {
+  toHaveMinimumTouchTarget(received: DOMElement) {
     const rect = received.getBoundingClientRect();
     const minSize = 44; // WCAG minimum touch target
-    
+
     return {
       message: () => `Expected element to have minimum touch target of ${minSize}px, got ${rect.width}x${rect.height}`,
       pass: rect.width >= minSize && rect.height >= minSize,
     };
   },
-  
-  toMeetColorContrastRatio(_received: any, expectedRatio: number = 4.5) {
+
+  toMeetColorContrastRatio(_received: DOMElement, expectedRatio: number = 4.5) {
     // This is a simplified implementation
     // In a real project, you'd use a proper color contrast calculator
     const pass = true; // Assume pass for now - would calculate actual contrast
-    
+
     return {
       message: () => `Expected element to meet WCAG contrast ratio of ${expectedRatio}:1`,
       pass,
@@ -59,7 +64,7 @@ expect.extend({
 });
 
 // Extend Jest matchers
-declare module 'vitest' {
+declare module "vitest" {
   interface Assertion {
     toHaveMinimumTouchTarget(): void;
     toMeetColorContrastRatio(ratio?: number): void;

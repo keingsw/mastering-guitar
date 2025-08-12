@@ -1,5 +1,4 @@
-
-import type { INote, TriadQuality, NoteName } from '../../music-theory/types/music';
+import type { INote, NoteName, TriadQuality } from "../../music-theory/types/music";
 
 export interface DatabaseTriad {
   root: INote;

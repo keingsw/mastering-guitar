@@ -11,7 +11,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   max-width: 1000px;
   margin: 0 auto;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
   position: relative;
 }
 
@@ -59,8 +59,13 @@
 }
 
 @keyframes progression-timer-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }
 
 /* Instructions section */

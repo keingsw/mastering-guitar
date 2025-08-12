@@ -1,16 +1,11 @@
-import type { NoteName, TriadQuality } from '../../../design-system/types/music';
-import type { TriadSelection, NeckPosition } from '../../../design-system/components/TriadSelector/TriadSelector';
+import type { NeckPosition, TriadSelection } from "../../../design-system/components/TriadSelector/TriadSelector";
+import type { TriadQuality } from "../../../design-system/types/music";
 
-export type PracticeMode = 'recognition' | 'construction' | 'progression' | 'ear-training';
+export type PracticeMode = "recognition" | "construction" | "progression" | "ear-training";
 
-export type QuestionType = 
-  | 'identify-quality'
-  | 'build-triad'
-  | 'chord-progression'
-  | 'ear-training'
-  | 'hear-quality';
+export type QuestionType = "identify-quality" | "build-triad" | "chord-progression" | "ear-training" | "hear-quality";
 
-export type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
+export type DifficultyLevel = "beginner" | "intermediate" | "advanced";
 
 export interface PracticeSettings {
   mode: PracticeMode;
@@ -76,7 +71,7 @@ export interface PracticeSession {
   results: QuestionResult[];
   currentQuestionIndex: number;
   score: SessionScore;
-  status: 'active' | 'completed' | 'paused';
+  status: "active" | "completed" | "paused";
   startTime: Date;
   endTime?: Date;
   createdAt: Date;
@@ -111,9 +106,9 @@ export interface QuestionGeneratorOptions {
 export interface AudioOptions {
   volume: number; // 0-1
   tempo: number; // BPM for progression mode
-  noteOrder: 'simultaneous' | 'ascending' | 'descending';
+  noteOrder: "simultaneous" | "ascending" | "descending";
   repeatCount: number;
-  timbreName: 'sine' | 'triangle' | 'sawtooth' | 'square';
+  timbreName: "sine" | "triangle" | "sawtooth" | "square";
 }
 
 // Practice mode configuration
@@ -156,126 +151,126 @@ export interface ProgressIndicator {
 // Default configurations for each practice mode
 export const PRACTICE_MODE_CONFIGS: Record<PracticeMode, PracticeModeConfig> = {
   recognition: {
-    name: 'Recognition Mode',
-    description: 'See triad on fretboard, identify the quality',
-    questionTypes: ['identify-quality'],
+    name: "Recognition Mode",
+    description: "See triad on fretboard, identify the quality",
+    questionTypes: ["identify-quality"],
     defaultSettings: {
       questionCount: 10,
       timeLimit: 15,
-      includeQualities: ['major', 'minor'],
-      includePositions: ['open', 'position-3', 'position-5'],
+      includeQualities: ["major", "minor"],
+      includePositions: ["open", "position-3", "position-5"],
     },
     difficultyProgression: {
       beginner: {
         questionCount: 5,
         timeLimit: 30,
-        includeQualities: ['major', 'minor'],
-        includePositions: ['open'],
+        includeQualities: ["major", "minor"],
+        includePositions: ["open"],
       },
       intermediate: {
         questionCount: 10,
         timeLimit: 15,
-        includeQualities: ['major', 'minor', 'diminished'],
-        includePositions: ['open', 'position-3', 'position-5'],
+        includeQualities: ["major", "minor", "diminished"],
+        includePositions: ["open", "position-3", "position-5"],
       },
       advanced: {
         questionCount: 15,
         timeLimit: 10,
-        includeQualities: ['major', 'minor', 'diminished', 'augmented'],
-        includePositions: ['open', 'position-3', 'position-5', 'position-7'],
+        includeQualities: ["major", "minor", "diminished", "augmented"],
+        includePositions: ["open", "position-3", "position-5", "position-7"],
       },
     },
     scoringWeights: { accuracy: 0.6, speed: 0.3, streak: 0.1 },
   },
   construction: {
-    name: 'Construction Mode',
-    description: 'Build triads from written instructions',
-    questionTypes: ['build-triad'],
+    name: "Construction Mode",
+    description: "Build triads from written instructions",
+    questionTypes: ["build-triad"],
     defaultSettings: {
       questionCount: 8,
       timeLimit: 30,
-      includeQualities: ['major', 'minor'],
-      includePositions: ['open', 'position-3'],
+      includeQualities: ["major", "minor"],
+      includePositions: ["open", "position-3"],
     },
     difficultyProgression: {
       beginner: {
         questionCount: 5,
         timeLimit: 45,
-        includeQualities: ['major', 'minor'],
-        includePositions: ['open'],
+        includeQualities: ["major", "minor"],
+        includePositions: ["open"],
       },
       intermediate: {
         questionCount: 8,
         timeLimit: 30,
-        includeQualities: ['major', 'minor', 'diminished'],
-        includePositions: ['open', 'position-3', 'position-5'],
+        includeQualities: ["major", "minor", "diminished"],
+        includePositions: ["open", "position-3", "position-5"],
       },
       advanced: {
         questionCount: 12,
         timeLimit: 20,
-        includeQualities: ['major', 'minor', 'diminished', 'augmented'],
-        includePositions: ['open', 'position-3', 'position-5', 'position-7'],
+        includeQualities: ["major", "minor", "diminished", "augmented"],
+        includePositions: ["open", "position-3", "position-5", "position-7"],
       },
     },
     scoringWeights: { accuracy: 0.7, speed: 0.2, streak: 0.1 },
   },
   progression: {
-    name: 'Progression Mode',
-    description: 'Practice chord changes and progressions',
-    questionTypes: ['play-progression'],
+    name: "Progression Mode",
+    description: "Practice chord changes and progressions",
+    questionTypes: ["chord-progression"],
     defaultSettings: {
       questionCount: 6,
       timeLimit: 60,
-      includeQualities: ['major', 'minor'],
-      includePositions: ['open'],
+      includeQualities: ["major", "minor"],
+      includePositions: ["open"],
     },
     difficultyProgression: {
       beginner: {
         questionCount: 3,
         timeLimit: 90,
-        includeQualities: ['major', 'minor'],
-        includePositions: ['open'],
+        includeQualities: ["major", "minor"],
+        includePositions: ["open"],
       },
       intermediate: {
         questionCount: 6,
         timeLimit: 60,
-        includeQualities: ['major', 'minor'],
-        includePositions: ['open', 'position-3'],
+        includeQualities: ["major", "minor"],
+        includePositions: ["open", "position-3"],
       },
       advanced: {
         questionCount: 8,
         timeLimit: 45,
-        includeQualities: ['major', 'minor', 'diminished'],
-        includePositions: ['open', 'position-3', 'position-5'],
+        includeQualities: ["major", "minor", "diminished"],
+        includePositions: ["open", "position-3", "position-5"],
       },
     },
     scoringWeights: { accuracy: 0.5, speed: 0.4, streak: 0.1 },
   },
-  'ear-training': {
-    name: 'Ear Training Mode',
-    description: 'Identify triad quality by listening',
-    questionTypes: ['hear-quality'],
+  "ear-training": {
+    name: "Ear Training Mode",
+    description: "Identify triad quality by listening",
+    questionTypes: ["hear-quality"],
     defaultSettings: {
       questionCount: 8,
       timeLimit: 20,
-      includeQualities: ['major', 'minor'],
+      includeQualities: ["major", "minor"],
       enableAudio: true,
     },
     difficultyProgression: {
       beginner: {
         questionCount: 5,
         timeLimit: 30,
-        includeQualities: ['major', 'minor'],
+        includeQualities: ["major", "minor"],
       },
       intermediate: {
         questionCount: 8,
         timeLimit: 20,
-        includeQualities: ['major', 'minor', 'diminished'],
+        includeQualities: ["major", "minor", "diminished"],
       },
       advanced: {
         questionCount: 12,
         timeLimit: 15,
-        includeQualities: ['major', 'minor', 'diminished', 'augmented'],
+        includeQualities: ["major", "minor", "diminished", "augmented"],
       },
     },
     scoringWeights: { accuracy: 0.8, speed: 0.1, streak: 0.1 },
@@ -302,14 +297,54 @@ export const SCORING = {
 // Common chord progressions for progression mode
 export const COMMON_PROGRESSIONS = {
   beginner: [
-    { name: 'I-V-vi-IV', chords: [{ rootNote: 'C', quality: 'major' }, { rootNote: 'G', quality: 'major' }, { rootNote: 'A', quality: 'minor' }, { rootNote: 'F', quality: 'major' }] },
-    { name: 'vi-IV-I-V', chords: [{ rootNote: 'A', quality: 'minor' }, { rootNote: 'F', quality: 'major' }, { rootNote: 'C', quality: 'major' }, { rootNote: 'G', quality: 'major' }] },
+    {
+      name: "I-V-vi-IV",
+      chords: [
+        { rootNote: "C", quality: "major" },
+        { rootNote: "G", quality: "major" },
+        { rootNote: "A", quality: "minor" },
+        { rootNote: "F", quality: "major" },
+      ],
+    },
+    {
+      name: "vi-IV-I-V",
+      chords: [
+        { rootNote: "A", quality: "minor" },
+        { rootNote: "F", quality: "major" },
+        { rootNote: "C", quality: "major" },
+        { rootNote: "G", quality: "major" },
+      ],
+    },
   ],
   intermediate: [
-    { name: 'ii-V-I', chords: [{ rootNote: 'D', quality: 'minor' }, { rootNote: 'G', quality: 'major' }, { rootNote: 'C', quality: 'major' }] },
-    { name: 'I-vi-ii-V', chords: [{ rootNote: 'C', quality: 'major' }, { rootNote: 'A', quality: 'minor' }, { rootNote: 'D', quality: 'minor' }, { rootNote: 'G', quality: 'major' }] },
+    {
+      name: "ii-V-I",
+      chords: [
+        { rootNote: "D", quality: "minor" },
+        { rootNote: "G", quality: "major" },
+        { rootNote: "C", quality: "major" },
+      ],
+    },
+    {
+      name: "I-vi-ii-V",
+      chords: [
+        { rootNote: "C", quality: "major" },
+        { rootNote: "A", quality: "minor" },
+        { rootNote: "D", quality: "minor" },
+        { rootNote: "G", quality: "major" },
+      ],
+    },
   ],
   advanced: [
-    { name: 'Circle of Fifths', chords: [{ rootNote: 'C', quality: 'major' }, { rootNote: 'A', quality: 'minor' }, { rootNote: 'D', quality: 'minor' }, { rootNote: 'G', quality: 'major' }, { rootNote: 'E', quality: 'minor' }] },
+    {
+      name: "Circle of Fifths",
+      chords: [
+        { rootNote: "C", quality: "major" },
+        { rootNote: "A", quality: "minor" },
+        { rootNote: "D", quality: "minor" },
+        { rootNote: "G", quality: "major" },
+        { rootNote: "E", quality: "minor" },
+      ],
+    },
   ],
 } as const;

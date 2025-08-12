@@ -93,7 +93,7 @@ export const TriadSelector: React.FC<TriadSelectorProps> = ({
       const openStringNote = STANDARD_TUNING[tuningIndex];
       const openStringIndex = CHROMATIC_NOTES.indexOf(openStringNote);
       
-      for (let fret = 0; fret <= 15; fret++) {
+      for (let fret = 0; fret <= 21; fret++) {
         const noteIndex = (openStringIndex + fret) % 12;
         const currentNote = CHROMATIC_NOTES[noteIndex];
         
@@ -202,8 +202,8 @@ export const TriadSelector: React.FC<TriadSelectorProps> = ({
           showNoteLabels={true}
           showFretNumbers={true}
           onFretClick={onFretClick}
-          fretCount={15} // Show full 15-fret range
-          aria-label={`${chordSymbol} chord positions across entire fretboard (0-15)`}
+          fretCount={21} // Show full 21-fret range
+          aria-label={`${chordSymbol} chord positions across entire fretboard (0-21)`}
         />
       </div>
     </div>

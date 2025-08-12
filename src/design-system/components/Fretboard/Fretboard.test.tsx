@@ -26,12 +26,12 @@ describe('Fretboard Component', () => {
       expect(strings).toHaveLength(6);
     });
 
-    it('renders 12 frets by default', () => {
+    it('renders 21 frets by default', () => {
       render(<Fretboard />);
       
       // Check for fret wires (not fret positions)
       const frets = screen.getByRole('img').querySelectorAll('[data-testid^="fret-"]:not([data-testid*="position"])');
-      expect(frets).toHaveLength(12);
+      expect(frets).toHaveLength(21);
     });
 
     it('renders with custom number of frets', () => {
@@ -100,13 +100,13 @@ describe('Fretboard Component', () => {
       expect(highlightedElements.length).toBeGreaterThan(0);
     });
 
-    it('displays note labels when enabled', () => {
+    it('displays function labels for highlighted positions', () => {
       render(<Fretboard triadPositions={mockTriadPositions} showNoteLabels />);
       
-      // Note labels are only shown on hover or for highlighted positions
+      // Function labels (R, 3, 5) are shown for highlighted positions
       const fretboard = screen.getByRole('img');
-      const noteLabels = fretboard.querySelectorAll('text.fret-position__note-label');
-      expect(noteLabels.length).toBeGreaterThan(0);
+      const functionLabels = fretboard.querySelectorAll('text.fret-position__function-label');
+      expect(functionLabels.length).toBeGreaterThan(0);
     });
 
     it('hides note labels when disabled', () => {

@@ -27,8 +27,6 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -112,8 +110,6 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -131,9 +127,13 @@ jobs:
         run: |
           echo "Checking for security patterns..."
           # Check for dangerous patterns in source code (excluding test files)
-          ! grep -r "dangerouslySetInnerHTML" src/ --exclude-dir="*.test.*" || (echo "❌ Found dangerouslySetInnerHTML usage!" && exit 1)
+          ! grep -r "dangerouslySetInnerHTML" src/ --exclude="*.test.*" || (echo "❌ Found dangerouslySetInnerHTML usage!" && exit 1)
           ! grep -r "eval(" src/ --exclude="*.test.*" || (echo "❌ Found eval() usage!" && exit 1)
-          ! grep -r "innerHTML.*=" src/ --exclude="*.test.*" || echo "⚠️  innerHTML usage found (acceptable in tests)"
+          # innerHTML usage is acceptable in test files
+          if grep -r "innerHTML.*=" src/ --exclude="*.test.*" | grep -v ".test."; then
+            echo "❌ Found innerHTML assignment in non-test files!"
+            exit 1
+          fi
           echo "✅ Security patterns validated"
 
   dependency-validation:
@@ -147,8 +147,6 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

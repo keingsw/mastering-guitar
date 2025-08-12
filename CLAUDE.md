@@ -33,12 +33,13 @@ Comprehensive guitar education web application with integrated design system and
 
 ## Design System Architecture
 - **Base Components**: Button, ChordDisplay, FretPosition, TriadSelector (built TDD)
+- **Fretboard Component**: Extended 21-fret range with clear R/3/5 harmonic labels
 - **Practice Components**: RecognitionMode, ConstructionMode, ProgressionMode, EarTrainingMode
 - **Session Management**: PracticeSession orchestrator with progress tracking and scoring
 - **Error Handling**: PracticeErrorBoundary with graceful fallbacks and recovery
 - **Design Tokens**: Semantic naming with music theory integration
 - **Type Safety**: Strict music types with runtime dev warnings
-- **Accessibility**: Dual encoding (color + shape symbols) for colorblind users
+- **Accessibility**: Text-based harmonic labels (R/3/5) for better clarity than color-only
 
 ## Module Architecture
 The application follows a modular architecture with clear separation of concerns:
@@ -89,12 +90,12 @@ src/
 ```
 
 ## Music Theory Integration
-- **Harmonic Functions**: root (red), third (orange), fifth (blue)
+- **Harmonic Functions**: Clear text labels (R, 3, 5) with colored borders for root/third/fifth
 - **Strict Types**: NoteName, ChordSymbol, Interval, HarmonicFunction, TriadQuality
 - **Practice Engine**: Question generation, scoring algorithms, adaptive learning
 - **Audio Synthesis**: Full chromatic support (C, C#, D, D#, E, F, F#, G, G#, A, A#, B)
 - **Validation**: Compile-time safety + development-mode warnings
-- **Color Accessibility**: WCAG compliant with symbol fallbacks
+- **Accessibility**: Text-based labels instead of color-only coding for better clarity
 
 ## Practice Modes System
 - **Recognition Mode**: Visual triad identification with multiple choice interface

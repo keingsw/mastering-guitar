@@ -14,12 +14,12 @@ function TestComponent() {
   return (
     <div data-testid="container">
       <span>Test Text</span>
-      <button aria-label="Test Button">
+      <button type="button" aria-label="Test Button">
         Click me
       </button>
-      <section role="main">
+      <main>
         <p>Nested content</p>
-      </section>
+      </main>
     </div>
   );
 }
@@ -42,9 +42,9 @@ describe("Test Helper Utilities", () => {
 
     it("should work with different selectors", () => {
       render(<TestComponent />);
-      const container = getElementContainer("Nested content", "section");
+      const container = getElementContainer("Nested content", "main");
       expect(container).toBeInTheDocument();
-      expect(container.getAttribute("role")).toBe("main");
+      expect(container.tagName.toLowerCase()).toBe("main");
     });
 
     it("should throw descriptive error when container not found", () => {

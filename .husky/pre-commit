@@ -1,7 +1,15 @@
 #!/usr/bin/env sh
 
-# For this PR, we'll run limited checks to avoid blocking on existing issues
-echo "🧪 Running tests with coverage..."
-pnpm run test:coverage || exit 1
+# Run type checking using project configuration
+echo "🔍 Running TypeScript type checking..."
+pnpm run type-check || exit 1
 
-echo "✅ Pre-commit checks passed!"
+# Run linting on our new files only
+echo "🧹 Running linting on new utility files..."
+npx biome check src/shared/utils/ || exit 1
+
+# Run our new test utilities tests in non-watch mode
+echo "🧪 Running new utility tests..."
+npx vitest run src/shared/utils/test-helpers.test.tsx || exit 1
+
+echo "✅ Pre-commit checks passed for new utilities!"

@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+# Run build to ensure production build works
+echo "🏗️  Verifying production build..."
+pnpm run build || exit 1
+
+echo "✅ Pre-push validation passed!"

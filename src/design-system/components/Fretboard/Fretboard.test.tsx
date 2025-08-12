@@ -127,7 +127,10 @@ describe("Fretboard Component", () => {
       // Test open strings (fret 0)
       // String 1 (high E) - fret 0 should be E
       const string1Open = screen.getByTestId("fret-position-0-1").querySelector('circle[role="button"]');
-      expect(string1Open).toBeTruthy(); if (string1Open) { fireEvent.click(string1Open); }
+      expect(string1Open).toBeTruthy();
+      if (string1Open) {
+        fireEvent.click(string1Open);
+      }
       expect(onFretClick).toHaveBeenCalledWith(
         expect.objectContaining({
           fret: 0,
@@ -138,7 +141,10 @@ describe("Fretboard Component", () => {
 
       // String 6 (low E) - fret 0 should be E
       const string6Open = screen.getByTestId("fret-position-0-6").querySelector('circle[role="button"]');
-      expect(string6Open).toBeTruthy(); if (string6Open) { fireEvent.click(string6Open); }
+      expect(string6Open).toBeTruthy();
+      if (string6Open) {
+        fireEvent.click(string6Open);
+      }
       expect(onFretClick).toHaveBeenCalledWith(
         expect.objectContaining({
           fret: 0,
@@ -154,7 +160,10 @@ describe("Fretboard Component", () => {
 
       // String 1 (high E), fret 3 should be G (E + 3 semitones = G)
       const string1Fret3 = screen.getByTestId("fret-position-3-1").querySelector('circle[role="button"]');
-      expect(string1Fret3).toBeTruthy(); if (string1Fret3) { fireEvent.click(string1Fret3); }
+      expect(string1Fret3).toBeTruthy();
+      if (string1Fret3) {
+        fireEvent.click(string1Fret3);
+      }
       expect(onFretClick).toHaveBeenCalledWith(
         expect.objectContaining({
           fret: 3,
@@ -165,7 +174,10 @@ describe("Fretboard Component", () => {
 
       // String 2 (B), fret 3 should be D (B + 3 semitones = D)
       const string2Fret3 = screen.getByTestId("fret-position-3-2").querySelector('circle[role="button"]');
-      expect(string2Fret3).toBeTruthy(); if (string2Fret3) { fireEvent.click(string2Fret3); }
+      expect(string2Fret3).toBeTruthy();
+      if (string2Fret3) {
+        fireEvent.click(string2Fret3);
+      }
       expect(onFretClick).toHaveBeenCalledWith(
         expect.objectContaining({
           fret: 3,
@@ -183,7 +195,10 @@ describe("Fretboard Component", () => {
       // because neckPosition affects display, not the actual fret calculation
       // The fret positions passed to Fretboard already account for neck position
       const string1Fret3 = screen.getByTestId("fret-position-3-1").querySelector('circle[role="button"]');
-      expect(string1Fret3).toBeTruthy(); if (string1Fret3) { fireEvent.click(string1Fret3); }
+      expect(string1Fret3).toBeTruthy();
+      if (string1Fret3) {
+        fireEvent.click(string1Fret3);
+      }
       expect(onFretClick).toHaveBeenCalledWith(
         expect.objectContaining({
           fret: 3,
@@ -201,7 +216,10 @@ describe("Fretboard Component", () => {
 
       const fretPosition = screen.getByTestId("fret-position-3-1");
       const clickableArea = fretPosition.querySelector('circle[role="button"]');
-      expect(clickableArea).toBeTruthy(); if (clickableArea) { fireEvent.click(clickableArea); }
+      expect(clickableArea).toBeTruthy();
+      if (clickableArea) {
+        fireEvent.click(clickableArea);
+      }
 
       expect(onFretClick).toHaveBeenCalledWith({
         fret: 3,
@@ -216,7 +234,10 @@ describe("Fretboard Component", () => {
       const fretPosition = screen.getByTestId("fret-position-3-1");
       const clickableArea = fretPosition.querySelector('circle[role="button"]');
 
-      expect(clickableArea).toBeTruthy(); if (clickableArea) { fireEvent.mouseEnter(clickableArea); }
+      expect(clickableArea).toBeTruthy();
+      if (clickableArea) {
+        fireEvent.mouseEnter(clickableArea);
+      }
 
       await waitFor(() => {
         const hoverIndicator = fretPosition.querySelector(".fret-position__hover-indicator");
@@ -230,8 +251,14 @@ describe("Fretboard Component", () => {
       const fretPosition = screen.getByTestId("fret-position-3-1");
       const clickableArea = fretPosition.querySelector('circle[role="button"]');
 
-      expect(clickableArea).toBeTruthy(); if (clickableArea) { fireEvent.mouseEnter(clickableArea); }
-      expect(clickableArea).toBeTruthy(); if (clickableArea) { fireEvent.mouseLeave(clickableArea); }
+      expect(clickableArea).toBeTruthy();
+      if (clickableArea) {
+        fireEvent.mouseEnter(clickableArea);
+      }
+      expect(clickableArea).toBeTruthy();
+      if (clickableArea) {
+        fireEvent.mouseLeave(clickableArea);
+      }
 
       await waitFor(() => {
         const hoverIndicator = fretPosition.querySelector(".fret-position__hover-indicator");
@@ -284,8 +311,8 @@ describe("Fretboard Component", () => {
         .getByTestId("fret-position-3-1")
         .querySelector('circle[role="button"]') as HTMLElement;
       fretPosition.focus();
-      expect(fretPosition).toBeTruthy(); 
-      if (fretPosition) { 
+      expect(fretPosition).toBeTruthy();
+      if (fretPosition) {
         fireEvent.keyDown(fretPosition, { key: "Enter" });
       }
 

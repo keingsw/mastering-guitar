@@ -54,7 +54,14 @@ export const Page: React.FC = () => {
         </p>
         <div className="tip-wrapper">
           <span className="tip">Tip</span> Adjust the width of the canvas with the{" "}
-          <svg width="10" height="10" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="viewport-icon-title">
+          <svg
+            width="10"
+            height="10"
+            viewBox="0 0 12 12"
+            xmlns="http://www.w3.org/2000/svg"
+            role="img"
+            aria-labelledby="viewport-icon-title"
+          >
             <title id="viewport-icon-title">Viewport adjustment icon</title>
             <g fill="none" fillRule="evenodd">
               <path

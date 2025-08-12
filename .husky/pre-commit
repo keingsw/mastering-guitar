@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+# For this PR, we'll run limited checks to avoid blocking on existing issues
+echo "🧪 Running tests with coverage..."
+pnpm run test:coverage || exit 1
+
+echo "✅ Pre-commit checks passed!"

@@ -31,6 +31,47 @@ Comprehensive guitar education web application with integrated design system and
 - **Error Boundaries**: Production-grade error handling for all practice modes
 - **Performance**: Optimized re-rendering and resource cleanup
 
+## Security Standards
+- **No dangerouslySetInnerHTML**: NEVER use dangerouslySetInnerHTML - always use safe React components for dynamic content
+- **XSS Prevention**: All user-generated content must be properly sanitized and rendered through React JSX
+- **Type-Safe HTML Generation**: Use React elements and proper escaping for any dynamic HTML content
+- **Content Security Policy**: Avoid inline styles and scripts where possible, prefer CSS classes and external resources
+- **Input Validation**: All user inputs must be validated at component boundaries with TypeScript types
+- **Dependency Security**: Run security audits regularly and keep dependencies updated
+- **Error Information Disclosure**: Never expose internal system details in error messages to users
+- **Safe Defaults**: Components should fail safely with fallback content rather than breaking the UI
+
+### Security Pattern Examples
+
+#### ❌ NEVER: dangerouslySetInnerHTML
+```typescript
+// SECURITY VULNERABILITY - Don't do this!
+<span dangerouslySetInnerHTML={{ __html: formatChordSymbol(chord) }} />
+```
+
+#### ✅ ALWAYS: Safe React Components  
+```typescript
+// SECURE - Parse and render as React elements
+const formatChordSymbol = (chord: string) => {
+  const parts: (string | { type: 'sup'; content: string })[] = [];
+  // Parse chord into safe parts...
+  return parts.map((part, index) => {
+    if (typeof part === 'string') return part;
+    return <sup key={`${part.content}-${index}`}>{part.content}</sup>;
+  });
+};
+
+return <span>{formatChordSymbol(chord)}</span>;
+```
+
+#### Type-Safe Validation
+```typescript
+// Validate inputs at component boundaries
+export function isValidDifficultyLevel(difficulty: unknown): difficulty is "beginner" | "intermediate" | "advanced" {
+  return typeof difficulty === "string" && (VALID_DIFFICULTY_LEVELS as readonly string[]).includes(difficulty);
+}
+```
+
 ## Design System Architecture
 - **Base Components**: Button, ChordDisplay, FretPosition, TriadSelector (built TDD)
 - **Fretboard Component**: Extended 21-fret range with clear R/3/5 harmonic labels
@@ -114,31 +155,33 @@ The application uses a build-time data generation system for chord information:
 - **Output**: `src/modules/chord-data/generated/triad-database.json` 
 - **Lookup Service**: `src/modules/chord-data/services/database-lookup.ts` provides runtime access
 - **Integration**: Practice engine uses generated data for question generation and validation
-- **Build Process**: Run `npm run build:data` to regenerate after chord definition changes
+- **Build Process**: Run `pnpm run build:data` to regenerate after chord definition changes
 
 ## Development Commands
+**⚠️ CRITICAL: Always use `pnpm` - npm usage is blocked by preinstall hooks**
+
 ```bash
 # Development
-npm run dev               # Start dev server
-npm test                  # Run tests in watch mode
-npm run test:ui          # Interactive test interface
+pnpm run dev               # Start dev server
+pnpm test                  # Run tests in watch mode
+pnpm run test:ui          # Interactive test interface
 
 # Validation & CI
-npm run test:coverage    # Run all tests once with coverage
-npm run type-check       # TypeScript validation
-npm run lint             # Code quality check
-npm run build            # Production build validation
+pnpm run test:coverage    # Run all tests once with coverage
+pnpm run type-check       # TypeScript validation
+pnpm run lint             # Code quality check
+pnpm run build            # Production build validation
 
 # Code Quality
-npm run lint:fix         # Auto-fix linting issues
-npm run format           # Format code with Biome
+pnpm run lint:fix         # Auto-fix linting issues
+pnpm run format           # Format code with Biome
 
 # Documentation
-npm run storybook        # Interactive component docs
-npm run build-storybook  # Build static Storybook
+pnpm run storybook        # Interactive component docs
+pnpm run build-storybook  # Build static Storybook
 
 # Data Generation
-npm run build:data       # Generate triad database from chord definitions
+pnpm run build:data       # Generate triad database from chord definitions
 ```
 
 ## TDD Workflow (MANDATORY - NO EXCEPTIONS)
@@ -320,12 +363,31 @@ if (isSubmitting) return;
 4. **Descriptive test names** document behavior
 5. **Comments only for complexity** that can't be simplified
 
-## Quality Gates (Run Before Commit)
+## Quality Gates (Automated via Pre-commit Hooks)
 **🚫 GATE 0: TESTS FIRST - Verify tests were written before implementation**
-1. `npm run test:coverage` - All tests pass (maintain TDD coverage)
-2. `npm run type-check` - No TypeScript errors  
-3. `npm run lint` - Code quality standards met
-4. `npm run build` - Production build succeeds
+
+### Pre-commit Hooks (Automatic)
+1. `pnpm run type-check` - No TypeScript errors  
+2. `pnpm run lint` - Code quality standards met
+3. `pnpm run test:coverage` - All tests pass (maintain TDD coverage)
+
+### Pre-push Hooks (Automatic)
+4. `pnpm run build` - Production build succeeds
+
+### Package Manager Enforcement
+- **pnpm Required**: `preinstall` script blocks npm/yarn usage with `only-allow pnpm`
+- **Engine Restrictions**: `package.json` specifies `pnpm>=8.0.0` requirement
+- **Configuration**: `.npmrc` enforces engine-strict and package-manager-strict
+
+#### If You See Package Manager Warnings
+If you see warnings like "Moving @package that was installed by a different package manager to node_modules/.ignored":
+
+```bash
+# Clean up mixed package manager state
+rm -rf node_modules package-lock.json
+pnpm install
+```
+
 5. **Complete Documentation Validation**:
    - CLAUDE.md updated to reflect architectural changes
    - Only non-obvious logic has inline comments explaining complexity

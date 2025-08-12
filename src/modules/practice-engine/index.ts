@@ -6,7 +6,14 @@
  */
 
 // Types
-export type { Answer, DifficultyLevel, PracticeMode, PracticeSession, Question, SessionStats } from "./types/practice";
+export type {
+  DifficultyLevel,
+  PracticeMode,
+  PracticeQuestion,
+  PracticeSession,
+  SessionStats,
+  UserAnswer,
+} from "./types/practice";
 
 // Practice Modes (will be implemented)
 // export { RecognitionMode } from './modes/RecognitionMode';

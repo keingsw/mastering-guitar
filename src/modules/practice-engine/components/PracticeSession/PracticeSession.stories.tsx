@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { PracticeSession } from './PracticeSession';
-import type { PracticeSettings } from '../../types/practice';
+import type { Meta, StoryObj } from "@storybook/react";
+import type { PracticeSettings } from "../../types/practice";
+import { PracticeSession } from "./PracticeSession";
 
 const meta: Meta<typeof PracticeSession> = {
-  title: 'Practice Engine/PracticeSession',
+  title: "Practice Engine/PracticeSession",
   component: PracticeSession,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     docs: {
       description: {
         component: `
@@ -50,24 +50,24 @@ The Practice Session component orchestrates multiple practice modes for guitar c
   },
   argTypes: {
     settings: {
-      control: 'object',
-      description: 'Practice session configuration and settings',
+      control: "object",
+      description: "Practice session configuration and settings",
     },
     size: {
-      control: 'radio',
-      options: ['sm', 'md', 'lg'],
-      description: 'Component size variant',
+      control: "radio",
+      options: ["sm", "md", "lg"],
+      description: "Component size variant",
     },
     onComplete: {
-      action: 'session-completed',
-      description: 'Callback when practice session is completed',
+      action: "session-completed",
+      description: "Callback when practice session is completed",
     },
     onPause: {
-      action: 'session-paused',
-      description: 'Callback when practice session is paused',
+      action: "session-paused",
+      description: "Callback when practice session is paused",
     },
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
 };
 
 export default meta;
@@ -75,12 +75,12 @@ type Story = StoryObj<typeof meta>;
 
 // Default settings for stories
 const defaultSettings: PracticeSettings = {
-  mode: 'recognition',
-  difficulty: 'beginner',
+  mode: "recognition",
+  difficulty: "beginner",
   questionCount: 5,
   timeLimit: 30,
-  includePositions: ['open', 'position-3'],
-  includeQualities: ['major', 'minor'],
+  includePositions: ["open", "position-3"],
+  includeQualities: ["major", "minor"],
   enableAudio: false,
 };
 
@@ -88,13 +88,14 @@ const defaultSettings: PracticeSettings = {
 export const RecognitionModeBasic: Story = {
   args: {
     settings: defaultSettings,
-    onComplete: (results) => console.log('session-completed', results),
-    onPause: () => console.log('session-paused'),
+    onComplete: (results) => console.log("session-completed", results),
+    onPause: () => console.log("session-paused"),
   },
   parameters: {
     docs: {
       description: {
-        story: 'Basic Recognition Mode session with beginner settings. Shows 5 questions focusing on major and minor triads in open and 3rd positions.',
+        story:
+          "Basic Recognition Mode session with beginner settings. Shows 5 questions focusing on major and minor triads in open and 3rd positions.",
       },
     },
   },
@@ -105,19 +106,20 @@ export const RecognitionModeIntermediate: Story = {
   args: {
     settings: {
       ...defaultSettings,
-      difficulty: 'intermediate',
+      difficulty: "intermediate",
       questionCount: 8,
       timeLimit: 20,
-      includePositions: ['open', 'position-3', 'position-5'],
-      includeQualities: ['major', 'minor', 'diminished'],
+      includePositions: ["open", "position-3", "position-5"],
+      includeQualities: ["major", "minor", "diminished"],
     },
-    onComplete: (results) => console.log('session-completed', results),
-    onPause: () => console.log('session-paused'),
+    onComplete: (results) => console.log("session-completed", results),
+    onPause: () => console.log("session-paused"),
   },
   parameters: {
     docs: {
       description: {
-        story: 'Intermediate Recognition Mode with more positions and triad qualities. Includes diminished triads and shorter time limits.',
+        story:
+          "Intermediate Recognition Mode with more positions and triad qualities. Includes diminished triads and shorter time limits.",
       },
     },
   },
@@ -128,19 +130,20 @@ export const RecognitionModeAdvanced: Story = {
   args: {
     settings: {
       ...defaultSettings,
-      difficulty: 'advanced',
+      difficulty: "advanced",
       questionCount: 12,
       timeLimit: 15,
-      includePositions: ['open', 'position-3', 'position-5', 'position-7'],
-      includeQualities: ['major', 'minor', 'diminished', 'augmented'],
+      includePositions: ["open", "position-3", "position-5", "position-7"],
+      includeQualities: ["major", "minor", "diminished", "augmented"],
     },
-    onComplete: (results) => console.log('session-completed', results),
-    onPause: () => console.log('session-paused'),
+    onComplete: (results) => console.log("session-completed", results),
+    onPause: () => console.log("session-paused"),
   },
   parameters: {
     docs: {
       description: {
-        story: 'Advanced Recognition Mode with all triad qualities and multiple positions. Challenging time limits and comprehensive chord knowledge required.',
+        story:
+          "Advanced Recognition Mode with all triad qualities and multiple positions. Challenging time limits and comprehensive chord knowledge required.",
       },
     },
   },
@@ -153,16 +156,17 @@ export const QuickPractice: Story = {
       ...defaultSettings,
       questionCount: 3,
       timeLimit: 45,
-      includePositions: ['open'],
-      includeQualities: ['major', 'minor'],
+      includePositions: ["open"],
+      includeQualities: ["major", "minor"],
     },
-    onComplete: (results) => console.log('session-completed', results),
-    onPause: () => console.log('session-paused'),
+    onComplete: (results) => console.log("session-completed", results),
+    onPause: () => console.log("session-paused"),
   },
   parameters: {
     docs: {
       description: {
-        story: 'Quick 3-question practice session perfect for a brief warm-up or skill check. Focuses on fundamental major/minor recognition.',
+        story:
+          "Quick 3-question practice session perfect for a brief warm-up or skill check. Focuses on fundamental major/minor recognition.",
       },
     },
   },
@@ -175,15 +179,16 @@ export const NoTimeLimit: Story = {
       ...defaultSettings,
       timeLimit: undefined,
       questionCount: 6,
-      includeQualities: ['major', 'minor', 'diminished'],
+      includeQualities: ["major", "minor", "diminished"],
     },
-    onComplete: (results) => console.log('session-completed', results),
-    onPause: () => console.log('session-paused'),
+    onComplete: (results) => console.log("session-completed", results),
+    onPause: () => console.log("session-paused"),
   },
   parameters: {
     docs: {
       description: {
-        story: 'Practice session without time pressure. Take your time to analyze each triad and learn at your own pace.',
+        story:
+          "Practice session without time pressure. Take your time to analyze each triad and learn at your own pace.",
       },
     },
   },
@@ -193,14 +198,14 @@ export const NoTimeLimit: Story = {
 export const SmallSize: Story = {
   args: {
     settings: defaultSettings,
-    size: 'sm',
-    onComplete: (results) => console.log('session-completed', results),
-    onPause: () => console.log('session-paused'),
+    size: "sm",
+    onComplete: (results) => console.log("session-completed", results),
+    onPause: () => console.log("session-paused"),
   },
   parameters: {
     docs: {
       description: {
-        story: 'Small size variant (85% scale) suitable for mobile devices or compact interface layouts.',
+        story: "Small size variant (85% scale) suitable for mobile devices or compact interface layouts.",
       },
     },
   },
@@ -211,16 +216,17 @@ export const LargeSize: Story = {
   args: {
     settings: {
       ...defaultSettings,
-      difficulty: 'intermediate',
+      difficulty: "intermediate",
     },
-    size: 'lg',
-    onComplete: (results) => console.log('session-completed', results),
-    onPause: () => console.log('session-paused'),
+    size: "lg",
+    onComplete: (results) => console.log("session-completed", results),
+    onPause: () => console.log("session-paused"),
   },
   parameters: {
     docs: {
       description: {
-        story: 'Large size variant (115% scale) ideal for detailed instruction, presentations, or desktop applications.',
+        story:
+          "Large size variant (115% scale) ideal for detailed instruction, presentations, or desktop applications.",
       },
     },
   },
@@ -230,45 +236,47 @@ export const LargeSize: Story = {
 export const ConstructionModePlaceholder: Story = {
   args: {
     settings: {
-      mode: 'construction',
-      difficulty: 'beginner',
+      mode: "construction",
+      difficulty: "beginner",
       questionCount: 5,
       timeLimit: 45,
-      includePositions: ['open'],
-      includeQualities: ['major', 'minor'],
+      includePositions: ["open"],
+      includeQualities: ["major", "minor"],
       enableAudio: false,
     },
-    onComplete: (results) => console.log('session-completed', results),
-    onPause: () => console.log('session-paused'),
+    onComplete: (results) => console.log("session-completed", results),
+    onPause: () => console.log("session-paused"),
   },
   parameters: {
     docs: {
       description: {
-        story: 'Placeholder for Construction Mode (under development). Shows the session structure for building triads from instructions.',
+        story:
+          "Placeholder for Construction Mode (under development). Shows the session structure for building triads from instructions.",
       },
     },
   },
 };
 
-// Progression mode placeholder  
+// Progression mode placeholder
 export const ProgressionModePlaceholder: Story = {
   args: {
     settings: {
-      mode: 'progression',
-      difficulty: 'beginner',
+      mode: "progression",
+      difficulty: "beginner",
       questionCount: 4,
       timeLimit: 60,
-      includePositions: ['open'],
-      includeQualities: ['major', 'minor'],
+      includePositions: ["open"],
+      includeQualities: ["major", "minor"],
       enableAudio: false,
     },
-    onComplete: (results) => console.log('session-completed', results),
-    onPause: () => console.log('session-paused'),
+    onComplete: (results) => console.log("session-completed", results),
+    onPause: () => console.log("session-paused"),
   },
   parameters: {
     docs: {
       description: {
-        story: 'Placeholder for Progression Mode (under development). Will feature common chord progressions and timing practice.',
+        story:
+          "Placeholder for Progression Mode (under development). Will feature common chord progressions and timing practice.",
       },
     },
   },
@@ -278,21 +286,22 @@ export const ProgressionModePlaceholder: Story = {
 export const EarTrainingModePlaceholder: Story = {
   args: {
     settings: {
-      mode: 'ear-training',
-      difficulty: 'beginner',
+      mode: "ear-training",
+      difficulty: "beginner",
       questionCount: 6,
       timeLimit: 25,
-      includePositions: ['open'],
-      includeQualities: ['major', 'minor'],
+      includePositions: ["open"],
+      includeQualities: ["major", "minor"],
       enableAudio: true,
     },
-    onComplete: (results) => console.log('session-completed', results),
-    onPause: () => console.log('session-paused'),
+    onComplete: (results) => console.log("session-completed", results),
+    onPause: () => console.log("session-paused"),
   },
   parameters: {
     docs: {
       description: {
-        story: 'Placeholder for Ear Training Mode (under development). Will feature audio-based triad identification using Web Audio API.',
+        story:
+          "Placeholder for Ear Training Mode (under development). Will feature audio-based triad identification using Web Audio API.",
       },
     },
   },
@@ -303,14 +312,14 @@ export const EducationalProgression: Story = {
   args: {
     settings: {
       ...defaultSettings,
-      difficulty: 'beginner',
+      difficulty: "beginner",
       questionCount: 4,
       timeLimit: 40,
-      includePositions: ['open'],
-      includeQualities: ['major', 'minor'],
+      includePositions: ["open"],
+      includeQualities: ["major", "minor"],
     },
-    onComplete: (results) => console.log('session-completed', results),
-    onPause: () => console.log('session-paused'),
+    onComplete: (results) => console.log("session-completed", results),
+    onPause: () => console.log("session-paused"),
   },
   parameters: {
     docs: {

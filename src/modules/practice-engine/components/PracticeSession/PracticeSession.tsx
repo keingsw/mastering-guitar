@@ -1,19 +1,20 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { RecognitionMode } from '../modes/RecognitionMode/RecognitionMode';
-import { ConstructionMode } from '../modes/ConstructionMode/ConstructionMode';
-import { ProgressionMode } from '../modes/ProgressionMode/ProgressionMode';
-import { EarTrainingMode } from '../modes/EarTrainingMode/EarTrainingMode';
-import { PracticeErrorBoundary } from '../PracticeErrorBoundary';
-import type { ComponentSize } from '../../../../design-system/types/music';
-import type { 
+import type React from "react";
+import { useCallback, useMemo, useState } from "react";
+import type { ComponentSize } from "../../../../design-system/types/music";
+import { PracticeQuestionGenerator } from "../../services/practice-generator";
+import { calculateSessionScore } from "../../services/scoring-system";
+import type {
   PracticeSession as PracticeSessionType,
   PracticeSettings,
+  ProgressIndicator,
   QuestionResult,
-  ProgressIndicator
-} from '../../types/practice';
-import { PracticeQuestionGenerator } from '../../services/practice-generator';
-import { calculateSessionScore } from '../../services/scoring-system';
-import './PracticeSession.css';
+} from "../../types/practice";
+import { ConstructionMode } from "../modes/ConstructionMode/ConstructionMode";
+import { EarTrainingMode } from "../modes/EarTrainingMode/EarTrainingMode";
+import { ProgressionMode } from "../modes/ProgressionMode/ProgressionMode";
+import { RecognitionMode } from "../modes/RecognitionMode/RecognitionMode";
+import { PracticeErrorBoundary } from "../PracticeErrorBoundary";
+import "./PracticeSession.css";
 
 export interface PracticeSessionProps {
   settings: PracticeSettings;
@@ -21,23 +22,24 @@ export interface PracticeSessionProps {
   onComplete: (session: PracticeSessionType) => void;
   onPause?: (session: PracticeSessionType) => void;
   className?: string;
-  'aria-label'?: string;
+  "aria-label"?: string;
 }
 
 export const PracticeSession: React.FC<PracticeSessionProps> = ({
   settings,
-  size = 'md',
+  size = "md",
   onComplete,
   onPause,
-  className = '',
-  'aria-label': ariaLabel,
+  className = "",
+  "aria-label": ariaLabel,
 }) => {
   const sessionId = useMemo(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`, []);
-  
+
   // Create stable dependency key for question generation
-  const questionsKey = useMemo(() => 
-    `${settings.mode}-${settings.difficulty}-${settings.questionCount}-${settings.includeQualities.join(',')}-${settings.includePositions.join(',')}`, 
-    [settings.mode, settings.difficulty, settings.questionCount, settings.includeQualities, settings.includePositions]
+  const questionsKey = useMemo(
+    () =>
+      `${settings.mode}-${settings.difficulty}-${settings.questionCount}-${settings.includeQualities.join(",")}-${settings.includePositions.join(",")}`,
+    [settings.mode, settings.difficulty, settings.questionCount, settings.includeQualities, settings.includePositions],
   );
 
   const questions = useMemo(() => {
@@ -48,7 +50,14 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
       includeQualities: settings.includeQualities,
       includePositions: settings.includePositions,
     });
-  }, [questionsKey, settings.difficulty, settings.mode, settings.questionCount, settings.includeQualities, settings.includePositions]);
+  }, [
+    questionsKey,
+    settings.difficulty,
+    settings.mode,
+    settings.questionCount,
+    settings.includeQualities,
+    settings.includePositions,
+  ]);
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<QuestionResult[]>([]);
@@ -59,42 +68,48 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex >= questions.length - 1;
 
-  const progress: ProgressIndicator = useMemo(() => ({
-    current: currentQuestionIndex + 1,
-    total: questions.length,
-    percentage: Math.round(((currentQuestionIndex + 1) / questions.length) * 100),
-    questionsRemaining: questions.length - (currentQuestionIndex + 1),
-  }), [currentQuestionIndex, questions.length]);
-  const handleAnswer = useCallback((result: QuestionResult) => {
-    const newAnswers = [...answers, result];
-    setAnswers(newAnswers);
+  const progress: ProgressIndicator = useMemo(
+    () => ({
+      current: currentQuestionIndex + 1,
+      total: questions.length,
+      percentage: Math.round(((currentQuestionIndex + 1) / questions.length) * 100),
+      questionsRemaining: questions.length - (currentQuestionIndex + 1),
+    }),
+    [currentQuestionIndex, questions.length],
+  );
+  const handleAnswer = useCallback(
+    (result: QuestionResult) => {
+      const newAnswers = [...answers, result];
+      setAnswers(newAnswers);
 
-    if (isLastQuestion) {
-      const endTime = new Date();
-      const totalTime = endTime.getTime() - sessionStartTime.getTime();
-      const score = calculateSessionScore(newAnswers, settings.difficulty, totalTime);
-      
-      const completedSession: PracticeSessionType = {
-        id: sessionId,
-        settings,
-        questions,
-        answers: newAnswers.map(r => r.userAnswer),
-        results: newAnswers,
-        currentQuestionIndex: questions.length,
-        score,
-        status: 'completed',
-        startTime: sessionStartTime,
-        endTime,
-        createdAt: sessionStartTime,
-        updatedAt: endTime,
-      };
+      if (isLastQuestion) {
+        const endTime = new Date();
+        const totalTime = endTime.getTime() - sessionStartTime.getTime();
+        const score = calculateSessionScore(newAnswers, settings.difficulty, totalTime);
 
-      setIsCompleted(true);
-      onComplete(completedSession);
-    } else {
-      setCurrentQuestionIndex(prev => prev + 1);
-    }
-  }, [answers, isLastQuestion, sessionId, settings, questions, sessionStartTime, onComplete]);
+        const completedSession: PracticeSessionType = {
+          id: sessionId,
+          settings,
+          questions,
+          answers: newAnswers.map((r) => r.userAnswer),
+          results: newAnswers,
+          currentQuestionIndex: questions.length,
+          score,
+          status: "completed",
+          startTime: sessionStartTime,
+          endTime,
+          createdAt: sessionStartTime,
+          updatedAt: endTime,
+        };
+
+        setIsCompleted(true);
+        onComplete(completedSession);
+      } else {
+        setCurrentQuestionIndex((prev) => prev + 1);
+      }
+    },
+    [answers, isLastQuestion, sessionId, settings, questions, sessionStartTime, onComplete],
+  );
   const handlePause = useCallback(() => {
     if (isPaused || isCompleted) return;
 
@@ -102,11 +117,11 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
       id: sessionId,
       settings,
       questions,
-      answers: answers.map(r => r.userAnswer),
+      answers: answers.map((r) => r.userAnswer),
       results: answers,
       currentQuestionIndex,
       score: calculateSessionScore(answers, settings.difficulty, Date.now() - sessionStartTime.getTime()),
-      status: 'paused',
+      status: "paused",
       startTime: sessionStartTime,
       createdAt: sessionStartTime,
       updatedAt: new Date(),
@@ -119,7 +134,7 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
   // Session completion screen
   if (isCompleted) {
     const finalScore = calculateSessionScore(answers, settings.difficulty, Date.now() - sessionStartTime.getTime());
-    
+
     return (
       <div className={`practice-session practice-session--completed ${className}`}>
         <div className="practice-session__completion">
@@ -139,7 +154,9 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
             </div>
             <div className="practice-session__stat">
               <span className="practice-session__stat-label">Avg Response</span>
-              <span className="practice-session__stat-value">{(finalScore.averageResponseTime / 1000).toFixed(1)}s</span>
+              <span className="practice-session__stat-value">
+                {(finalScore.averageResponseTime / 1000).toFixed(1)}s
+              </span>
             </div>
           </div>
         </div>
@@ -149,7 +166,7 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
 
   // Main session interface
   return (
-    <div 
+    <div
       className={`practice-session practice-session--${size} ${className}`}
       role="main"
       aria-label={ariaLabel || `${settings.mode} practice session`}
@@ -180,10 +197,7 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
       {/* Progress indicator */}
       <div className="practice-session__progress">
         <div className="practice-session__progress-bar">
-          <div 
-            className="practice-session__progress-fill"
-            style={{ width: `${progress.percentage}%` }}
-          />
+          <div className="practice-session__progress-fill" style={{ width: `${progress.percentage}%` }} />
         </div>
         <div className="practice-session__progress-text">
           Question {progress.current} of {progress.total} ({progress.percentage}%)
@@ -195,7 +209,9 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
         <div className="practice-session__current-score">
           <div className="practice-session__score-item">
             <span className="practice-session__score-label">Correct:</span>
-            <span className="practice-session__score-value">{answers.filter(a => a.isCorrect).length}/{answers.length}</span>
+            <span className="practice-session__score-value">
+              {answers.filter((a) => a.isCorrect).length}/{answers.length}
+            </span>
           </div>
           <div className="practice-session__score-item">
             <span className="practice-session__score-label">Points:</span>
@@ -205,10 +221,10 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
       )}
 
       {/* Practice mode component */}
-      {currentQuestion && settings.mode === 'recognition' && (
+      {currentQuestion && settings.mode === "recognition" && (
         <PracticeErrorBoundary
           onError={(error, errorInfo) => {
-            console.error('Recognition Mode error:', error, errorInfo);
+            console.error("Recognition Mode error:", error, errorInfo);
           }}
         >
           <RecognitionMode
@@ -221,10 +237,10 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
         </PracticeErrorBoundary>
       )}
 
-      {currentQuestion && settings.mode === 'construction' && (
+      {currentQuestion && settings.mode === "construction" && (
         <PracticeErrorBoundary
           onError={(error, errorInfo) => {
-            console.error('Construction Mode error:', error, errorInfo);
+            console.error("Construction Mode error:", error, errorInfo);
           }}
         >
           <ConstructionMode
@@ -237,10 +253,10 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
         </PracticeErrorBoundary>
       )}
 
-      {currentQuestion && settings.mode === 'progression' && (
+      {currentQuestion && settings.mode === "progression" && (
         <PracticeErrorBoundary
           onError={(error, errorInfo) => {
-            console.error('Progression Mode error:', error, errorInfo);
+            console.error("Progression Mode error:", error, errorInfo);
           }}
         >
           <ProgressionMode
@@ -253,10 +269,10 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
         </PracticeErrorBoundary>
       )}
 
-      {currentQuestion && settings.mode === 'ear-training' && (
+      {currentQuestion && settings.mode === "ear-training" && (
         <PracticeErrorBoundary
           onError={(error, errorInfo) => {
-            console.error('Ear Training Mode error:', error, errorInfo);
+            console.error("Ear Training Mode error:", error, errorInfo);
           }}
         >
           <EarTrainingMode
@@ -270,25 +286,27 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
       )}
 
       {/* Placeholder for future modes */}
-      {currentQuestion && !['recognition', 'construction', 'progression', 'ear-training'].includes(settings.mode) && (
+      {currentQuestion && !["recognition", "construction", "progression", "ear-training"].includes(settings.mode) && (
         <div className="practice-session__placeholder">
           <h3>Coming Soon: {settings.mode} mode</h3>
           <p>This practice mode is under development.</p>
-          <button 
-            onClick={() => handleAnswer({
-              question: currentQuestion,
-              userAnswer: {
-                questionId: currentQuestion.id,
-                answer: 'major',
-                responseTime: 1000,
-                timestamp: new Date(),
+          <button
+            onClick={() =>
+              handleAnswer({
+                question: currentQuestion,
+                userAnswer: {
+                  questionId: currentQuestion.id,
+                  answer: "major",
+                  responseTime: 1000,
+                  timestamp: new Date(),
+                  isCorrect: true,
+                },
+                correctAnswer: "major",
                 isCorrect: true,
-              },
-              correctAnswer: 'major',
-              isCorrect: true,
-              feedback: 'Placeholder result',
-              points: 100,
-            })}
+                feedback: "Placeholder result",
+                points: 100,
+              })
+            }
             className="practice-session__skip-button"
           >
             Skip Question (Demo)
@@ -300,8 +318,8 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
 };
 
 // Validation in development mode
-if (process.env.NODE_ENV === 'development') {
-  PracticeSession.displayName = 'PracticeSession';
+if (process.env.NODE_ENV === "development") {
+  PracticeSession.displayName = "PracticeSession";
 }
 
 export default PracticeSession;

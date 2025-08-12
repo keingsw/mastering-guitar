@@ -1,16 +1,16 @@
-import type { NoteName, TriadQuality } from '../../../design-system/types/music';
-import type { TriadSelection, NeckPosition } from '../../../design-system/components/TriadSelector/TriadSelector';
-import type { 
-  PracticeQuestion, 
-  QuestionGeneratorOptions, 
+import type { NeckPosition, TriadSelection } from "../../../design-system/components/TriadSelector/TriadSelector";
+import type { NoteName, TriadQuality } from "../../../design-system/types/music";
+import type {
   DifficultyLevel,
   PracticeMode,
-  QuestionResult
-} from '../types/practice';
+  PracticeQuestion,
+  QuestionGeneratorOptions,
+  QuestionResult,
+} from "../types/practice";
 
-const ALL_NOTES: NoteName[] = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-const ALL_QUALITIES: TriadQuality[] = ['major', 'minor', 'diminished', 'augmented'];
-const ALL_POSITIONS: NeckPosition[] = ['open', 'position-3', 'position-5', 'position-7', 'position-9', 'position-12'];
+const ALL_NOTES: NoteName[] = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+const ALL_QUALITIES: TriadQuality[] = ["major", "minor", "diminished", "augmented"];
+const ALL_POSITIONS: NeckPosition[] = ["open", "position-3", "position-5", "position-7", "position-9", "position-12"];
 
 function generateQuestionId(): string {
   return `q_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -35,22 +35,19 @@ function shuffle<T>(array: T[]): T[] {
  */
 function generateMultipleChoiceOptions(correctAnswer: TriadQuality, allQualities: TriadQuality[]): string[] {
   const options = [correctAnswer];
-  const otherQualities = allQualities.filter(q => q !== correctAnswer);
-  
+  const otherQualities = allQualities.filter((q) => q !== correctAnswer);
+
   // Add 3 random other qualities (or all if less than 3)
   const additionalOptions = shuffle(otherQualities).slice(0, 3);
   options.push(...additionalOptions);
-  
+
   return shuffle(options);
 }
 
 /**
  * Generate a random triad selection
  */
-function generateRandomTriad(
-  includeQualities: TriadQuality[], 
-  includePositions: NeckPosition[]
-): TriadSelection {
+function generateRandomTriad(includeQualities: TriadQuality[], includePositions: NeckPosition[]): TriadSelection {
   return {
     rootNote: randomPick(ALL_NOTES),
     quality: randomPick(includeQualities),
@@ -64,14 +61,14 @@ function generateRandomTriad(
 function generateRecognitionQuestion(
   difficulty: DifficultyLevel,
   includeQualities: TriadQuality[],
-  includePositions: NeckPosition[]
+  includePositions: NeckPosition[],
 ): PracticeQuestion {
   const target = generateRandomTriad(includeQualities, includePositions);
   const options = generateMultipleChoiceOptions(target.quality, includeQualities);
-  
+
   return {
     id: generateQuestionId(),
-    type: 'identify-quality',
+    type: "identify-quality",
     target,
     options,
     difficulty,
@@ -85,34 +82,35 @@ function generateRecognitionQuestion(
 function generateConstructionQuestion(
   difficulty: DifficultyLevel,
   includeQualities: TriadQuality[],
-  includePositions: NeckPosition[]
+  includePositions: NeckPosition[],
 ): PracticeQuestion {
   const target = generateRandomTriad(includeQualities, includePositions);
-  
+
   // Generate instructions based on difficulty
   let instructions: string;
-  const qualityName = target.quality === 'major' ? '' : target.quality;
-  const positionName = target.neckPosition === 'open' ? 'open position' : 
-    target.neckPosition.replace('position-', '') + 'th position';
-  
+  const qualityName = target.quality === "major" ? "" : target.quality;
+  const positionName =
+    target.neckPosition === "open" ? "open position" : target.neckPosition.replace("position-", "") + "th position";
+
   switch (difficulty) {
-    case 'beginner':
+    case "beginner":
       instructions = `Build a ${target.rootNote}${qualityName} triad in ${positionName}`;
       break;
-    case 'intermediate':
-      instructions = `Construct ${target.rootNote}${qualityName} (${target.rootNote}-${getTriadNotes(target).join('-')}) in ${positionName}`;
+    case "intermediate":
+      instructions = `Construct ${target.rootNote}${qualityName} (${target.rootNote}-${getTriadNotes(target).join("-")}) in ${positionName}`;
       break;
-    case 'advanced':
+    case "advanced": {
       const intervals = getTriadIntervals(target.quality);
       instructions = `Build ${target.rootNote}${qualityName} using intervals ${intervals} in ${positionName}`;
       break;
+    }
     default:
       instructions = `Build a ${target.rootNote}${qualityName} triad`;
   }
-  
+
   return {
     id: generateQuestionId(),
-    type: 'build-triad',
+    type: "build-triad",
     target,
     instructions,
     difficulty,
@@ -126,22 +124,22 @@ function generateConstructionQuestion(
 function generateProgressionQuestion(
   difficulty: DifficultyLevel,
   includeQualities: TriadQuality[],
-  includePositions: NeckPosition[]
+  includePositions: NeckPosition[],
 ): PracticeQuestion {
   // For now, generate a simple 2-chord progression
   // Future: Use COMMON_PROGRESSIONS constant
   const chord1 = generateRandomTriad(includeQualities, includePositions);
   const chord2 = generateRandomTriad(includeQualities, includePositions);
-  
+
   // Store progression in target (we'll expand this structure later)
   const target = chord1; // Primary chord for this question
-  
-  const progressionName = `${chord1.rootNote}${chord1.quality === 'major' ? '' : chord1.quality} - ${chord2.rootNote}${chord2.quality === 'major' ? '' : chord2.quality}`;
+
+  const progressionName = `${chord1.rootNote}${chord1.quality === "major" ? "" : chord1.quality} - ${chord2.rootNote}${chord2.quality === "major" ? "" : chord2.quality}`;
   const instructions = `Play this chord progression: ${progressionName}`;
-  
+
   return {
     id: generateQuestionId(),
-    type: 'chord-progression',
+    type: "chord-progression",
     progression: [chord1, chord2],
     target,
     instructions,
@@ -153,17 +151,14 @@ function generateProgressionQuestion(
 /**
  * Generate ear training mode questions
  */
-function generateEarTrainingQuestion(
-  difficulty: DifficultyLevel,
-  includeQualities: TriadQuality[]
-): PracticeQuestion {
+function generateEarTrainingQuestion(difficulty: DifficultyLevel, includeQualities: TriadQuality[]): PracticeQuestion {
   // For ear training, position doesn't matter as much
-  const target = generateRandomTriad(includeQualities, ['open']);
+  const target = generateRandomTriad(includeQualities, ["open"]);
   const options = generateMultipleChoiceOptions(target.quality, includeQualities);
-  
+
   return {
     id: generateQuestionId(),
-    type: 'ear-training',
+    type: "ear-training",
     target,
     options,
     audioEnabled: true,
@@ -178,25 +173,25 @@ function generateEarTrainingQuestion(
 function getTriadNotes(triad: TriadSelection): NoteName[] {
   const rootIndex = ALL_NOTES.indexOf(triad.rootNote);
   let intervals: number[];
-  
+
   switch (triad.quality) {
-    case 'major':
+    case "major":
       intervals = [0, 4, 7];
       break;
-    case 'minor':
+    case "minor":
       intervals = [0, 3, 7];
       break;
-    case 'diminished':
+    case "diminished":
       intervals = [0, 3, 6];
       break;
-    case 'augmented':
+    case "augmented":
       intervals = [0, 4, 8];
       break;
     default:
       intervals = [0, 4, 7];
   }
-  
-  return intervals.map(interval => {
+
+  return intervals.map((interval) => {
     const noteIndex = (rootIndex + interval) % 12;
     return ALL_NOTES[noteIndex];
   });
@@ -207,16 +202,16 @@ function getTriadNotes(triad: TriadSelection): NoteName[] {
  */
 function getTriadIntervals(quality: TriadQuality): string {
   switch (quality) {
-    case 'major':
-      return 'R-M3-P5';
-    case 'minor':
-      return 'R-m3-P5';
-    case 'diminished':
-      return 'R-m3-TT';
-    case 'augmented':
-      return 'R-M3-+5';
+    case "major":
+      return "R-M3-P5";
+    case "minor":
+      return "R-m3-P5";
+    case "diminished":
+      return "R-m3-TT";
+    case "augmented":
+      return "R-M3-+5";
     default:
-      return 'R-M3-P5';
+      return "R-M3-P5";
   }
 }
 
@@ -229,57 +224,54 @@ export class PracticeQuestionGenerator {
    */
   static generateQuestions(options: QuestionGeneratorOptions): PracticeQuestion[] {
     const questions: PracticeQuestion[] = [];
-    
+
     for (let i = 0; i < options.count; i++) {
       let question: PracticeQuestion;
-      
+
       switch (options.mode) {
-        case 'recognition':
+        case "recognition":
           question = generateRecognitionQuestion(
             options.difficulty,
             options.includeQualities,
-            options.includePositions
+            options.includePositions,
           );
           break;
-          
-        case 'construction':
+
+        case "construction":
           question = generateConstructionQuestion(
             options.difficulty,
             options.includeQualities,
-            options.includePositions
+            options.includePositions,
           );
           break;
-          
-        case 'progression':
+
+        case "progression":
           question = generateProgressionQuestion(
             options.difficulty,
             options.includeQualities,
-            options.includePositions
+            options.includePositions,
           );
           break;
-          
-        case 'ear-training':
-          question = generateEarTrainingQuestion(
-            options.difficulty,
-            options.includeQualities
-          );
+
+        case "ear-training":
+          question = generateEarTrainingQuestion(options.difficulty, options.includeQualities);
           break;
-          
+
         default:
           throw new Error(`Unsupported practice mode: ${options.mode}`);
       }
-      
+
       questions.push(question);
     }
-    
+
     // Avoid repeats if requested
     if (options.avoidRepeats) {
       return removeDuplicateQuestions(questions);
     }
-    
+
     return questions;
   }
-  
+
   /**
    * Generate a single question for a specific mode
    */
@@ -287,7 +279,7 @@ export class PracticeQuestionGenerator {
     mode: PracticeMode,
     difficulty: DifficultyLevel,
     includeQualities: TriadQuality[],
-    includePositions: NeckPosition[]
+    includePositions: NeckPosition[],
   ): PracticeQuestion {
     const options: QuestionGeneratorOptions = {
       difficulty,
@@ -296,26 +288,26 @@ export class PracticeQuestionGenerator {
       includeQualities,
       includePositions,
     };
-    
-    return this.generateQuestions(options)[0];
+
+    return PracticeQuestionGenerator.generateQuestions(options)[0];
   }
-  
+
   /**
    * Generate adaptive questions based on previous results
    */
   static generateAdaptiveQuestions(options: QuestionGeneratorOptions): PracticeQuestion[] {
     if (!options.focusWeakAreas || !options.previousResults) {
-      return this.generateQuestions(options);
+      return PracticeQuestionGenerator.generateQuestions(options);
     }
-    
+
     // Analyze previous results to identify weak areas
     const weakQualities = identifyWeakQualities(options.previousResults);
     const adaptedOptions = {
       ...options,
       includeQualities: weakQualities.length > 0 ? weakQualities : options.includeQualities,
     };
-    
-    return this.generateQuestions(adaptedOptions);
+
+    return PracticeQuestionGenerator.generateQuestions(adaptedOptions);
   }
 }
 
@@ -324,7 +316,7 @@ export class PracticeQuestionGenerator {
  */
 function removeDuplicateQuestions(questions: PracticeQuestion[]): PracticeQuestion[] {
   const seen = new Set<string>();
-  return questions.filter(question => {
+  return questions.filter((question) => {
     const key = `${question.target.rootNote}-${question.target.quality}-${question.target.neckPosition}`;
     if (seen.has(key)) {
       return false;
@@ -346,15 +338,15 @@ function identifyWeakQualities(results: QuestionResult[]): TriadQuality[] {
   // Track accuracy for each quality
   const qualityStats = new Map<TriadQuality, { correct: number; total: number }>();
 
-  results.forEach(result => {
+  results.forEach((result) => {
     const quality = result.question.target.quality;
     const stats = qualityStats.get(quality) || { correct: 0, total: 0 };
-    
+
     stats.total += 1;
     if (result.isCorrect) {
       stats.correct += 1;
     }
-    
+
     qualityStats.set(quality, stats);
   });
 

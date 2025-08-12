@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { TriadSelector } from './TriadSelector';
-import type { TriadSelection } from './TriadSelector';
-import type { FretPosition } from '../Fretboard/Fretboard';
+import type { Meta, StoryObj } from "@storybook/react";
+import type { FretPosition } from "../Fretboard/Fretboard";
+import type { TriadSelection } from "./TriadSelector";
+import { TriadSelector } from "./TriadSelector";
 
 const meta: Meta<typeof TriadSelector> = {
-  title: 'Design System/TriadSelector',
+  title: "Design System/TriadSelector",
   component: TriadSelector,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     docs: {
       description: {
         component: `
@@ -63,45 +63,45 @@ A comprehensive React component for selecting and visualizing musical triads on 
   },
   argTypes: {
     initialSelection: {
-      control: 'object',
-      description: 'Initial triad selection state',
+      control: "object",
+      description: "Initial triad selection state",
       table: {
-        type: { summary: 'Partial<TriadSelection>' },
+        type: { summary: "Partial<TriadSelection>" },
       },
     },
     size: {
-      control: 'radio',
-      options: ['sm', 'md', 'lg'],
-      description: 'Component size variant for different layouts',
+      control: "radio",
+      options: ["sm", "md", "lg"],
+      description: "Component size variant for different layouts",
     },
     showAdvancedPositions: {
-      control: 'boolean',
-      description: 'Show all neck positions including 7th, 9th, and 12th',
+      control: "boolean",
+      description: "Show all neck positions including 7th, 9th, and 12th",
     },
     onChange: {
-      action: 'selection-changed',
-      description: 'Callback when triad selection changes',
+      action: "selection-changed",
+      description: "Callback when triad selection changes",
       table: {
-        type: { summary: '(selection: TriadSelection) => void' },
+        type: { summary: "(selection: TriadSelection) => void" },
       },
     },
     onFretClick: {
-      action: 'fret-clicked',
-      description: 'Callback when a fret is clicked on the integrated fretboard',
+      action: "fret-clicked",
+      description: "Callback when a fret is clicked on the integrated fretboard",
       table: {
-        type: { summary: '(position: FretPosition) => void' },
+        type: { summary: "(position: FretPosition) => void" },
       },
     },
     className: {
-      control: 'text',
-      description: 'Additional CSS class names',
+      control: "text",
+      description: "Additional CSS class names",
     },
-    'aria-label': {
-      control: 'text',
-      description: 'Custom ARIA label for accessibility',
+    "aria-label": {
+      control: "text",
+      description: "Custom ARIA label for accessibility",
     },
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
 };
 
 export default meta;
@@ -110,13 +110,14 @@ type Story = StoryObj<typeof meta>;
 // Default triad selector
 export const Default: Story = {
   args: {
-    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
-    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
+    onChange: (selection: TriadSelection) => console.log("selection-changed", selection),
+    onFretClick: (position) => console.log("fret-clicked", position.fret, position.string, position.note),
   },
   parameters: {
     docs: {
       description: {
-        story: 'Default triad selector starting with C major in open position. Try selecting different root notes, qualities, and positions to see the chord chart update in real-time.',
+        story:
+          "Default triad selector starting with C major in open position. Try selecting different root notes, qualities, and positions to see the chord chart update in real-time.",
       },
     },
   },
@@ -126,17 +127,18 @@ export const Default: Story = {
 export const GMajor: Story = {
   args: {
     initialSelection: {
-      rootNote: 'G',
-      quality: 'major',
-      neckPosition: 'open',
+      rootNote: "G",
+      quality: "major",
+      neckPosition: "open",
     },
-    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
-    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
+    onChange: (selection: TriadSelection) => console.log("selection-changed", selection),
+    onFretClick: (position) => console.log("fret-clicked", position.fret, position.string, position.note),
   },
   parameters: {
     docs: {
       description: {
-        story: 'G Major chord in open position showing the classic open G chord fingering with multiple root positions.',
+        story:
+          "G Major chord in open position showing the classic open G chord fingering with multiple root positions.",
       },
     },
   },
@@ -146,17 +148,18 @@ export const GMajor: Story = {
 export const AMinor: Story = {
   args: {
     initialSelection: {
-      rootNote: 'A',
-      quality: 'minor',
-      neckPosition: 'open',
+      rootNote: "A",
+      quality: "minor",
+      neckPosition: "open",
     },
-    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
-    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
+    onChange: (selection: TriadSelection) => console.log("selection-changed", selection),
+    onFretClick: (position) => console.log("fret-clicked", position.fret, position.string, position.note),
   },
   parameters: {
     docs: {
       description: {
-        story: 'A minor chord demonstrating minor triad intervals (root, minor third, perfect fifth) with the characteristic melancholy sound.',
+        story:
+          "A minor chord demonstrating minor triad intervals (root, minor third, perfect fifth) with the characteristic melancholy sound.",
       },
     },
   },
@@ -166,17 +169,18 @@ export const AMinor: Story = {
 export const FSharpDiminished: Story = {
   args: {
     initialSelection: {
-      rootNote: 'F#',
-      quality: 'diminished',
-      neckPosition: 'position-3',
+      rootNote: "F#",
+      quality: "diminished",
+      neckPosition: "position-3",
     },
-    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
-    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
+    onChange: (selection: TriadSelection) => console.log("selection-changed", selection),
+    onFretClick: (position) => console.log("fret-clicked", position.fret, position.string, position.note),
   },
   parameters: {
     docs: {
       description: {
-        story: 'F# diminished chord in 3rd position showing the unique interval structure of diminished triads (minor thirds stacked).',
+        story:
+          "F# diminished chord in 3rd position showing the unique interval structure of diminished triads (minor thirds stacked).",
       },
     },
   },
@@ -186,17 +190,18 @@ export const FSharpDiminished: Story = {
 export const CAugmented: Story = {
   args: {
     initialSelection: {
-      rootNote: 'C',
-      quality: 'augmented',
-      neckPosition: 'position-5',
+      rootNote: "C",
+      quality: "augmented",
+      neckPosition: "position-5",
     },
-    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
-    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
+    onChange: (selection: TriadSelection) => console.log("selection-changed", selection),
+    onFretClick: (position) => console.log("fret-clicked", position.fret, position.string, position.note),
   },
   parameters: {
     docs: {
       description: {
-        story: 'C augmented chord in 5th position demonstrating the symmetrical nature of augmented triads with their distinctive raised fifth.',
+        story:
+          "C augmented chord in 5th position demonstrating the symmetrical nature of augmented triads with their distinctive raised fifth.",
       },
     },
   },
@@ -207,17 +212,18 @@ export const AdvancedPositions: Story = {
   args: {
     showAdvancedPositions: true,
     initialSelection: {
-      rootNote: 'D',
-      quality: 'major',
-      neckPosition: 'position-12',
+      rootNote: "D",
+      quality: "major",
+      neckPosition: "position-12",
     },
-    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
-    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
+    onChange: (selection: TriadSelection) => console.log("selection-changed", selection),
+    onFretClick: (position) => console.log("fret-clicked", position.fret, position.string, position.note),
   },
   parameters: {
     docs: {
       description: {
-        story: 'D major chord in 12th position with advanced positions enabled, showing extended neck positions for lead guitar work.',
+        story:
+          "D major chord in 12th position with advanced positions enabled, showing extended neck positions for lead guitar work.",
       },
     },
   },
@@ -226,19 +232,19 @@ export const AdvancedPositions: Story = {
 // Small size variant
 export const SmallSize: Story = {
   args: {
-    size: 'sm',
+    size: "sm",
     initialSelection: {
-      rootNote: 'E',
-      quality: 'minor',
-      neckPosition: 'open',
+      rootNote: "E",
+      quality: "minor",
+      neckPosition: "open",
     },
-    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
-    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
+    onChange: (selection: TriadSelection) => console.log("selection-changed", selection),
+    onFretClick: (position) => console.log("fret-clicked", position.fret, position.string, position.note),
   },
   parameters: {
     docs: {
       description: {
-        story: 'Small size variant (75% scale) suitable for sidebar widgets, mobile layouts, or compact interfaces.',
+        story: "Small size variant (75% scale) suitable for sidebar widgets, mobile layouts, or compact interfaces.",
       },
     },
   },
@@ -247,19 +253,20 @@ export const SmallSize: Story = {
 // Large size variant
 export const LargeSize: Story = {
   args: {
-    size: 'lg',
+    size: "lg",
     initialSelection: {
-      rootNote: 'B',
-      quality: 'major',
-      neckPosition: 'position-7',
+      rootNote: "B",
+      quality: "major",
+      neckPosition: "position-7",
     },
-    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
-    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
+    onChange: (selection: TriadSelection) => console.log("selection-changed", selection),
+    onFretClick: (position) => console.log("fret-clicked", position.fret, position.string, position.note),
   },
   parameters: {
     docs: {
       description: {
-        story: 'Large size variant (125% scale) ideal for detailed instruction, desktop applications, or presentation mode.',
+        story:
+          "Large size variant (125% scale) ideal for detailed instruction, desktop applications, or presentation mode.",
       },
     },
   },
@@ -269,14 +276,15 @@ export const LargeSize: Story = {
 export const Interactive: Story = {
   args: {
     showAdvancedPositions: true,
-    size: 'md',
-    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
-    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
+    size: "md",
+    onChange: (selection: TriadSelection) => console.log("selection-changed", selection),
+    onFretClick: (position) => console.log("fret-clicked", position.fret, position.string, position.note),
   },
   parameters: {
     docs: {
       description: {
-        story: 'Interactive playground with all controls available. Experiment with different combinations to explore guitar chord theory.',
+        story:
+          "Interactive playground with all controls available. Experiment with different combinations to explore guitar chord theory.",
       },
     },
   },
@@ -285,14 +293,14 @@ export const Interactive: Story = {
 // Accessibility demonstration
 export const AccessibilityDemo: Story = {
   args: {
-    'aria-label': 'Chord theory learning interface with full keyboard navigation',
+    "aria-label": "Chord theory learning interface with full keyboard navigation",
     initialSelection: {
-      rootNote: 'F',
-      quality: 'major',
-      neckPosition: 'open',
+      rootNote: "F",
+      quality: "major",
+      neckPosition: "open",
     },
-    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
-    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
+    onChange: (selection: TriadSelection) => console.log("selection-changed", selection),
+    onFretClick: (position) => console.log("fret-clicked", position.fret, position.string, position.note),
   },
   parameters: {
     docs: {
@@ -327,12 +335,12 @@ Accessibility demonstration with enhanced ARIA labeling and keyboard navigation 
 export const EducationalMajorTriads: Story = {
   args: {
     initialSelection: {
-      rootNote: 'C',
-      quality: 'major',
-      neckPosition: 'open',
+      rootNote: "C",
+      quality: "major",
+      neckPosition: "open",
     },
-    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
-    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
+    onChange: (selection: TriadSelection) => console.log("selection-changed", selection),
+    onFretClick: (position) => console.log("fret-clicked", position.fret, position.string, position.note),
   },
   parameters: {
     docs: {
@@ -361,12 +369,12 @@ Educational example focusing on major triads. Perfect for teaching major triad c
 export const EducationalMinorMajorComparison: Story = {
   args: {
     initialSelection: {
-      rootNote: 'A',
-      quality: 'minor',
-      neckPosition: 'open',
+      rootNote: "A",
+      quality: "minor",
+      neckPosition: "open",
     },
-    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
-    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
+    onChange: (selection: TriadSelection) => console.log("selection-changed", selection),
+    onFretClick: (position) => console.log("fret-clicked", position.fret, position.string, position.note),
   },
   parameters: {
     docs: {
@@ -400,12 +408,12 @@ export const PositionComparison: Story = {
   args: {
     showAdvancedPositions: true,
     initialSelection: {
-      rootNote: 'E',
-      quality: 'major',
-      neckPosition: 'open',
+      rootNote: "E",
+      quality: "major",
+      neckPosition: "open",
     },
-    onChange: (selection: TriadSelection) => console.log('selection-changed', selection),
-    onFretClick: (fret: number, string: number) => console.log('fret-clicked', fret, string),
+    onChange: (selection: TriadSelection) => console.log("selection-changed", selection),
+    onFretClick: (position) => console.log("fret-clicked", position.fret, position.string, position.note),
   },
   parameters: {
     docs: {
@@ -433,21 +441,21 @@ Each position offers different voicing options and tonal colors while maintainin
 export const CustomHandlers: Story = {
   args: {
     initialSelection: {
-      rootNote: 'C',
-      quality: 'major',
-      neckPosition: 'open',
+      rootNote: "C",
+      quality: "major",
+      neckPosition: "open",
     },
     onChange: (selection: TriadSelection) => {
-      console.log('selection-changed', selection);
-      console.log('Chord selected:', {
-        chord: `${selection.rootNote}${selection.quality === 'major' ? '' : selection.quality}`,
+      console.log("selection-changed", selection);
+      console.log("Chord selected:", {
+        chord: `${selection.rootNote}${selection.quality === "major" ? "" : selection.quality}`,
         position: selection.neckPosition,
         notes: selection.rootNote, // In real app, calculate full triad
       });
     },
     onFretClick: (position: FretPosition) => {
-      console.log('fret-clicked', position);
-      console.log('Fret clicked:', {
+      console.log("fret-clicked", position);
+      console.log("Fret clicked:", {
         location: `Fret ${position.fret}, String ${position.string}`,
         note: position.note,
         function: position.function,
@@ -457,7 +465,8 @@ export const CustomHandlers: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Example with custom event handlers for integration into larger applications. Check browser console for detailed event information.',
+        story:
+          "Example with custom event handlers for integration into larger applications. Check browser console for detailed event information.",
       },
     },
   },

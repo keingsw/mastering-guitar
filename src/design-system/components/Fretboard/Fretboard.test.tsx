@@ -1,308 +1,324 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
-import { Fretboard } from './Fretboard';
-import type { NoteName, HarmonicFunction } from '../../types/music';
+import { fireEvent, screen, waitFor } from "@testing-library/dom";
+import { render } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import type { HarmonicFunction, NoteName } from "../../types/music";
+import { Fretboard } from "./Fretboard";
 
-describe('Fretboard Component', () => {
+describe("Fretboard Component", () => {
   const mockTriadPositions = [
-    { fret: 3, string: 1, note: 'G' as NoteName, function: 'root' as HarmonicFunction },
-    { fret: 3, string: 2, note: 'C' as NoteName, function: 'root' as HarmonicFunction },
-    { fret: 0, string: 3, note: 'G' as NoteName, function: 'root' as HarmonicFunction },
+    { fret: 3, string: 1, note: "G" as NoteName, function: "root" as HarmonicFunction },
+    { fret: 3, string: 2, note: "C" as NoteName, function: "root" as HarmonicFunction },
+    { fret: 0, string: 3, note: "G" as NoteName, function: "root" as HarmonicFunction },
   ];
 
-  describe('Rendering', () => {
-    it('renders the fretboard SVG with correct structure', () => {
+  describe("Rendering", () => {
+    it("renders the fretboard SVG with correct structure", () => {
       render(<Fretboard />);
-      
-      const svg = screen.getByRole('img', { name: /guitar fretboard/i });
+
+      const svg = screen.getByRole("img", { name: /guitar fretboard/i });
       expect(svg).toBeInTheDocument();
-      expect(svg.tagName).toBe('svg');
+      expect(svg.tagName).toBe("svg");
     });
 
-    it('renders 6 strings by default', () => {
+    it("renders 6 strings by default", () => {
       render(<Fretboard />);
-      
-      const strings = screen.getByRole('img').querySelectorAll('[data-testid*="string-"]');
+
+      const strings = screen.getByRole("img").querySelectorAll('[data-testid*="string-"]');
       expect(strings).toHaveLength(6);
     });
 
-    it('renders 21 frets by default', () => {
+    it("renders 21 frets by default", () => {
       render(<Fretboard />);
-      
+
       // Check for fret wires (not fret positions)
-      const frets = screen.getByRole('img').querySelectorAll('[data-testid^="fret-"]:not([data-testid*="position"])');
+      const frets = screen.getByRole("img").querySelectorAll('[data-testid^="fret-"]:not([data-testid*="position"])');
       expect(frets).toHaveLength(21);
     });
 
-    it('renders with custom number of frets', () => {
+    it("renders with custom number of frets", () => {
       render(<Fretboard fretCount={15} />);
-      
+
       // Check for fret wires (not fret positions)
-      const frets = screen.getByRole('img').querySelectorAll('[data-testid^="fret-"]:not([data-testid*="position"])');
+      const frets = screen.getByRole("img").querySelectorAll('[data-testid^="fret-"]:not([data-testid*="position"])');
       expect(frets).toHaveLength(15);
     });
 
-    it('renders position markers at standard positions', () => {
+    it("renders position markers at standard positions", () => {
       render(<Fretboard />);
-      
-      const positionMarkers = screen.getByRole('img').querySelectorAll('[data-testid*="position-marker"]');
+
+      const positionMarkers = screen.getByRole("img").querySelectorAll('[data-testid*="position-marker"]');
       expect(positionMarkers.length).toBeGreaterThan(0);
     });
   });
 
-  describe('Responsiveness', () => {
-    it('applies responsive size classes', () => {
+  describe("Responsiveness", () => {
+    it("applies responsive size classes", () => {
       const { rerender } = render(<Fretboard size="sm" />);
-      let svg = screen.getByRole('img');
-      expect(svg).toHaveClass('fretboard--sm');
+      let svg = screen.getByRole("img");
+      expect(svg).toHaveClass("fretboard--sm");
 
       rerender(<Fretboard size="lg" />);
-      svg = screen.getByRole('img');
-      expect(svg).toHaveClass('fretboard--lg');
+      svg = screen.getByRole("img");
+      expect(svg).toHaveClass("fretboard--lg");
     });
 
-    it('maintains aspect ratio on different sizes', () => {
+    it("maintains aspect ratio on different sizes", () => {
       render(<Fretboard size="lg" />);
-      const svg = screen.getByRole('img');
-      
-      expect(svg).toHaveAttribute('preserveAspectRatio', 'xMidYMid meet');
-      expect(svg).toHaveAttribute('viewBox');
+      const svg = screen.getByRole("img");
+
+      expect(svg).toHaveAttribute("preserveAspectRatio", "xMidYMid meet");
+      expect(svg).toHaveAttribute("viewBox");
     });
   });
 
-  describe('Neck Positions', () => {
-    it('renders different neck positions', () => {
+  describe("Neck Positions", () => {
+    it("renders different neck positions", () => {
       const { rerender } = render(<Fretboard neckPosition={0} />);
-      let svg = screen.getByRole('img');
-      expect(svg).toHaveAttribute('data-neck-position', '0');
+      let svg = screen.getByRole("img");
+      expect(svg).toHaveAttribute("data-neck-position", "0");
 
       rerender(<Fretboard neckPosition={5} />);
-      svg = screen.getByRole('img');
-      expect(svg).toHaveAttribute('data-neck-position', '5');
+      svg = screen.getByRole("img");
+      expect(svg).toHaveAttribute("data-neck-position", "5");
     });
 
-    it('adjusts fret numbering based on neck position', () => {
+    it("adjusts fret numbering based on neck position", () => {
       render(<Fretboard neckPosition={5} showFretNumbers />);
-      
+
       // First fret should be labeled as 6 (5 + 1)
-      const fretNumber = screen.getByText('6');
+      const fretNumber = screen.getByText("6");
       expect(fretNumber).toBeInTheDocument();
     });
   });
 
-  describe('Triad Highlighting', () => {
-    it('highlights triad positions with correct colors', () => {
+  describe("Triad Highlighting", () => {
+    it("highlights triad positions with correct colors", () => {
       render(<Fretboard triadPositions={mockTriadPositions} />);
-      
+
       // Check that highlighted positions exist (now using group selector)
-      const fretboard = screen.getByRole('img');
-      const highlightedElements = fretboard.querySelectorAll('g.fret-position__indicator');
+      const fretboard = screen.getByRole("img");
+      const highlightedElements = fretboard.querySelectorAll("g.fret-position__indicator");
       expect(highlightedElements.length).toBeGreaterThan(0);
     });
 
-    it('displays function labels for highlighted positions', () => {
+    it("displays function labels for highlighted positions", () => {
       render(<Fretboard triadPositions={mockTriadPositions} showNoteLabels />);
-      
+
       // Function labels (R, 3, 5) are shown for highlighted positions
-      const fretboard = screen.getByRole('img');
-      const functionLabels = fretboard.querySelectorAll('text.fret-position__function-label');
+      const fretboard = screen.getByRole("img");
+      const functionLabels = fretboard.querySelectorAll("text.fret-position__function-label");
       expect(functionLabels.length).toBeGreaterThan(0);
     });
 
-    it('hides note labels when disabled', () => {
+    it("hides note labels when disabled", () => {
       render(<Fretboard triadPositions={mockTriadPositions} showNoteLabels={false} />);
-      
-      const fretboard = screen.getByRole('img');
-      const noteLabels = fretboard.querySelectorAll('text.fret-position__note-label');
+
+      const fretboard = screen.getByRole("img");
+      const noteLabels = fretboard.querySelectorAll("text.fret-position__note-label");
       expect(noteLabels).toHaveLength(0);
     });
   });
 
-  describe('Note Calculation (TDD)', () => {
-    it('calculates correct notes for open strings (standard tuning)', () => {
+  describe("Note Calculation (TDD)", () => {
+    it("calculates correct notes for open strings (standard tuning)", () => {
       const onFretClick = vi.fn();
       render(<Fretboard onFretClick={onFretClick} />);
-      
+
       // Test open strings (fret 0)
       // String 1 (high E) - fret 0 should be E
-      const string1Open = screen.getByTestId('fret-position-0-1').querySelector('circle[role="button"]');
-      fireEvent.click(string1Open!);
-      expect(onFretClick).toHaveBeenCalledWith(expect.objectContaining({
-        fret: 0,
-        string: 1,
-        note: 'E'
-      }));
-      
+      const string1Open = screen.getByTestId("fret-position-0-1").querySelector('circle[role="button"]');
+      expect(string1Open).toBeTruthy(); if (string1Open) { fireEvent.click(string1Open); }
+      expect(onFretClick).toHaveBeenCalledWith(
+        expect.objectContaining({
+          fret: 0,
+          string: 1,
+          note: "E",
+        }),
+      );
+
       // String 6 (low E) - fret 0 should be E
-      const string6Open = screen.getByTestId('fret-position-0-6').querySelector('circle[role="button"]');
-      fireEvent.click(string6Open!);
-      expect(onFretClick).toHaveBeenCalledWith(expect.objectContaining({
-        fret: 0,
-        string: 6,
-        note: 'E'
-      }));
+      const string6Open = screen.getByTestId("fret-position-0-6").querySelector('circle[role="button"]');
+      expect(string6Open).toBeTruthy(); if (string6Open) { fireEvent.click(string6Open); }
+      expect(onFretClick).toHaveBeenCalledWith(
+        expect.objectContaining({
+          fret: 0,
+          string: 6,
+          note: "E",
+        }),
+      );
     });
 
-    it('calculates correct notes for specific fret positions', () => {
+    it("calculates correct notes for specific fret positions", () => {
       const onFretClick = vi.fn();
       render(<Fretboard onFretClick={onFretClick} />);
-      
+
       // String 1 (high E), fret 3 should be G (E + 3 semitones = G)
-      const string1Fret3 = screen.getByTestId('fret-position-3-1').querySelector('circle[role="button"]');
-      fireEvent.click(string1Fret3!);
-      expect(onFretClick).toHaveBeenCalledWith(expect.objectContaining({
-        fret: 3,
-        string: 1,
-        note: 'G'
-      }));
-      
+      const string1Fret3 = screen.getByTestId("fret-position-3-1").querySelector('circle[role="button"]');
+      expect(string1Fret3).toBeTruthy(); if (string1Fret3) { fireEvent.click(string1Fret3); }
+      expect(onFretClick).toHaveBeenCalledWith(
+        expect.objectContaining({
+          fret: 3,
+          string: 1,
+          note: "G",
+        }),
+      );
+
       // String 2 (B), fret 3 should be D (B + 3 semitones = D)
-      const string2Fret3 = screen.getByTestId('fret-position-3-2').querySelector('circle[role="button"]');
-      fireEvent.click(string2Fret3!);
-      expect(onFretClick).toHaveBeenCalledWith(expect.objectContaining({
-        fret: 3,
-        string: 2,
-        note: 'D'
-      }));
+      const string2Fret3 = screen.getByTestId("fret-position-3-2").querySelector('circle[role="button"]');
+      expect(string2Fret3).toBeTruthy(); if (string2Fret3) { fireEvent.click(string2Fret3); }
+      expect(onFretClick).toHaveBeenCalledWith(
+        expect.objectContaining({
+          fret: 3,
+          string: 2,
+          note: "D",
+        }),
+      );
     });
 
-    it('calculates correct notes with neck position offset', () => {
+    it("calculates correct notes with neck position offset", () => {
       const onFretClick = vi.fn();
       render(<Fretboard neckPosition={3} onFretClick={onFretClick} />);
-      
+
       // With neck position 3, fret 3 on string 1 should still be G
       // because neckPosition affects display, not the actual fret calculation
       // The fret positions passed to Fretboard already account for neck position
-      const string1Fret3 = screen.getByTestId('fret-position-3-1').querySelector('circle[role="button"]');
-      fireEvent.click(string1Fret3!);
-      expect(onFretClick).toHaveBeenCalledWith(expect.objectContaining({
-        fret: 3,
-        string: 1,
-        note: 'G' // E + 3 = G (neck position is handled by TriadSelector, not Fretboard)
-      }));
+      const string1Fret3 = screen.getByTestId("fret-position-3-1").querySelector('circle[role="button"]');
+      expect(string1Fret3).toBeTruthy(); if (string1Fret3) { fireEvent.click(string1Fret3); }
+      expect(onFretClick).toHaveBeenCalledWith(
+        expect.objectContaining({
+          fret: 3,
+          string: 1,
+          note: "G", // E + 3 = G (neck position is handled by TriadSelector, not Fretboard)
+        }),
+      );
     });
   });
 
-  describe('Interaction', () => {
-    it('handles fret clicks with callback', () => {
+  describe("Interaction", () => {
+    it("handles fret clicks with callback", () => {
       const onFretClick = vi.fn();
       render(<Fretboard onFretClick={onFretClick} />);
-      
-      const fretPosition = screen.getByTestId('fret-position-3-1');
+
+      const fretPosition = screen.getByTestId("fret-position-3-1");
       const clickableArea = fretPosition.querySelector('circle[role="button"]');
-      fireEvent.click(clickableArea!);
-      
+      expect(clickableArea).toBeTruthy(); if (clickableArea) { fireEvent.click(clickableArea); }
+
       expect(onFretClick).toHaveBeenCalledWith({
         fret: 3,
         string: 1,
-        note: 'G'  // Now we test the actual expected note instead of expect.any(String)
+        note: "G", // Now we test the actual expected note instead of expect.any(String)
       });
     });
 
-    it('shows hover states on fret positions', async () => {
+    it("shows hover states on fret positions", async () => {
       render(<Fretboard />);
-      
-      const fretPosition = screen.getByTestId('fret-position-3-1');
+
+      const fretPosition = screen.getByTestId("fret-position-3-1");
       const clickableArea = fretPosition.querySelector('circle[role="button"]');
-      
-      fireEvent.mouseEnter(clickableArea!);
-      
+
+      expect(clickableArea).toBeTruthy(); if (clickableArea) { fireEvent.mouseEnter(clickableArea); }
+
       await waitFor(() => {
-        const hoverIndicator = fretPosition.querySelector('.fret-position__hover-indicator');
+        const hoverIndicator = fretPosition.querySelector(".fret-position__hover-indicator");
         expect(hoverIndicator).toBeInTheDocument();
       });
     });
 
-    it('removes hover states on mouse leave', async () => {
+    it("removes hover states on mouse leave", async () => {
       render(<Fretboard />);
-      
-      const fretPosition = screen.getByTestId('fret-position-3-1');
+
+      const fretPosition = screen.getByTestId("fret-position-3-1");
       const clickableArea = fretPosition.querySelector('circle[role="button"]');
-      
-      fireEvent.mouseEnter(clickableArea!);
-      fireEvent.mouseLeave(clickableArea!);
-      
+
+      expect(clickableArea).toBeTruthy(); if (clickableArea) { fireEvent.mouseEnter(clickableArea); }
+      expect(clickableArea).toBeTruthy(); if (clickableArea) { fireEvent.mouseLeave(clickableArea); }
+
       await waitFor(() => {
-        const hoverIndicator = fretPosition.querySelector('.fret-position__hover-indicator');
+        const hoverIndicator = fretPosition.querySelector(".fret-position__hover-indicator");
         expect(hoverIndicator).not.toBeInTheDocument();
       });
     });
   });
 
-  describe('Chord Visualization', () => {
-    it('displays chord name when provided', () => {
+  describe("Chord Visualization", () => {
+    it("displays chord name when provided", () => {
       render(<Fretboard chord="C" triadPositions={mockTriadPositions} />);
-      
+
       // Check for chord name in the display area specifically
-      const chordDisplay = screen.getByText('C', { selector: '.fretboard__chord-name' });
+      const chordDisplay = screen.getByText("C", { selector: ".fretboard__chord-name" });
       expect(chordDisplay).toBeInTheDocument();
     });
 
-    it('highlights chord tones with different intensities', () => {
+    it("highlights chord tones with different intensities", () => {
       const chordPositions = [
-        { fret: 3, string: 1, note: 'G' as NoteName, function: 'root' as HarmonicFunction },
-        { fret: 2, string: 2, note: 'E' as NoteName, function: 'third' as HarmonicFunction },
-        { fret: 0, string: 3, note: 'G' as NoteName, function: 'fifth' as HarmonicFunction },
+        { fret: 3, string: 1, note: "G" as NoteName, function: "root" as HarmonicFunction },
+        { fret: 2, string: 2, note: "E" as NoteName, function: "third" as HarmonicFunction },
+        { fret: 0, string: 3, note: "G" as NoteName, function: "fifth" as HarmonicFunction },
       ];
 
       render(<Fretboard triadPositions={chordPositions} />);
-      
-      const rootNote = screen.getByTestId('fret-position-3-1').querySelector('circle[data-function="root"]');
-      const thirdNote = screen.getByTestId('fret-position-2-2').querySelector('circle[data-function="third"]');
-      const fifthNote = screen.getByTestId('fret-position-0-3').querySelector('circle[data-function="fifth"]');
-      
+
+      const rootNote = screen.getByTestId("fret-position-3-1").querySelector('circle[data-function="root"]');
+      const thirdNote = screen.getByTestId("fret-position-2-2").querySelector('circle[data-function="third"]');
+      const fifthNote = screen.getByTestId("fret-position-0-3").querySelector('circle[data-function="fifth"]');
+
       expect(rootNote).toBeInTheDocument();
       expect(thirdNote).toBeInTheDocument();
       expect(fifthNote).toBeInTheDocument();
     });
   });
 
-  describe('Accessibility', () => {
-    it('has proper ARIA attributes', () => {
+  describe("Accessibility", () => {
+    it("has proper ARIA attributes", () => {
       render(<Fretboard />);
-      
-      const svg = screen.getByRole('img');
-      expect(svg).toHaveAttribute('aria-label', 'Interactive guitar fretboard');
+
+      const svg = screen.getByRole("img");
+      expect(svg).toHaveAttribute("aria-label", "Interactive guitar fretboard");
     });
 
-    it('provides keyboard navigation for fret positions', () => {
+    it("provides keyboard navigation for fret positions", () => {
       const onFretClick = vi.fn();
       render(<Fretboard onFretClick={onFretClick} />);
-      
-      const fretPosition = screen.getByTestId('fret-position-3-1').querySelector('circle[role="button"]') as HTMLElement;
+
+      const fretPosition = screen
+        .getByTestId("fret-position-3-1")
+        .querySelector('circle[role="button"]') as HTMLElement;
       fretPosition.focus();
-      fireEvent.keyDown(fretPosition!, { key: 'Enter' });
-      
+      expect(fretPosition).toBeTruthy(); 
+      if (fretPosition) { 
+        fireEvent.keyDown(fretPosition, { key: "Enter" });
+      }
+
       expect(onFretClick).toHaveBeenCalled();
     });
 
-    it('provides descriptive text for screen readers', () => {
+    it("provides descriptive text for screen readers", () => {
       render(<Fretboard triadPositions={mockTriadPositions} chord="C" />);
-      
+
       // Check for screen reader description
       const description = screen.getByText(/C chord on guitar fretboard/i);
       expect(description).toBeInTheDocument();
-      expect(description).toHaveClass('sr-only');
+      expect(description).toHaveClass("sr-only");
     });
   });
 
-  describe('Performance', () => {
-    it('memoizes fret calculations to prevent unnecessary re-renders', () => {
+  describe("Performance", () => {
+    it("memoizes fret calculations to prevent unnecessary re-renders", () => {
       const { rerender } = render(<Fretboard fretCount={12} />);
-      const firstRender = screen.getByRole('img').innerHTML;
-      
+      const firstRender = screen.getByRole("img").innerHTML;
+
       rerender(<Fretboard fretCount={12} />);
-      const secondRender = screen.getByRole('img').innerHTML;
-      
+      const secondRender = screen.getByRole("img").innerHTML;
+
       expect(firstRender).toBe(secondRender);
     });
 
-    it('handles large numbers of triad positions efficiently', () => {
+    it("handles large numbers of triad positions efficiently", () => {
       const manyPositions = Array.from({ length: 50 }, (_, i) => ({
         fret: (i % 12) + 1,
         string: (i % 6) + 1,
-        note: 'C' as NoteName,
-        function: 'root' as HarmonicFunction,
+        note: "C" as NoteName,
+        function: "root" as HarmonicFunction,
       }));
 
       expect(() => {
@@ -311,11 +327,11 @@ describe('Fretboard Component', () => {
     });
   });
 
-  describe('Error Handling', () => {
-    it('handles invalid fret positions gracefully', () => {
+  describe("Error Handling", () => {
+    it("handles invalid fret positions gracefully", () => {
       const invalidPositions = [
-        { fret: -1, string: 1, note: 'C' as NoteName, function: 'root' as HarmonicFunction },
-        { fret: 25, string: 7, note: 'invalid' as NoteName, function: 'root' as HarmonicFunction },
+        { fret: -1, string: 1, note: "C" as NoteName, function: "root" as HarmonicFunction },
+        { fret: 25, string: 7, note: "invalid" as NoteName, function: "root" as HarmonicFunction },
       ];
 
       expect(() => {
@@ -323,10 +339,10 @@ describe('Fretboard Component', () => {
       }).not.toThrow();
     });
 
-    it('provides fallback when no positions are provided', () => {
+    it("provides fallback when no positions are provided", () => {
       render(<Fretboard triadPositions={[]} />);
-      
-      const svg = screen.getByRole('img');
+
+      const svg = screen.getByRole("img");
       expect(svg).toBeInTheDocument();
     });
   });

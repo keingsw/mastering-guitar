@@ -1,5 +1,5 @@
-import type { NoteName } from "../types/music";
 import { MUSIC_CONSTANTS, VALID_NOTE_NAMES } from "@shared/constants/music";
+import type { NoteName } from "../types/music";
 
 /**
  * Note class representing a musical note with methods for interval calculations
@@ -47,7 +47,9 @@ export class Note {
 
   public addSemitones(semitones: number): Note {
     const currentSemitone = this.semitoneValue();
-    const newSemitone = (((currentSemitone + semitones) % MUSIC_CONSTANTS.SEMITONES_IN_OCTAVE) + MUSIC_CONSTANTS.SEMITONES_IN_OCTAVE) % MUSIC_CONSTANTS.SEMITONES_IN_OCTAVE;
+    const newSemitone =
+      (((currentSemitone + semitones) % MUSIC_CONSTANTS.SEMITONES_IN_OCTAVE) + MUSIC_CONSTANTS.SEMITONES_IN_OCTAVE) %
+      MUSIC_CONSTANTS.SEMITONES_IN_OCTAVE;
     const newNoteName = Note.NOTE_NAMES[newSemitone];
 
     // Calculate new octave if this note has an octave

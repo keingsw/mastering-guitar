@@ -1,16 +1,20 @@
-export { Button, type ButtonProps } from './Button/Button';
-export { ChordDisplay, type ChordDisplayProps } from './ChordDisplay/ChordDisplay';
-export { FretPosition, type FretPositionProps } from './FretPosition/FretPosition';
-export { Fretboard, type FretboardProps, type FretPosition as FretboardPosition } from './Fretboard/Fretboard';
-export { TriadSelector, type TriadSelectorProps, type TriadSelection, type TriadQuality, type NeckPosition } from './TriadSelector/TriadSelector';
-
-export type { 
-  NoteName, 
-  ChordSymbol, 
-  Interval, 
-  HarmonicFunction, 
-  ComponentSize 
-} from '../types/music';
-
-export * from '../tokens';
-export { generateCSSCustomProperties, cssVar } from '../tokens';
+export * from "../tokens";
+export { cssVar, generateCSSCustomProperties } from "../tokens";
+export type {
+  ChordSymbol,
+  ComponentSize,
+  HarmonicFunction,
+  Interval,
+  NoteName,
+} from "../types/music";
+export { Button, type ButtonProps } from "./Button/Button";
+export { ChordDisplay, type ChordDisplayProps } from "./ChordDisplay/ChordDisplay";
+export { Fretboard, type FretboardProps, type FretPosition as FretboardPosition } from "./Fretboard/Fretboard";
+export { FretPosition, type FretPositionProps } from "./FretPosition/FretPosition";
+export {
+  type NeckPosition,
+  type TriadQuality,
+  type TriadSelection,
+  TriadSelector,
+  type TriadSelectorProps,
+} from "./TriadSelector/TriadSelector";

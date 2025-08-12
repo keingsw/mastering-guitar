@@ -5,27 +5,26 @@
  * Optimized for fast lookup and guitar-specific chord information.
  */
 
-// Database types
-export type {
-  TriadDatabase,
-  TriadDatabaseEntry,
-  DatabaseTriad,
-  DatabaseFretboardPosition,
-  DatabaseChordVoicing,
-  DatabaseLookupOptions,
-} from './types/database';
-
 // Database lookup services
 export {
-  getTriad,
-  getTriadsByRoot,
-  getTriadsByQuality,
-  getVoicingsByDifficulty,
-  getVoicingsByNeckPosition,
   findTriads,
   findVoicings,
-  getRandomTriad,
+  getAllTriadSymbols,
   getCommonVoicings,
   getDatabaseStats,
-  getAllTriadSymbols,
-} from './services/database-lookup';
+  getRandomTriad,
+  getTriad,
+  getTriadsByQuality,
+  getTriadsByRoot,
+  getVoicingsByDifficulty,
+  getVoicingsByNeckPosition,
+} from "./services/database-lookup";
+// Database types
+export type {
+  DatabaseChordVoicing,
+  DatabaseFretboardPosition,
+  DatabaseLookupOptions,
+  DatabaseTriad,
+  TriadDatabase,
+  TriadDatabaseEntry,
+} from "./types/database";

@@ -17,10 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
-    strategy:
-      matrix:
-        node-version: [20.x, 22.x]
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -28,10 +24,10 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js 22.x
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '22.x'
           cache: 'pnpm'
 
       - name: Verify pnpm installation
@@ -75,7 +71,6 @@ jobs:
 
       - name: Upload coverage reports
         uses: codecov/codecov-action@v4
-        if: matrix.node-version == '20.x'
         with:
           file: ./coverage/lcov.info
           flags: unittests

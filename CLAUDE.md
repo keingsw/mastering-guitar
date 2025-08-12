@@ -191,7 +191,7 @@ The project uses GitHub Actions for automated quality checks on all PRs and push
 - **Quality Checks**: TypeScript compilation, linting, testing with coverage, production builds
 - **Security Audit**: Dependency vulnerability scanning, dangerous pattern detection  
 - **Dependency Validation**: Package manager enforcement, lockfile integrity
-- **Multi-Node Testing**: Node.js 20.x and 22.x compatibility verification
+- **Node.js Testing**: Node.js 22.x testing (as specified in .mise.toml)
 - **Build Verification**: Production bundle and Storybook compilation
 
 ### Quality Gates

@@ -184,6 +184,25 @@ pnpm run build-storybook  # Build static Storybook
 pnpm run build:data       # Generate triad database from chord definitions
 ```
 
+## Continuous Integration
+The project uses GitHub Actions for automated quality checks on all PRs and pushes:
+
+### CI Pipeline (`.github/workflows/ci.yml`)
+- **Quality Checks**: TypeScript compilation, linting, testing with coverage, production builds
+- **Security Audit**: Dependency vulnerability scanning, dangerous pattern detection  
+- **Dependency Validation**: Package manager enforcement, lockfile integrity
+- **Multi-Node Testing**: Node.js 20.x and 22.x compatibility verification
+- **Build Verification**: Production bundle and Storybook compilation
+
+### Quality Gates
+All PRs must pass comprehensive CI checks including:
+- TypeScript type checking with strict mode
+- Biome linting and formatting validation  
+- Test coverage reporting with Codecov integration
+- Security audit with vulnerability detection
+- Package manager consistency enforcement (pnpm only)
+- Production build success verification
+
 ## TDD Workflow (MANDATORY - NO EXCEPTIONS)
 **⚠️ CRITICAL: Never write implementation code without tests first ⚠️**
 

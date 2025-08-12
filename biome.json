@@ -23,6 +23,8 @@
     "lineWidth": 120
   },
   "files": {
-    "includes": ["src/**"]
+    "includes": ["src/**"],
+    "ignoreUnknown": true,
+    "maxSize": 10485760
   }
 }

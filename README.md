@@ -1,5 +1,7 @@
 # Mastering Guitar
 
+[![CI Quality Checks](https://github.com/keingsw/mastering-guitar/actions/workflows/ci.yml/badge.svg)](https://github.com/keingsw/mastering-guitar/actions/workflows/ci.yml)
+
 Guitar triads mastery tool with interactive fretboard and practice modes.
 
 ## Getting Started

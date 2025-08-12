@@ -27,28 +27,28 @@ export interface ChordDisplayProps {
 // Helper function to format chord symbols with proper superscript styling
 const formatChordSymbol = (chord: string) => {
   // Split chord into parts and create React elements
-  const parts: (string | { type: 'sup'; content: string })[] = [];
-  let currentPart = '';
-  
+  const parts: (string | { type: "sup"; content: string })[] = [];
+  let currentPart = "";
+
   for (let i = 0; i < chord.length; i++) {
     const char = chord[i];
-    if (char === '°' || char === '#' || char === '♭' || char === '♯') {
+    if (char === "°" || char === "#" || char === "♭" || char === "♯") {
       if (currentPart) {
         parts.push(currentPart);
-        currentPart = '';
+        currentPart = "";
       }
-      parts.push({ type: 'sup', content: char });
+      parts.push({ type: "sup", content: char });
     } else {
       currentPart += char;
     }
   }
-  
+
   if (currentPart) {
     parts.push(currentPart);
   }
-  
+
   return parts.map((part, index) => {
-    if (typeof part === 'string') {
+    if (typeof part === "string") {
       return part;
     }
     return <sup key={`${part.content}-${index}`}>{part.content}</sup>;
@@ -283,10 +283,7 @@ export const ChordDisplay: React.FC<ChordDisplayProps> = ({
         aria-label={onClick ? `Select ${chord} chord` : undefined}
         onKeyDown={handleKeyDown}
       >
-        <div
-          style={chordStyles}
-          aria-label={`Chord: ${chord}`}
-        >
+        <div style={chordStyles} aria-label={`Chord: ${chord}`}>
           {formatChordSymbol(chord)}
         </div>
 

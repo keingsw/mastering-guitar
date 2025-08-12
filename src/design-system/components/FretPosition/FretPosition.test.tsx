@@ -12,6 +12,7 @@ import { fireEvent, screen } from "@testing-library/dom";
 import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+import { expectElementContainer } from "../../../shared/utils";
 import { FretPosition } from "./FretPosition";
 
 describe("FretPosition Component", () => {
@@ -30,19 +31,15 @@ describe("FretPosition Component", () => {
 
     it("should render as circular element", () => {
       render(<FretPosition note="C" />);
-      const element = screen.getByText("C").closest("div");
-      expect(element).toBeTruthy();
-      if (!element) return;
-      expect(element?.style.borderRadius).toBe("50%");
+      const element = expectElementContainer("C");
+      expect(element.style.borderRadius).toBe("50%");
     });
 
     it("should have minimum touch target size by default", () => {
       render(<FretPosition note="C" />);
-      const element = screen.getByText("C").closest("div");
-      expect(element).toBeTruthy();
-      if (!element) return;
-      expect(element?.style.width).toBe("88px"); // musicalSpacing.note.size
-      expect(element?.style.height).toBe("88px");
+      const element = expectElementContainer("C");
+      expect(element.style.width).toBe("88px"); // musicalSpacing.note.size
+      expect(element.style.height).toBe("88px");
     });
   });
 
@@ -50,32 +47,26 @@ describe("FretPosition Component", () => {
   describe("Sizes", () => {
     it("should render medium size by default", () => {
       render(<FretPosition note="C" />);
-      const element = screen.getByText("C").closest("div");
-      expect(element).toBeTruthy();
-      if (!element) return;
-      expect(element?.style.width).toBe("88px");
-      expect(element?.style.height).toBe("88px");
-      expect(element?.style.fontSize).toBe("0.875rem");
+      const element = expectElementContainer("C");
+      expect(element.style.width).toBe("88px");
+      expect(element.style.height).toBe("88px");
+      expect(element.style.fontSize).toBe("0.875rem");
     });
 
     it("should render small size correctly", () => {
       render(<FretPosition note="C" size="sm" />);
-      const element = screen.getByText("C").closest("div");
-      expect(element).toBeTruthy();
-      if (!element) return;
-      expect(element?.style.width).toBe("32px");
-      expect(element?.style.height).toBe("32px");
-      expect(element?.style.fontSize).toBe("0.75rem");
+      const element = expectElementContainer("C");
+      expect(element.style.width).toBe("32px");
+      expect(element.style.height).toBe("32px");
+      expect(element.style.fontSize).toBe("0.75rem");
     });
 
     it("should render large size correctly", () => {
       render(<FretPosition note="C" size="lg" />);
-      const element = screen.getByText("C").closest("div");
-      expect(element).toBeTruthy();
-      if (!element) return;
-      expect(element?.style.width).toBe("48px");
-      expect(element?.style.height).toBe("48px");
-      expect(element?.style.fontSize).toBe("1rem");
+      const element = expectElementContainer("C");
+      expect(element.style.width).toBe("48px");
+      expect(element.style.height).toBe("48px");
+      expect(element.style.fontSize).toBe("1rem");
     });
   });
 
@@ -83,11 +74,9 @@ describe("FretPosition Component", () => {
   describe("Harmonic Functions", () => {
     it("should render root function with red colors", () => {
       render(<FretPosition note="C" function="root" isHighlighted />);
-      const element = screen.getByText("C").closest("div");
-      expect(element).toBeTruthy();
-      if (!element) return;
-      expect(element?.style.backgroundColor).toBe("rgb(220, 38, 38)"); // actual root color
-      expect(element?.style.color).toBe("rgb(255, 255, 255)");
+      const element = expectElementContainer("C");
+      expect(element.style.backgroundColor).toBe("rgb(220, 38, 38)"); // actual root color
+      expect(element.style.color).toBe("rgb(255, 255, 255)");
     });
 
     it("should render third function with yellow/amber colors", () => {

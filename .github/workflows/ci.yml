@@ -70,7 +70,7 @@ jobs:
           npx vitest run src/shared/utils/test-helpers.test.tsx || exit 1
 
       - name: Upload coverage reports
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           file: ./coverage/lcov.info
           flags: unittests
